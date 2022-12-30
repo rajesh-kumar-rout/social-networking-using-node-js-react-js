@@ -20,12 +20,22 @@ mysql.createConnection({
 })
 
 export const fetch = async(sql, params) => {
+    await connection.connect()
+
     const [result] = await connection.execute(sql, params);
+
+    await connection.end()
+
     return result?.[0]
 }
 
 export const query = async(sql, params) => {
-    const [result] = await connection.execute(sql, params);
+    await connection.connect()
+
+    const [result] = await connection.execute(sql, params)
+
+    await connection.end()
+
     return result
 }
 
