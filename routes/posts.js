@@ -4,6 +4,7 @@ import { body, param } from "express-validator"
 import { checkFileMimeType, checkIsFileTruncated, checkValidationError, files } from "../utils/validation.js"
 import { upload, destroy } from "../utils/cloudinary.js"
 import { unlink } from "fs/promises"
+import { multipart } from "../utils/filtSystem.js"
 
 const routes = Router()
 
@@ -40,33 +41,27 @@ routes.post(
         .isLength({ max: 255 })
         .default(""),
 
-    files("img")
-        .optional()
-        .isObject()
-        .bail()
-        .custom(checkFileMimeType("image/jpeg", "image/jpg", "image/png"))
-        .custom(checkIsFileTruncated),
+    multipart.single("img"),
 
     checkValidationError(async req => {
-        req.files.img && await unlink(req.files.img.tempFilePath)
+        req.file && await unlink(req.file.path)
     }),
 
     async (req, res) => {
         const { desc } = req.body
-        const { img } = req.files
         const { currentUserId } = req.local
 
-        if (!desc && !img) {
+        if (!desc && !req.file) {
             return res.status(400).json({ message: "Either des or image is required" })
         }
 
         let imgUrl = null, imgId = null
 
-        if (img) {
-            let imgRes = await upload(img.tempFilePath)
+        if (req.file.path) {
+            let imgRes = await upload(req.file.path)
             imgUrl = imgRes.secure_url
             imgId = imgRes.public_id
-            await unlink(img.tempFilePath)
+            await unlink(req.file.path)
         }
 
         await query("INSERT INTO posts (`desc`, imgUrl, imgId, userId) VALUES (?, ?, ?, ?)", [desc, imgUrl, imgId, currentUserId])

@@ -17,11 +17,6 @@ app.use(express.static("views"))
 app.set('view engine', 'ejs')
 
 app.use(cors())
-app.use(fileUpload({
-    useTempFiles: true,
-    tempFileDir: path.join(path.resolve(), "temp")
-}))
-console.log(path.join(path.resolve(), "temp"));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(setUpRequest)
