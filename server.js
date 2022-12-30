@@ -7,6 +7,7 @@ import { authenticate } from "./middlewares/authentication.js"
 import userRoutes from "./routes/users.js"
 import postRoutes from "./routes/posts.js"
 import authRoutes from "./routes/auth.js"
+import path from "path"
 
 config()
 const app = express()
@@ -16,7 +17,11 @@ app.use(express.static("views"))
 app.set('view engine', 'ejs')
 
 app.use(cors())
-app.use(fileUpload({ useTempFiles: true, tempFileDir : "/temp/" }))
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(path.resolve(), "temp")
+}))
+console.log(path.join(path.resolve(), "temp"));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(setUpRequest)
