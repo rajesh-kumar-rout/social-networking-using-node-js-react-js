@@ -15,6 +15,9 @@ mysql.createConnection({
     connection = db 
     connection.config.namedPlaceholders = true
 })
+.catch(error => {
+    console.log(error);
+})
 
 export const fetch = async(sql, params) => {
     const [result] = await connection.execute(sql, params);
