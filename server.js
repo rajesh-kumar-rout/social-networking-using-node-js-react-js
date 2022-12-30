@@ -14,7 +14,7 @@ const app = express()
 app.use(express.static("views"))
 
 app.set('view engine', 'ejs');
-
+// a
 app.use(cors())
 app.use(fileUpload({ useTempFiles: true }))
 app.use(express.json())
