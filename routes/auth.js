@@ -1,13 +1,11 @@
 import { Router } from "express"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import { fetch, query } from "../database/connection.js"
 import { upload, destroy } from "../utils/cloudinary.js"
 import { authenticate } from "../middlewares/authentication.js"
 import { body } from "express-validator"
-import { unlink } from "fs/promises"
-import { checkIsFileTruncated, files, checkFileMimeType, checkValidationError } from "../utils/validation.js"
-import { multipart } from "../utils/filtSystem.js"
+import { checkValidationError } from "../utils/validation.js"
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 const routes = Router()
 
@@ -18,7 +16,7 @@ routes.post(
 
     body("password").isLength({ min: 6, max: 20 }),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { email, password } = req.body
@@ -50,7 +48,7 @@ routes.post(
 
     body("password").isLength({ min: 6, max: 20 }),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { name, email, password } = req.body
@@ -74,7 +72,7 @@ routes.patch(
 
     body("newPassword").isLength({ min: 6, max: 20 }),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { currentUserId } = req.local
@@ -111,11 +109,6 @@ routes.patch(
 
     authenticate,
 
-    multipart.fields([
-        { name: "profileImg", maxCount: 1 },
-        { name: "coverImg", maxCount: 1 },
-    ]),
-
     body("name")
         .trim()
         .isLength({ min: 2, max: 30 }),
@@ -125,15 +118,11 @@ routes.patch(
         .toLowerCase()
         .isEmail(),
 
-    checkValidationError(async (req) => {
-        req.files.coverImg && await unlink(req.files.coverImg[0].path)
-        req.files.profileImg && await unlink(req.files.profileImg[0].path)
-    }),
+    checkValidationError,
 
     async (req, res) => {
         const { currentUserId } = req.local
-        const { name, email } = req.body
-        const { coverImg, profileImg } = req.files
+        const { name, email, coverImg, profileImg } = req.body
 
         if (await fetch('SELECT 1 FROM users WHERE email = ? AND id != ? LIMIT 1', [email, currentUserId])) {
             return res.status(409).json({ message: "Email already taken" })
@@ -142,19 +131,17 @@ routes.patch(
         const user = await fetch('SELECT * FROM users WHERE id = ? LIMIT 1', [currentUserId])
 
         if (coverImg) {
-            const { secure_url, public_id } = await upload(coverImg[0].path)
+            const { secure_url, public_id } = await upload(coverImg)
             user.coverImgUrl && await destroy(user.coverImgId)
             user.coverImgUrl = secure_url
             user.coverImgId = public_id
-            await unlink(coverImg[0].path)
         }
 
         if (profileImg) {
-            const { secure_url, public_id } = await upload(profileImg[0].path)
+            const { secure_url, public_id } = await upload(profileImg)
             user.profileImgUrl && await destroy(user.profileImgId)
             user.profileImgUrl = secure_url
             user.profileImgId = public_id
-            await unlink(profileImg[0].path)
         }
 
         await query('UPDATE users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ?, coverImgUrl = ?, coverImgId = ? WHERE id = ?', [name, email, user.profileImgUrl, user.profileImgId, user.coverImgUrl, user.coverImgId, currentUserId])

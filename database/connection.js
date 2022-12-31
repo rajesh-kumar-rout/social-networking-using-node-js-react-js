@@ -12,8 +12,6 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD
 })
 
-
-
 export const fetch = async(sql, params) => {
     const [result] = await pool.execute(sql, params);
 

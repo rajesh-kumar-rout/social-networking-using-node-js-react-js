@@ -1,10 +1,8 @@
 import { Router } from "express"
 import { query, fetch } from "../database/connection.js"
 import { body, param } from "express-validator"
-import { checkFileMimeType, checkIsFileTruncated, checkValidationError, files } from "../utils/validation.js"
 import { upload, destroy } from "../utils/cloudinary.js"
-import { unlink } from "fs/promises"
-import { multipart } from "../utils/filtSystem.js"
+import { checkValidationError } from "../utils/validation.js"
 
 const routes = Router()
 
@@ -21,7 +19,7 @@ routes.get(
 
     param("postId").isInt(),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { currentUserId } = req.local
@@ -41,27 +39,22 @@ routes.post(
         .isLength({ max: 255 })
         .default(""),
 
-    multipart.single("img"),
-
-    checkValidationError(async req => {
-        req.file && await unlink(req.file.path)
-    }),
+    checkValidationError,
 
     async (req, res) => {
-        const { desc } = req.body
+        const { desc, img } = req.body
         const { currentUserId } = req.local
 
-        if (!desc && !req.file) {
+        if (!desc && !img) {
             return res.status(400).json({ message: "Either des or image is required" })
         }
 
         let imgUrl = null, imgId = null
 
-        if (req.file.path) {
-            let imgRes = await upload(req.file.path)
+        if (img) {
+            let imgRes = await upload(img)
             imgUrl = imgRes.secure_url
             imgId = imgRes.public_id
-            await unlink(req.file.path)
         }
 
         await query("INSERT INTO posts (`desc`, imgUrl, imgId, userId) VALUES (?, ?, ?, ?)", [desc, imgUrl, imgId, currentUserId])
@@ -77,7 +70,7 @@ routes.post(
 
     body("comment").isLength({ min: 1, max: 255 }),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { postId } = req.params
@@ -101,7 +94,7 @@ routes.delete(
 
     param("commentId").isInt(),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { commentId } = req.params
@@ -122,7 +115,7 @@ routes.patch(
 
     param("postId").isInt(),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { postId } = req.params
@@ -147,7 +140,7 @@ routes.delete(
 
     param("postId").isInt(),
 
-    checkValidationError(),
+    checkValidationError,
 
     async (req, res) => {
         const { postId } = req.params
