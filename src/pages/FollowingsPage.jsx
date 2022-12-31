@@ -25,12 +25,12 @@ export default function FollowingsPage() {
     }
 
     if (!users.length) {
-        return <EmptyMessage message="You have not follow any people yet" />
+        return <EmptyMessage message="You have not follow any people yet"/>
     }
 
     return (
         <UserList
-            title={users.length + " Followings Found"}
+            title={`${users.length} Followings Found`}
             users={users}
         />
     )

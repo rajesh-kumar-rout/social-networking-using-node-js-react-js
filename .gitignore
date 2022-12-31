@@ -2,4 +2,5 @@
 /build
 /public
 /dist
+constants.js
 package-lock.json

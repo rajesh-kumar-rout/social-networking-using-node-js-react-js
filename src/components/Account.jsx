@@ -13,6 +13,7 @@ export default function Account() {
 
     const fetchAccount = async () => {
         const { data } = await axios.get("/auth/account")
+        console.log((data));
         setAccount(data)
         setIsFetching(false)
     }

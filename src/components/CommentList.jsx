@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react"
 import { AccountContext } from "./Account"
+import { toast } from "react-toastify"
+import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import Comment from "./Comment"
 import axios from "../utils/axios"
-import { toast } from "react-toastify"
 
 export default function CommentList({ postId }) {
     const [comments, setComments] = useState([])
@@ -53,21 +54,25 @@ export default function CommentList({ postId }) {
     }, [])
 
     return (
-        <div className="comments">
+        <div className="border-t-2 border-gray-300">
             {isLoading ? (
-                <p className="comments-loader-txt">Loading...</p>
+                <div className="h-10 w-10 rounded-full border-4 my-4 mx-auto border-indigo-600 border-b-transparent animate-spin"></div>
             ) : (
                 <>
-                    <div className="comment">
-                        <img src={account.profileImgUrl} className="comment-profile-img" />
+                    <div className="flex gap-3 px-3 py-4 ">
+                        <img 
+                            src={account.profileImgUrl ? account.profileImgUrl : DEFAULT_PROFILE_IMG} 
+                            className="h-9 w-9 rounded-full object-cover" 
+                        />
 
                         <form onSubmit={handleAddComment} className="flex-1">
                             <input
-                                className="form-control text-sm"
+                                className="border-2 border-gray-300 rounded-md p-2 outline-none block w-full focus:ring-1
+                                focus:border-indigo-600  focus:ring-indigo-600 text-sm"
                                 name="comment"
                                 placeholder="Write your comment..."
                             />
-                            <p className="comments-submit-hint">Press enter to post.</p>
+                            <p className="text-gray-600 mt-1 text-sm">Press enter to post.</p>
                         </form>
                     </div>
 

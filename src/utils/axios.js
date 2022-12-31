@@ -1,4 +1,5 @@
 import axios from "axios"
+import { loadConfigFromFile } from "vite"
 import { BASE_URL } from "./constants"
 
 const instance = axios.create({
@@ -13,7 +14,10 @@ instance.interceptors.request.use(config => {
 })
 
 instance.interceptors.response.use(response => response, error => {
-    window.location.href = "/login"
+    if (error.response?.status === 401) {
+        localStorage.removeItem("jwtToken")
+        window.location.href = "/login"
+    }
     return Promise.reject(error)
 })
 

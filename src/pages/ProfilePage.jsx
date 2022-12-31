@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import Post from "../components/Post"
 import Loader from "../components/Loader"
 import Profile from "../components/Profile"
 import axios from "../utils/axios"
-import { toast } from "react-toastify"
 
 export default function ProfilePage() {
     const { userId } = useParams()
@@ -24,19 +24,15 @@ export default function ProfilePage() {
 
     const handleDeletePost = async (postId) => {
         setIsLoading(true)
-
         await axios.delete(`/posts/${postId}`)
         toast.error("Post deleted successfully")
-
         setPosts(posts.filter(post => post.id !== postId))
         setIsLoading(false)
     }
 
     const handleToggleFollow = async () => {
         setIsLoading(true)
-
         await axios.patch(`/users/${user.id}/toggleFollow`)
-
         setUser({
             ...user,
             isFollowing: !user.isFollowing,
@@ -47,12 +43,10 @@ export default function ProfilePage() {
 
     const handleToggleLike = async (postId) => {
         axios.patch(`/posts/${postId}/toggleLike`)
-
         const newPosts = [...posts]
         const index = posts.findIndex(post => post.id === postId)
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1
         newPosts[index].isLiked = !newPosts[index].isLiked
-
         setPosts(newPosts)
     }
 
@@ -72,7 +66,7 @@ export default function ProfilePage() {
             <Profile user={user} onToggleFollow={handleToggleFollow}/>
 
             {posts.length ? (
-                <div className="posts my-4">
+                <div className="space-y-5 my-5">
                     {posts.map(post => (
                         <Post
                             key={post.id}
@@ -83,7 +77,9 @@ export default function ProfilePage() {
                     ))}
                 </div>
             ) : (
-                <p className="msg mt-4">You have not add any post yet</p>
+                <p className="text-xl font-bold text-indigo-600 text-center my-5">
+                    No Post Found 
+                </p>
             )}
         </div>
     )

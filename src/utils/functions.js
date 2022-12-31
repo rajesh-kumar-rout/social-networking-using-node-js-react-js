@@ -17,6 +17,16 @@ export const dateToAgo = (date) => {
     return format.charAt(0).toUpperCase() + format.slice(1)
 }
 
+export const getBase64 = async (image) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(image)
+    return new Promise((resolve, reject) => {
+        reader.onload = () => {
+            resolve(reader.result)
+        }
+    })
+}
+
 
 
 

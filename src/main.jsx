@@ -3,7 +3,7 @@ import App from "./App"
 import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
-import "./index.scss"
+import "./index.css"
 import "react-toastify/dist/ReactToastify.css"
 
 const root = createRoot(document.getElementById("root"))
@@ -11,7 +11,7 @@ const root = createRoot(document.getElementById("root"))
 root.render(
     <>
         <ToastContainer
-            position="top-right"
+            position="top-center"
             autoClose={5000}
             hideProgressBar={false}
             newestOnTop={false}

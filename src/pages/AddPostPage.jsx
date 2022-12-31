@@ -1,16 +1,17 @@
 import { useRef } from "react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { toast } from "react-toastify"
+import { object, string } from "yup"
+import { getBase64 } from "../utils/functions"
 import axios from "../utils/axios"
-import * as Yup from "yup"
 
-const validationSchema = Yup.object().shape({
-    desc: Yup.string()
+const validationSchema = object().shape({
+    desc: string()
         .trim()
         .max(255, "Description must be within 255 characters")
         .when("img", {
             is: (img) => img === undefined,
-            then: Yup.string().required("Either image or description required")
+            then: string().required("Either image or description required")
         })
 })
 
@@ -18,16 +19,12 @@ export default function AddPostPage() {
     const imgRef = useRef()
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        const formData = new FormData()
-        Object.keys(values).forEach(key => formData.append(key, values[key]))
-
+        values.img && (values.img = await getBase64(values.img))
         setSubmitting(true)
-
-        await axios.post("/posts", formData)
+        await axios.post("/posts", values)
         resetForm()
         imgRef.current.value = ""
         toast.success("Post added successfully")
-
         setSubmitting(false)
     }
 
@@ -41,27 +38,29 @@ export default function AddPostPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting, setFieldValue }) => (
-                <Form className="card card-2">
-                    <div className="card-header card-title-1">Add New Post</div>
+                <Form className="max-w-2xl bg-white border-2 border-gray-300 rounded-md my-8 mx-auto p-7">
+                    <p className="text-center font-bold text-indigo-600 mb-6 text-2xl">Add New Post</p>
 
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="desc" className="form-label">Description</label>
+                    <div className="">
+                        <div className="mb-5">
+                            <label htmlFor="desc" className="font-semibold mb-2 inline-block">Description</label>
                             <Field
                                 id="desc"
-                                className="form-control"
+                                className="border-2 border-gray-300 rounded-md p-2 outline-none block w-full focus:ring-1
+                                focus:border-indigo-600  focus:ring-indigo-600"
                                 name="desc"
                                 as="textarea"
                             />
-                            <ErrorMessage component="p" className="form-error" name="desc"/>
+                            <ErrorMessage component="p" className="text-sm mt-1 font-semibold text-red-600" name="desc" />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="img" className="form-label">Image</label>
+                        <div className="mb-5">
+                            <label htmlFor="img" className="font-semibold mb-2 inline-block">Image</label>
                             <input
                                 type="file"
                                 id="img"
-                                className="form-control"
+                                className="border-2 border-gray-300 rounded-md p-2 outline-none block w-full focus:ring-1
+                                focus:border-indigo-600  focus:ring-indigo-600"
                                 name="img"
                                 onChange={event => setFieldValue("img", event.target.files[0])}
                                 accept="image/jpg, image/jpeg, image/png"
@@ -71,10 +70,11 @@ export default function AddPostPage() {
 
                         <button
                             type="submit"
-                            className="btn btn-primary btn-full"
+                            className="px-4 py-2 w-full rounded-md text-center bg-indigo-600 text-white hover:bg-indigo-800
+                            disabled:bg-indigo-400 transition-all duration-300"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Please Wait..." : "Save"}
+                            {isSubmitting ? "Loading..." : "Save"}
                         </button>
                     </div>
                 </Form>

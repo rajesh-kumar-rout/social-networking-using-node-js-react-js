@@ -29,22 +29,23 @@ export default function SearchPage() {
     }
 
     return (
-        <div className="search">
-            <div className="card search-form">
+        <div className="px-2">
+            <div className="bg-white flex items-center max-w-2xl mx-auto gap-3 p-4 border-2 rounded-md border-gray-300 my-8">
                 <MdSearch size={28} />
 
                 <input
                     type="search"
+                    className="w-full outline-none"
                     onChange={event => setQuery(event.target.value)}
                     placeholder="Search Here..."
                 />
             </div>
 
             {filteredUsers.length === 0 ? (
-                <p className="search-no-user">There is no user as "{query}"</p>
+                <p className="text-xl font-bold text-indigo-600">There is no user as "{query}"</p>
             ) : (
                 <UserList
-                    title={filteredUsers.length + " Users Found"}
+                    title={`${filteredUsers.length} Users Found`}
                     users={filteredUsers}
                 />
             )}

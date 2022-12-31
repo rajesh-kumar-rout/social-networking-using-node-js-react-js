@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import Post from "../components/Post"
 import Loader from "../components/Loader"
-import EmptyMessage from "../components/EmptyMessage"
 import axios from "../utils/axios"
-import { toast } from "react-toastify"
 
 export default function HomePage() {
     const [posts, setPosts] = useState([])
@@ -17,11 +16,9 @@ export default function HomePage() {
 
     const handleDeletePost = async (postId) => {
         setIsLoading(true)
-
         await axios.delete(`/posts/${postId}`)
         toast.error("Post deleted successfully")
         setPosts(posts.filter(post => post.id !== postId))
-
         setIsLoading(false)
     }
 
@@ -43,11 +40,12 @@ export default function HomePage() {
     }
 
     if (posts.length === 0) {
-        return <EmptyMessage message="No Posts Found. Follow people to see their post and photos" />
+        return <p className="flex justify-center items-center text-indigo-600 h-full text-center
+        text-xl font-bold">No Posts Found <br/> Follow people to see their post and photos</p>
     }
 
     return (
-        <div className="posts my-4">
+        <div className="space-y-5 my-5">
             {posts.map(post => (
                 <Post
                     key={post.id}
