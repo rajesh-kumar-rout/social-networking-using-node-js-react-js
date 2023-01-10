@@ -1,19 +1,19 @@
 import jwt from "jsonwebtoken"
-import dotenv from "dotenv"
+import { config } from "dotenv"
 
-dotenv.config()
+config()
 
 export function authenticate(req, res, next) {
-    let { authorization } = req.headers
+    const { authorization } = req.headers
 
-    authorization = authorization && authorization.startsWith("Bearer ") &&
-        authorization.substring(7, authorization.length)
+    const accessToken = authorization && authorization.startsWith("Bearer ") 
+        ? authorization.substring(7, authorization.length) : null
 
     try {
-        const { currentUserId } = jwt.verify(authorization, process.env.JWT_SECRECT)
-        req.local.currentUserId = currentUserId
+        const { currentUserId } = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRECT)
+        req.currentUserId = currentUserId
         next()
-    } catch {
+    } catch{
         res.status(401).json({ message: "Unauthenticated" })
     }
 }
