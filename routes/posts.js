@@ -115,30 +115,22 @@ routes.delete(
     }
 )
 
-routes.patch(
-    "/:postId/toggle-like",
+routes.patch("/:postId/toggle-like", async (req, res) => {
+    const { postId } = req.params
+    const { currentUserId } = req
 
-    param("postId").isInt(),
-
-    checkValidationError,
-
-    async (req, res) => {
-        const { postId } = req.params
-        const { currentUserId } = req
-
-        if (!await fetch('SELECT 1 FROM social_posts WHERE id = ? LIMIT 1', [postId])) {
-            return res.status(409).json({ message: "Post does not exists" })
-        }
-
-        if (await fetch('SELECT 1 FROM social_likes WHERE userId = ? AND postId = ?', [currentUserId, postId])) {
-            await query('DELETE FROM social_likes WHERE postId = ? AND userId = ?', [postId, currentUserId])
-            return res.json({ message: "Dislike the post successfully" })
-        }
-
-        await query('INSERT INTO social_likes (postId, userId) VALUES (?, ?)', [postId, currentUserId])
-        res.status(201).json({ message: "Like the post successfully" })
+    if (!await fetch('SELECT 1 FROM social_posts WHERE id = ? LIMIT 1', [postId])) {
+        return res.status(409).json({ message: "Post does not exists" })
     }
-)
+
+    if (await fetch('SELECT 1 FROM social_likes WHERE userId = ? AND postId = ?', [currentUserId, postId])) {
+        await query('DELETE FROM social_likes WHERE postId = ? AND userId = ?', [postId, currentUserId])
+        return res.json({ message: "Dislike the post successfully" })
+    }
+
+    await query('INSERT INTO social_likes (postId, userId) VALUES (?, ?)', [postId, currentUserId])
+    res.status(201).json({ message: "Like the post successfully" })
+})
 
 routes.delete(
     "/:postId",
