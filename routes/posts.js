@@ -131,7 +131,7 @@ routes.patch(
         }
 
         if (await fetch('SELECT 1 FROM social_likes WHERE userId = ? AND postId = ?', [currentUserId, postId])) {
-            await query('DELETE FROM likes WHERE postId = ? AND userId = ?', [postId, currentUserId])
+            await query('DELETE FROM social_likes WHERE postId = ? AND userId = ?', [postId, currentUserId])
             return res.json({ message: "Dislike the post successfully" })
         }
 
