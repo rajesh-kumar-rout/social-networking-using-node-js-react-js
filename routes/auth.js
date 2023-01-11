@@ -1,12 +1,12 @@
-import { Router } from "express"
-import { fetch, query } from "../utils/database.js"
-import { upload, destroy } from "../utils/cloudinary.js"
-import { authenticate } from "../middlewares/authentication.js"
-import { body } from "express-validator"
-import { checkValidationError, isBase64Img } from "../utils/validation.js"
-import { config } from "dotenv"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
+import { config } from "dotenv"
+import { Router } from "express"
+import { body } from "express-validator"
+import { authenticate } from "../middlewares/authentication.js"
+import { destroy, upload } from "../utils/cloudinary.js"
+import { fetch, query } from "../utils/database.js"
+import { checkValidationError, isBase64Img } from "../utils/validation.js"
 
 config()
 
@@ -30,7 +30,7 @@ routes.post(
             return res.status(422).json({ message: "Invalid email or password" })
         }
 
-        req.session.currentUserId = user.id 
+        req.session.currentUserId = user.id
 
         res.json({ message: "Login successfull" })
     }
@@ -80,7 +80,7 @@ routes.patch(
 
     async (req, res) => {
         const { currentUserId } = req.session
-        
+
         const { oldPassword, newPassword } = req.body
 
         const user = await fetch('SELECT password FROM social_users WHERE id = ? LIMIT 1', [currentUserId])
@@ -155,7 +155,7 @@ routes.patch(
     }
 )
 
-routes.get("/", async(req, res) => {
+routes.get("/", async (req, res) => {
     const { currentUserId } = req.session
 
     const csrfToken = crypto.randomUUID()
@@ -165,6 +165,12 @@ routes.get("/", async(req, res) => {
     const user = await fetch("SELECT id, name, email, profileImgUrl, coverImgUrl FROM social_users WHERE id = ? LIMIT 1", [currentUserId ?? null])
 
     res.cookie("X-XSRF-TOKEN", csrfToken).json(user)
+})
+
+routes.get("/logout", (req, res) => {
+    req.session.destroy()
+
+    res.json({ message: "Logout successfull" })
 })
 
 export default routes

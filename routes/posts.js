@@ -1,7 +1,7 @@
 import { Router } from "express"
-import { query, fetch } from "../utils/database.js"
 import { body, param } from "express-validator"
-import { upload, destroy } from "../utils/cloudinary.js"
+import { destroy, upload } from "../utils/cloudinary.js"
+import { fetch, query } from "../utils/database.js"
 import { checkValidationError, isBase64Img } from "../utils/validation.js"
 
 const routes = Router()
