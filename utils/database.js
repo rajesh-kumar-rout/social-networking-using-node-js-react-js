@@ -3,7 +3,7 @@ import { config } from "dotenv"
 
 config()
 
-const pool = createPool({
+export const pool = createPool({
     connectionLimit: 1,
     namedPlaceholders: true,
     host: process.env.DB_HOST, 

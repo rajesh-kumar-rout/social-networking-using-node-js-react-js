@@ -1,14 +1,15 @@
 import { Router } from "express"
-import { fetch, query } from "../database/connection.js"
+import { fetch, query } from "../utils/database.js"
 import { upload, destroy } from "../utils/cloudinary.js"
 import { authenticate } from "../middlewares/authentication.js"
 import { body } from "express-validator"
 import { checkValidationError, isBase64Img } from "../utils/validation.js"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import { config } from "dotenv"
+import bcrypt from "bcrypt"
+import crypto from "crypto"
 
 config()
+
 const routes = Router()
 
 routes.post(
@@ -29,11 +30,9 @@ routes.post(
             return res.status(422).json({ message: "Invalid email or password" })
         }
 
-        const accessToken = jwt.sign({ currentUserId: user.id }, process.env.ACCESS_TOKEN_SECRECT, { expiresIn: "1h" })
+        req.session.currentUserId = user.id 
 
-        const refreshToken = jwt.sign({ currentUserId: user.id }, process.env.REFRESH_TOKEN_SECRECT, { expiresIn: "720h" })
-
-        res.json({ accessToken, refreshToken })
+        res.json({ message: "Login successfull" })
     }
 )
 
@@ -60,7 +59,9 @@ routes.post(
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        await query('INSERT INTO social_users (name, email, password) VALUES (?, ?, ?)', [name, email, await bcrypt.hash(password, 10)])
+        const { insertId } = await query('INSERT INTO social_users (name, email, password) VALUES (?, ?, ?)', [name, email, await bcrypt.hash(password, 10)])
+
+        req.session.currentUserId = insertId
 
         res.status(201).json({ message: "User created successfully" })
     }
@@ -78,7 +79,8 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { currentUserId } = req.session
+        
         const { oldPassword, newPassword } = req.body
 
         const user = await fetch('SELECT password FROM social_users WHERE id = ? LIMIT 1', [currentUserId])
@@ -92,40 +94,6 @@ routes.patch(
         res.json({ message: "Password changed successfully" })
     }
 )
-
-routes.get(
-    "/account",
-
-    authenticate,
-
-    async (req, res) => {
-        const { currentUserId } = req
-
-        const user = await fetch('SELECT id, name, email, profileImgUrl, coverImgUrl, createdAt, updatedAt FROM social_users WHERE id = ? LIMIT 1', [currentUserId])
-
-        res.json(user)
-    }
-)
-
-routes.get("/refresh-token", async (req, res) => {
-    const { authorization } = req.headers
-
-    const refreshToken = authorization && authorization.startsWith("Bearer ") 
-        ? authorization.substring(7, authorization.length) : null
-
-    try {
-
-        const { currentUserId } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRECT)
-
-        const accessToken = jwt.sign({ currentUserId }, process.env.ACCESS_TOKEN_SECRECT, { expiresIn: "1h" })
-
-        res.json({ accessToken })
-
-    } catch {
-
-        res.status(401).json({ message: "Refresh token expires" })
-    }
-})
 
 routes.patch(
     "/edit-account",
@@ -154,7 +122,8 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { currentUserId } = req.session
+
         const { name, email, coverImg, profileImg } = req.body
 
         if (await fetch('SELECT 1 FROM social_users WHERE email = ? AND id != ? LIMIT 1', [email, currentUserId])) {
@@ -185,5 +154,17 @@ routes.patch(
         })
     }
 )
+
+routes.get("/", async(req, res) => {
+    const { currentUserId } = req.session
+
+    const csrfToken = crypto.randomUUID()
+
+    req.session.csrfToken = csrfToken
+
+    const user = await fetch("SELECT id, name, email, profileImgUrl, coverImgUrl FROM social_users WHERE id = ? LIMIT 1", [currentUserId ?? null])
+
+    res.cookie("X-XSRF-TOKEN", csrfToken).json(user)
+})
 
 export default routes

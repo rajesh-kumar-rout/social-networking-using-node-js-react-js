@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { query, fetch } from "../database/connection.js"
+import { query, fetch } from "../utils/database.js"
 import { body, param } from "express-validator"
 import { upload, destroy } from "../utils/cloudinary.js"
 import { checkValidationError, isBase64Img } from "../utils/validation.js"
@@ -7,7 +7,7 @@ import { checkValidationError, isBase64Img } from "../utils/validation.js"
 const routes = Router()
 
 routes.get("/feeds", async (req, res) => {
-    const { currentUserId } = req
+    const { currentUserId } = req.session
 
     const posts = await query("SELECT social_posts.id, social_posts.userId, social_posts.desc, social_posts.imgUrl, social_posts.createdAt, social_users.name AS userName, social_users.profileImgUrl, (CASE WHEN social_users.id = :currentUserId THEN 1 ELSE 0 END) AS isPosted, EXISTS(SELECT 1 FROM social_likes WHERE social_likes.postId = social_posts.id AND social_likes.userId = :currentUserId) AS isLiked, (SELECT COUNT(*) FROM social_comments WHERE social_comments.postId = social_posts.id) AS totalComments, (SELECT COUNT(*) FROM social_likes WHERE social_likes.postId = social_posts.id) AS totalLikes FROM social_followers INNER JOIN social_users ON social_users.id = social_followers.followingId INNER JOIN social_posts ON social_posts.userId = social_users.id WHERE followerId = :currentUserId", { currentUserId })
 
@@ -22,7 +22,8 @@ routes.get(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { currentUserId } = req.session
+
         const { postId } = req.params
 
         const comments = await query('SELECT social_comments.id, social_comments.comment, social_comments.createdAt, social_users.name AS userName, social_users.profileImgUrl, ( CASE WHEN social_comments.userId = ? THEN 1 ELSE 0 END ) AS isCommented FROM social_comments INNER JOIN social_users ON social_users.id = social_comments.userId WHERE social_comments.postId = ?', [currentUserId, postId])
@@ -48,7 +49,8 @@ routes.post(
 
     async (req, res) => {
         const { desc, img } = req.body
-        const { currentUserId } = req
+
+        const { currentUserId } = req.session
 
         if (!desc && !img) {
             return res.status(400).json({ message: "Either des or image is required" })
@@ -79,7 +81,9 @@ routes.post(
 
     async (req, res) => {
         const { postId } = req.params
-        const { currentUserId } = req
+
+        const { currentUserId } = req.session
+
         const { comment } = req.body
 
         if (!await fetch('SELECT 1 FROM social_posts WHERE id = ? LIMIT 1', [postId])) {
@@ -94,30 +98,24 @@ routes.post(
     }
 )
 
-routes.delete(
-    "/comments/:commentId",
+routes.delete("/comments/:commentId", async (req, res) => {
+    const { commentId } = req.params
 
-    param("commentId").isInt(),
+    const { currentUserId } = req.session
 
-    checkValidationError,
+    const { affectedRows } = await query('DELETE FROM social_comments WHERE id = ? AND userId = ?', [commentId, currentUserId])
 
-    async (req, res) => {
-        const { commentId } = req.params
-        const { currentUserId } = req
-
-        const { affectedRows } = await query('DELETE FROM social_comments WHERE id = ? AND userId = ?', [commentId, currentUserId])
-
-        if (!affectedRows) {
-            return res.status(404).json({ message: "Comment not found" })
-        }
-
-        res.json({ message: "Comment deleted successfully" })
+    if (!affectedRows) {
+        return res.status(404).json({ message: "Comment not found" })
     }
-)
+
+    res.json({ message: "Comment deleted successfully" })
+})
 
 routes.patch("/:postId/toggle-like", async (req, res) => {
     const { postId } = req.params
-    const { currentUserId } = req
+
+    const { currentUserId } = req.session
 
     if (!await fetch("SELECT 1 FROM social_posts WHERE id = ? LIMIT 1", [postId])) {
         return res.status(409).json({ message: "Post does not exists" })
@@ -125,7 +123,7 @@ routes.patch("/:postId/toggle-like", async (req, res) => {
 
     if (await fetch("SELECT 1 FROM social_likes WHERE userId = ? AND postId = ?", [currentUserId, postId])) {
         await query("DELETE FROM social_likes WHERE postId = ? AND userId = ?", [postId, currentUserId])
-        return res.json({ message: "Dislike the post successfully" })
+        return res.json({ message: "Remove likes from post successfully" })
     }
 
     await query("INSERT INTO social_likes (postId, userId) VALUES (?, ?)", [postId, currentUserId])
@@ -141,7 +139,8 @@ routes.delete(
 
     async (req, res) => {
         const { postId } = req.params
-        const { currentUserId } = req
+
+        const { currentUserId } = req.session
 
         const post = await fetch('SELECT imgId FROM social_posts WHERE id = ? AND userId = ? LIMIT 1', [postId, currentUserId])
 
