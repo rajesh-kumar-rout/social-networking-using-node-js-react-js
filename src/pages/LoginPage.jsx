@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { toast } from "react-toastify"
 import { object, string } from "yup"
@@ -12,15 +12,15 @@ const validationSchema = object().shape({
 })
 
 export default function LoginPage() {
+    const [searchParams] = useSearchParams()
     const navigate = useNavigate()
-
+console.log(searchParams.get("returnUrl"));
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
 
         try {
             const { data } = await axios.post("/auth/login", values)
-            localStorage.setItem("jwtToken", data.jwtToken)
-            navigate("/")
+            window.location.href = "/"
         } catch ({ response }) {
             response?.status === 422 && toast.error("Invalid email or password")
         }

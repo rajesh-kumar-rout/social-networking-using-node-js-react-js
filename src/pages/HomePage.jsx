@@ -23,7 +23,7 @@ export default function HomePage() {
     }
 
     const handleToggleLike = async (postId) => {
-        axios.patch(`/posts/${postId}/toggleLike`)
+        axios.patch(`/posts/${postId}/toggle-like`)
         const newPosts = [...posts]
         const index = newPosts.findIndex(post => post.id === postId)
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1

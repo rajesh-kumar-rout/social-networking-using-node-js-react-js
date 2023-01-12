@@ -1,24 +1,24 @@
 import axios from "axios"
-import { loadConfigFromFile } from "vite"
 import { BASE_URL } from "./constants"
+import Cookie from "js-cookie"
+axios.defaults.baseURL = BASE_URL
 
-const instance = axios.create({
-    baseURL: BASE_URL
-})
+axios.defaults.withCredentials = true
 
-instance.interceptors.request.use(config => {
-    if (localStorage.getItem("jwtToken")) {
-        config.headers.authorization = `Bearer ${localStorage.getItem("jwtToken")}`
+axios.interceptors.request.use(config => {
+    if (Cookie.get("x-csrf-token")) {
+        config.headers["csrf-token"] = Cookie.get("x-csrf-token")
     }
     return config
 })
 
-instance.interceptors.response.use(response => response, error => {
-    if (error.response?.status === 401) {
-        localStorage.removeItem("jwtToken")
-        window.location.href = "/login"
+axios.interceptors.response.use(response => response, error => {
+    if (error.response.status === 401) {
+
+        window.location.reload()
     }
+
     return Promise.reject(error)
 })
 
-export default instance
+export default axios

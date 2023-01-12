@@ -10,7 +10,7 @@ export default function Comment({ comment, onDeleteComment }) {
                 className="h-9 w-9 rounded-full object-cover" 
             />
 
-            <div className="comment-right-section">
+            <div className="flex justify-between flex-1">
                 <div>
                     <p className="text-sm font-semibold">
                         {comment.userName}

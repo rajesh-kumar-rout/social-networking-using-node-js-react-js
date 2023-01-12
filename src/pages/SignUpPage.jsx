@@ -35,10 +35,10 @@ export default function SignUpPage() {
         setSubmitting(true)
 
         try {
-            await axios.post("/auth/sign-up", values)
-            toast.success("Sign up successfull. Please login")
-            navigate("/login")
+            await axios.post("/auth/register", values)
+            toast.success("Sign up successfull")
         } catch ({ response }) {
+            console.log(response);
             response?.status === 409 && toast.error("Email already exists")
         }
 

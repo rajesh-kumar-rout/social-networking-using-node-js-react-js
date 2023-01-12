@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom"
-import { Authenticated, NotAuthenticated } from "./components/Auth"
+import Authenticated from "./components/Authenticated"
+import NotAuthenticated from "./components/NotAuthenticated"
 import AddPostPage from "./pages/AddPostPage"
 import ChangePasswordPage from "./pages/ChangePasswordPage"
 import HomePage from "./pages/HomePage"
@@ -10,30 +11,30 @@ import FollowersPage from "./pages/FollowersPage"
 import FollowingPage from "./pages/FollowingsPage"
 import LoginPage from "./pages/LoginPage"
 import SignUpPage from "./pages/SignUpPage"
-import Account from "./components/Account"
+import Account from "./components/Auth"
 import Layout from "./components/Layout"
 
 export default function App() {
     return (
         <Routes>
-            <Route element={<Authenticated />}>
-                <Route element={<Account />}>
+            <Route element={<Account />}>
+                <Route element={<Authenticated />}>
                     <Route element={<Layout />}>
                         <Route index element={<HomePage />} />
                         <Route path="/search" element={<SearchPage />} />
                         <Route path="/add-post" element={<AddPostPage />} />
+                        <Route path="/auth/profile/:userId" element={<ProfilePage />} />
                         <Route path="/profile/:userId" element={<ProfilePage />} />
-                        <Route path="/change-password" element={<ChangePasswordPage />} />
+                        <Route path="/auth/change-password" element={<ChangePasswordPage />} />
                         <Route path="/edit-account" element={<EditAccountPage />} />
-                        <Route path="/followers" element={<FollowersPage />} />
-                        <Route path="/followings" element={<FollowingPage />} />
+                        <Route path="/auth/followers" element={<FollowersPage />} />
+                        <Route path="/auth/followings" element={<FollowingPage />} />
                     </Route>
                 </Route>
-            </Route>
-
-            <Route element={<NotAuthenticated />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/sign-up" element={<SignUpPage />} />
+                <Route element={<NotAuthenticated />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/sign-up" element={<SignUpPage />} />
+                </Route>
             </Route>
         </Routes>
     )

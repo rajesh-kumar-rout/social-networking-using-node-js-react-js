@@ -2,11 +2,11 @@ import { useContext } from "react"
 import { Link, useParams } from "react-router-dom"
 import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { postImgUrl } from "../utils/functions"
-import { AccountContext } from "./Account"
+import { AuthContext } from "./Auth"
 
 export default function Profile({ user, onToggleFollow }) {
     const { userId } = useParams()
-    const { account } = useContext(AccountContext)
+    const { currentUser } = useContext(AuthContext)
 
     return (
         <div className="bg-white shadow-md pb-8">
@@ -32,7 +32,7 @@ export default function Profile({ user, onToggleFollow }) {
                             </p>
                         </div>
 
-                        {userId == account.id ? (
+                        {userId == currentUser.id ? (
                             <Link
                                 to="/edit-account"
                                 className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-800 

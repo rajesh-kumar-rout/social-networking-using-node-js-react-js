@@ -46,11 +46,11 @@ export default function ChangePasswordPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <Form className="max-w-2xl bg-white shadow-md rounded-md my-8 mx-auto p-7">
+                <Form className="max-w-xl bg-white shadow-md lg:rounded-md my-8 mx-auto p-5">
                     <p className="text-center font-bold text-indigo-600 mb-6 text-2xl">Change Password</p>
 
-                    <div className="form-group">
-                        <label htmlFor="oldPassword" className="font-semibold mb-2 inline-block">Old Password</label>
+                    <div className="mb-5">
+                        <label htmlFor="oldPassword" className="font-semibold mb-1 inline-block">Old Password</label>
                         <Field
                             type="password"
                             id="oldPassword"
@@ -61,8 +61,8 @@ export default function ChangePasswordPage() {
                         <ErrorMessage component="p" name="oldPassword" className="text-sm mt-1 font-semibold text-red-600" />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="newPassword" className="font-semibold mb-2 inline-block">New Password</label>
+                    <div className="mb-5">
+                        <label htmlFor="newPassword" className="font-semibold mb-1 inline-block">New Password</label>
                         <Field
                             type="password"
                             id="newPassword"
@@ -73,8 +73,8 @@ export default function ChangePasswordPage() {
                         <ErrorMessage component="p" name="newPassword" className="text-sm mt-1 font-semibold text-red-600" />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="confirmNewPassword" className="font-semibold mb-2 inline-block">Confirm New Password</label>
+                    <div className="mb-5">
+                        <label htmlFor="confirmNewPassword" className="font-semibold mb-1 inline-block">Confirm New Password</label>
                         <Field
                             type="password"
                             id="confirmNewPassword"

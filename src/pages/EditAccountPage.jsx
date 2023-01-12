@@ -1,5 +1,5 @@
-import { useContext } from "react"
-import { AccountContext } from "../components/Account"
+import { useContext, useRef } from "react"
+import { AuthContext } from "../components/Auth"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { toast } from "react-toastify"
 import { object, string } from "yup"
@@ -21,7 +21,9 @@ const validationSchema = object().shape({
 })
 
 export default function ChangePasswordPage() {
-    const { account, setAccount } = useContext(AccountContext)
+    const { currentUser, setCurrentUser } = useContext(AuthContext)
+    const profileImgRef = useRef()
+    const coverImgRef = useRef()
 
     const handleSubmit = async (values, { setSubmitting }) => {
         values.profileImg && (values.profileImg = await getBase64(values.profileImg))
@@ -29,16 +31,22 @@ export default function ChangePasswordPage() {
 
         setSubmitting(true)
 
+
         try {
             const { data } = await axios.patch("/auth/edit-account", values)
-            setAccount({
-                ...account,
+            setCurrentUser({
+                ...currentUser,
                 name: values.name,
                 profileImgUrl: data.profileImgUrl,
                 coverImgUrl: data.coverImgUrl
             })
+            profileImgRef.current.value = ""
+            coverImgRef.current.value = ""
+            values.profileImg = ""
+            values.coverImg = ""
             toast.success("Account edited successfully")
         } catch ({ response }) {
+            console.log(response);
             response?.status === 422 && toast.error("Email already taken")
         }
 
@@ -48,8 +56,8 @@ export default function ChangePasswordPage() {
     return (
         <Formik
             initialValues={{
-                name: account.name,
-                email: account.email,
+                name: currentUser.name,
+                email: currentUser.email,
                 profileImg: "",
                 coverImg: ""
             }}
@@ -93,6 +101,7 @@ export default function ChangePasswordPage() {
                             focus:border-indigo-600  focus:ring-indigo-600"
                             name="profileImg"
                             onChange={event => setFieldValue("profileImg", event.target.files[0])}
+                            ref={profileImgRef}
                         />
                     </div>
 
@@ -105,6 +114,7 @@ export default function ChangePasswordPage() {
                             className="border-2 border-gray-300 rounded-md p-2 outline-none block w-full focus:ring-1
                             focus:border-indigo-600  focus:ring-indigo-600"
                             onChange={event => setFieldValue("coverImg", event.target.files[0])}
+                            ref={coverImgRef}
                         />
                     </div>
 

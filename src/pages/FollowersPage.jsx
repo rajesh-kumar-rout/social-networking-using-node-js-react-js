@@ -1,17 +1,17 @@
 import { useContext, useEffect, useState } from "react"
-import { AccountContext } from "../components/Account"
+import { AuthContext } from "../components/Auth"
 import UserList from "../components/UserList"
 import Loader from "../components/Loader"
 import EmptyMessage from "../components/EmptyMessage"
 import axios from "../utils/axios"
 
 export default function FollowersPage() {
-    const { account } = useContext(AccountContext)
+    const { currentUser } = useContext(AuthContext)
     const [users, setUsers] = useState([])
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchFollowers = async () => {
-        const { data } = await axios.get(`/users/${account.id}/followers`)
+        const { data } = await axios.get(`/users/${currentUser.id}/followers`)
         setUsers(data)
         setIsFetching(false)
     }

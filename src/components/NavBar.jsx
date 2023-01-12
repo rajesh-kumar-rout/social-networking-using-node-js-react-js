@@ -1,12 +1,13 @@
+import axios from "axios"
 import { useContext, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { MdSearch, MdHome, MdArrowDropDown, MdAdd } from "react-icons/md"
-import { AccountContext } from "./Account"
+import { MdAdd, MdArrowDropDown, MdHome, MdLock, MdLogout, MdPeople, MdPerson, MdPersonAdd, MdSearch } from "react-icons/md"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
+import { AuthContext } from "./Auth"
 
 export default function NavBar() {
     const navigate = useNavigate()
-    const { account } = useContext(AccountContext)
+    const { currentUser } = useContext(AuthContext)
     const [isDropDownOpened, setIsDropDownOpened] = useState(false)
 
     window.onclick = () => {
@@ -18,10 +19,10 @@ export default function NavBar() {
         setIsDropDownOpened(true)
     }
 
-    const handleLogout = (event) => {
+    const handleLogout = async (event) => {
         event.preventDefault()
-        localStorage.removeItem("jwtToken")
-        navigate("/login")
+        await axios.get("/auth/logout")
+        window.location.href = "/login"
     }
 
     return (
@@ -33,7 +34,7 @@ export default function NavBar() {
 
                 <div className="flex gap-3">
                     <Link
-                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-10 w-10 
+                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-9 w-9 
                         text-gray-700"
                         to="/"
                     >
@@ -41,7 +42,7 @@ export default function NavBar() {
                     </Link>
 
                     <Link
-                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-10 w-10
+                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-9 w-9
                         text-gray-700"
                         to="/search"
                     >
@@ -49,7 +50,7 @@ export default function NavBar() {
                     </Link>
 
                     <Link
-                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-10 w-10
+                        className="bg-gray-200 hover:bg-gray-300 rounded-full flex justify-center items-center h-9 w-9
                         text-gray-700"
                         to="/add-post"
                     >
@@ -59,19 +60,69 @@ export default function NavBar() {
                     <div className="relative">
                         <div onClick={handleDropDown} className="flex items-center gap-1 cursor-pointer">
                             <img
-                                src={account.profileImgUrl ? account.profileImgUrl : DEFAULT_PROFILE_IMG}
-                                className="h-10 w-10 rounded-full object-cover"
+                                src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG}
+                                className="h-9 w-9 rounded-full object-cover"
                             />
                             <MdArrowDropDown size={24} />
                         </div>
+                        {/* 
+                        {isDropDownOpened && (
+                            <div className="absolute right-0 top-0 mt-16 rounded-md bg-white shadow-md flex flex-col w-56 py-1">
+                                <Link className="text-gray-700 py-2 px-3 hover:bg-gray-200 flex items-center gap-2" to={`/profile/${currentUser.id}`}>
+                                    <div className="bg-gray-200 p-2 rounded-full">
+                                        <MdPerson size={24} />
+
+                                    </div>
+                                    Profile</Link>
+                                <Link className="text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white hover:fill-white flex items-center gap-2" to="/followers">
+                                    <div className="bg-gray-200 p-2 rounded-full">
+                                        <MdPersonAdd size={24} />
+
+                                    </div>
+                                    Followers</Link>
+                                <Link className="text-gray-700 py-1 px-2 hover:bg-gray-200 flex items-center gap-2" to="/followings">
+                                    <div className="bg-gray-200 p-2 rounded-full">
+                                        <MdPeople size={24} />
+
+                                    </div>
+                                    Followings</Link>
+                                <Link className="text-gray-700 py-1 px-2 hover:bg-gray-200 flex items-center gap-2"
+                                    to="/change-password">
+                                    <div className="bg-gray-200 p-2 rounded-full ">
+                                        <MdLock size={24} />
+
+                                    </div>
+                                    Change Password</Link>
+                                <Link className="text-gray-700 py-1 px-2 hover:bg-gray-200 flex items-center gap-2"
+                                    onClick={handleLogout}>
+                                    <div className="bg-gray-200 p-2 rounded-full ">
+                                        <MdLogout size={24} />
+
+                                    </div>
+                                    Logout</Link>
+                            </div>
+                        )} */}
 
                         {isDropDownOpened && (
-                            <div className="absolute right-0 top-0 mt-14 rounded-md bg-white shadow-md flex flex-col w-56 py-2">
-                                <Link className="text-gray-700 py-3 px-4 hover:bg-gray-200" to={`/profile/${account.id}`}>Profile</Link>
-                                <Link className="text-gray-700 py-3 px-4 hover:bg-gray-200" to="/followers">Followers</Link>
-                                <Link className="text-gray-700 py-3 px-4 hover:bg-gray-200" to="/followings">Followings</Link>
-                                <Link className="text-gray-700 py-3 px-4 hover:bg-gray-200" to="/change-password">Change Password</Link>
-                                <Link className="text-gray-700 py-3 px-4 hover:bg-gray-200" onClick={handleLogout}>Logout</Link>
+                            <div className="absolute right-0 top-0 mt-16 rounded-md bg-white shadow-md flex flex-col w-48 py-2">
+                                <NavLink className={({ isActive }) => `text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white' : ''}`} to={`/auth/profile/${currentUser.id}`}>
+                                    Profile
+                                </NavLink>
+
+                                <NavLink className={({ isActive }) => `text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white' : ''}`} to="/auth/followers">
+                                    Followers
+                                </NavLink>
+                                <NavLink className={({ isActive }) => `text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white' : ''}`} to="/auth/followings">
+                                    Followings
+                                </NavLink>
+                                <NavLink className={({ isActive }) => `text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white' : ''}`}
+                                    to="/auth/change-password">
+                                    Change Password
+                                </NavLink>
+                                <NavLink to="/auth/logout" className={({ isActive }) => `text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white' : ''}`}
+                                    onClick={handleLogout}>
+                                    Logout
+                                </NavLink>
                             </div>
                         )}
                     </div>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { AccountContext } from "./Account"
+import { AuthContext } from "./Auth"
 import { toast } from "react-toastify"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import Comment from "./Comment"
@@ -8,7 +8,7 @@ import axios from "../utils/axios"
 export default function CommentList({ postId }) {
     const [comments, setComments] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const { account } = useContext(AccountContext)
+    const { currentUser } = useContext(AuthContext)
 
     const fetchComments = async () => {
         const { data } = await axios.get(`/posts/${postId}/comments`)
@@ -31,8 +31,8 @@ export default function CommentList({ postId }) {
             id: data.id,
             comment: data.comment,
             createdAt: data.createdAt,
-            userName: account.name,
-            profileImgUrl: account.profileImgUrl,
+            userName: currentUser.name,
+            profileImgUrl: currentUser.profileImgUrl,
             isCommented: 1
         }
 
@@ -61,7 +61,7 @@ export default function CommentList({ postId }) {
                 <>
                     <div className="flex gap-3 px-3 py-4 ">
                         <img 
-                            src={account.profileImgUrl ? account.profileImgUrl : DEFAULT_PROFILE_IMG} 
+                            src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG} 
                             className="h-9 w-9 rounded-full object-cover" 
                         />
 

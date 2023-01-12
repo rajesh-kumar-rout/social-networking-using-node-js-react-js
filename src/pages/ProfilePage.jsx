@@ -17,6 +17,7 @@ export default function ProfilePage() {
             axios.get(`/users/${userId}`),
             axios.get(`/users/${userId}/posts`)
         ])
+        console.log(userRes);
         setUser(userRes.data)
         setPosts(postRes.data)
         setIsLoading(false)
@@ -32,7 +33,7 @@ export default function ProfilePage() {
 
     const handleToggleFollow = async () => {
         setIsLoading(true)
-        await axios.patch(`/users/${user.id}/toggleFollow`)
+        await axios.patch(`/users/${user.id}/toggle-follow`)
         setUser({
             ...user,
             isFollowing: !user.isFollowing,
@@ -42,7 +43,7 @@ export default function ProfilePage() {
     }
 
     const handleToggleLike = async (postId) => {
-        axios.patch(`/posts/${postId}/toggleLike`)
+        axios.patch(`/posts/${postId}/toggle-like`)
         const newPosts = [...posts]
         const index = posts.findIndex(post => post.id === postId)
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1

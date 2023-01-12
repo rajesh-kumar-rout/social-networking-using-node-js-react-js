@@ -30,7 +30,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
             <div className="p-3 flex justify-between">
                 <div className="flex items-center gap-3">
                     <button 
-                        className="bg-gray-200 transition-all rounded-full p-3 hover:bg-gray-300 text-gray-800
+                        className="bg-gray-200 transition-all rounded-full p-2 hover:bg-gray-300 text-gray-800
                         duration-300" 
                         onClick={() => onToggleLike(post.id)}
                     >
@@ -38,7 +38,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                     </button>
 
                     <button 
-                        className="bg-gray-200 transition-all rounded-full p-3 hover:bg-gray-300 text-gray-800
+                        className="bg-gray-200 transition-all rounded-full p-2 hover:bg-gray-300 text-gray-800
                         duration-300" 
                         onClick={() => setIsCommentBoxOpened(!isCommentBoxOpened)}
                     >
@@ -47,7 +47,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
 
                     {post.isPosted === 1 && (
                         <button 
-                            className="bg-gray-200 transition-all rounded-full p-3 hover:bg-gray-300 text-gray-800
+                            className="bg-gray-200 transition-all rounded-full p-2 hover:bg-gray-300 text-gray-800
                             duration-300" 
                             onClick={() => onDeletePost(post.id)}
                         >
