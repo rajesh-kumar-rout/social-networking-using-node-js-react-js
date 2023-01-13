@@ -19,7 +19,7 @@ export default session({
     saveUninitialized: false,
     cookie: {
         sameSite: false,
-        secure: false,
+        secure: true,
         maxAge: 2629746000
     }
 })
