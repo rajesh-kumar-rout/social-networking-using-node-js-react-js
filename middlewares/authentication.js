@@ -11,7 +11,7 @@ export function authenticate(req, res, next) {
 }
 
 export async function verifyCsrf(req, res, next) {
-    if (req.method !== "GET" && req.headers['x-xsrf-token'] !== req.session.csrfToken) {
+    if (req.method !== "GET" && req.headers["csrf-token"] !== req.session.csrfToken) {
         return res.status(403).json({ message: "Access denied" })
     }
 

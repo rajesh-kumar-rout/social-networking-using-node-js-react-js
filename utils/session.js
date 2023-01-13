@@ -16,8 +16,9 @@ export default session({
     store: sessionStorage,
     secret: process.env.SESSION_SECRECT,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
+        sameSite: false,
         secure: false,
         maxAge: 2629746000
     }

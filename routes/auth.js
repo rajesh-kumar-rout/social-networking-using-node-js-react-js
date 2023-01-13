@@ -110,13 +110,11 @@ routes.patch(
         .isEmail(),
 
     body("profileImg")
-        .optional()
-        .isString()
+        .optional({ checkFalsy: true })
         .custom(isBase64Img),
 
     body("coverImg")
-        .optional()
-        .isString()
+        .optional({ checkFalsy: true })
         .custom(isBase64Img),
 
     checkValidationError,
@@ -164,7 +162,7 @@ routes.get("/", async (req, res) => {
 
     const user = await fetch("SELECT id, name, email, profileImgUrl, coverImgUrl FROM social_users WHERE id = ? LIMIT 1", [currentUserId ?? null])
 
-    res.cookie("X-XSRF-TOKEN", csrfToken).json(user)
+    res.cookie("x-csrf-token", csrfToken).json(user)
 })
 
 routes.get("/logout", (req, res) => {
