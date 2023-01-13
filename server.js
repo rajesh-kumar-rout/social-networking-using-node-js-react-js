@@ -10,6 +10,8 @@ import session from "./utils/session.js"
 config()
 
 const app = express()
+
+app.set("trust proxy", 1)
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
