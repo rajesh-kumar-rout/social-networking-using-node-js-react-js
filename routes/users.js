@@ -93,7 +93,7 @@ routes.get("/:userId/posts", async (req, res) => {
                 [
                     knex("socialLikes")
                         .whereColumn("socialLikes.postId", "socialPosts.id")
-                        .whereColumn("socialusers.id", "socialLikes.userId")
+                        .whereColumn("socialUsers.id", "socialLikes.userId")
                         .select(1)
                 ]
             ),
