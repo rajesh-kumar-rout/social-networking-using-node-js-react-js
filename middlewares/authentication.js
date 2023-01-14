@@ -1,18 +1,25 @@
 import { config } from "dotenv"
+import knex from "../utils/database.js"
 
 config()
 
-export function authenticate(req, res, next) {
-    if(!req.session.currentUserId){
-        return res.status(401).json({ message: "Unauthenticated" })
+export async function authenticate(req, res, next) {
+    const token = req.headers.authorization ?? null
+
+    const tokenRow = await knex("socialTokens")
+        .where({ token })
+        .first()
+
+    if (tokenRow) {
+        req.currentUserId = tokenRow.userId
     }
 
     next()
 }
 
-export async function verifyCsrf(req, res, next) {
-    if (req.method !== "GET" && req.headers["csrf-token"] !== req.session.csrfToken) {
-        return res.status(403).json({ message: "Access denied" })
+export async function isAuthenticated(req, res, next) {
+    if (!req.currentUserId) {
+        return res.status(401).json({ error: "Authentication failed" })
     }
 
     next()

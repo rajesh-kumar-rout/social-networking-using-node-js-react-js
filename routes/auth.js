@@ -3,9 +3,9 @@ import crypto from "crypto"
 import { config } from "dotenv"
 import { Router } from "express"
 import { body } from "express-validator"
-import { authenticate } from "../middlewares/authentication.js"
+import { isAuthenticated } from "../middlewares/authentication.js"
 import { destroy, upload } from "../utils/cloudinary.js"
-import { fetch, query } from "../utils/database.js"
+import knex from "../utils/database.js"
 import { checkValidationError, isBase64Img } from "../utils/validation.js"
 
 config()
@@ -24,15 +24,22 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await fetch('SELECT id, password FROM social_users WHERE email = ? LIMIT 1', [email])
+        const user = await knex("socialUsers")
+            .where({ email })
+            .first()
 
         if (!(user && await bcrypt.compare(password, user.password))) {
-            return res.status(422).json({ message: "Invalid email or password" })
+            return res.status(422).json({ error: "Invalid email or password" })
         }
 
-        req.session.currentUserId = user.id
+        const token = crypto.randomUUID()
 
-        res.json({ message: "Login successfull" })
+        await knex("socialTokens").insert({
+            userId: user.id,
+            token
+        })
+
+        res.json({ token })
     }
 )
 
@@ -55,22 +62,35 @@ routes.post(
     async (req, res) => {
         const { name, email, password } = req.body
 
-        if (await fetch('SELECT 1 FROM social_users WHERE email = ? LIMIT 1', [email])) {
+        const isEmailTaken = await knex("socialUsers")
+            .where({ email })
+            .first()
+
+        if (isEmailTaken) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const { insertId } = await query('INSERT INTO social_users (name, email, password) VALUES (?, ?, ?)', [name, email, await bcrypt.hash(password, 10)])
+        const [userId] = await knex("socialUsers").insert({
+            name,
+            email,
+            password: await bcrypt.hash(password, 10)
+        })
 
-        req.session.currentUserId = insertId
+        const token = crypto.randomUUID()
 
-        res.status(201).json({ message: "User created successfully" })
+        await knex("socialTokens").insert({
+            userId,
+            token
+        })
+
+        res.status(201).json({ token })
     }
 )
 
 routes.patch(
     "/change-password",
 
-    authenticate,
+    isAuthenticated,
 
     body("oldPassword").isLength({ min: 6, max: 20 }),
 
@@ -79,26 +99,34 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req.session
+        const { currentUserId } = req
 
         const { oldPassword, newPassword } = req.body
 
-        const user = await fetch('SELECT password FROM social_users WHERE id = ? LIMIT 1', [currentUserId])
+        const user = await knex("socialUsers")
+            .select("password")
+            .where({ id: currentUserId })
+            .first()
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
             return res.status(422).json({ message: "Old password does not match" })
         }
 
-        await query('UPDATE social_users SET password = ? WHERE id = ?', [await bcrypt.hash(newPassword, 10), currentUserId])
+        await knex("socialUsers")
+            .where({ id: currentUserId })
+            .update({
+                password: await bcrypt.hash(newPassword, 10)
+            })
 
-        res.json({ message: "Password changed successfully" })
+
+        res.json({ success: "Password changed successfully" })
     }
 )
 
 routes.patch(
     "/edit-account",
 
-    authenticate,
+    isAuthenticated,
 
     body("name")
         .trim()
@@ -120,15 +148,22 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req.session
+        const { currentUserId } = req
 
         const { name, email, coverImg, profileImg } = req.body
 
-        if (await fetch('SELECT 1 FROM social_users WHERE email = ? AND id != ? LIMIT 1', [email, currentUserId])) {
+        const isEmailTaken = await knex("socialUsers")
+            .where({ email })
+            .whereNot({ id: currentUserId })
+            .first()
+
+        if (isEmailTaken) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const user = await fetch('SELECT * FROM social_users WHERE id = ? LIMIT 1', [currentUserId])
+        const user = await knex("socialUsers")
+            .where({ id: currentUserId })
+            .first()
 
         if (coverImg) {
             const { secure_url, public_id } = await upload(coverImg)
@@ -144,7 +179,16 @@ routes.patch(
             user.profileImgId = public_id
         }
 
-        await query('UPDATE social_users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ?, coverImgUrl = ?, coverImgId = ? WHERE id = ?', [name, email, user.profileImgUrl, user.profileImgId, user.coverImgUrl, user.coverImgId, currentUserId])
+        await knex("socialUsers")
+            .where({ id: currentUserId })
+            .update({
+                name,
+                email,
+                profileImgUrl: user.profileImgUrl,
+                profileImgId: user.profileImgUrl,
+                coverImgId: user.coverImgId,
+                coverImgUrl: user.coverImgUrl
+            })
 
         res.json({
             profileImgUrl: user.profileImgUrl,
@@ -154,21 +198,31 @@ routes.patch(
 )
 
 routes.get("/", async (req, res) => {
-    const { currentUserId } = req.session
+    const token = req.headers.authorization ?? null
 
-    const csrfToken = crypto.randomUUID()
+    const user = await knex("socialTokens")
+        .where({ token  })
+        .join("socialUsers", "socialUsers.id", "socialTokens.userId")
+        .select(
+            "socialUsers.id",
+            "socialUsers.name",
+            "socialUsers.email",
+            "socialUsers.createdAt",
+            "socialUsers.updatedAt",
+        )
+        .first()
 
-    req.session.csrfToken = csrfToken
-
-    const user = await fetch("SELECT id, name, email, profileImgUrl, coverImgUrl FROM social_users WHERE id = ? LIMIT 1", [currentUserId ?? null])
-
-    res.cookie("x-csrf-token", csrfToken).json(user)
+    res.json(user)
 })
 
-routes.get("/logout", (req, res) => {
-    req.session.destroy()
+routes.get("/logout", isAuthenticated, async (req, res) => {
+    const token = req.headers.authorization ?? null
 
-    res.json({ message: "Logout successfull" })
+    await knex("socialTokens")
+        .where({ token })
+        .del()
+
+    res.json({ success: "Logout successfull" })
 })
 
 export default routes

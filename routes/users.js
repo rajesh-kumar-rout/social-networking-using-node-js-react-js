@@ -1,10 +1,14 @@
 import { Router } from "express"
-import { fetch, query } from "../utils/database.js"
+import knex from "../utils/database.js"
 
 const routes = Router()
 
 routes.get("/", async (req, res) => {
-    const users = await query('SELECT social_users.id, social_users.name, social_users.profileImgUrl FROM social_users')
+    const users = await knex("socialUsers").select(
+        "id",
+        "name",
+        "profileImgUrl"
+    )
 
     res.json(users)
 })
@@ -12,12 +16,46 @@ routes.get("/", async (req, res) => {
 routes.get("/:userId", async (req, res) => {
     const { userId } = req.params
 
-    const { currentUserId } = req.session
+    const { currentUserId } = req
 
-    const user = await fetch("SELECT social_users.id, social_users.name, social_users.profileImgUrl, social_users.coverImgUrl, (SELECT COUNT(social_followers.followerId) FROM social_followers WHERE followingId = social_users.id) AS totalFollowers, (SELECT COUNT(social_followers.followingId) FROM social_followers WHERE social_followers.followingId = social_users.id) AS totalFollowings, (SELECT COUNT(social_posts.id) FROM social_posts WHERE social_posts.userId = social_users.id ) AS totalPosts, EXISTS( SELECT 1 FROM social_followers WHERE social_followers.followerId = ? AND social_followers.followingId = social_users.id) isFollowing FROM social_users WHERE id = ? LIMIT 1", [currentUserId, userId])
+    const user = await knex("socialUsers")
+        .where({ id: userId })
+        .select(
+            "socialUsers.id",
+            "socialUsers.name",
+            "socialUsers.profileImgUrl",
+            "socialUsers.coverImgUrl",
+
+            knex("socialFollowers")
+                .whereColumn("socialUsers.id", "socialFollowers.followerId")
+                .count()
+                .as("totalFollowings"),
+
+            knex("socialFollowers")
+                .whereColumn("socialUsers.id", "socialFollowers.followingId")
+                .count()
+                .as("totalFollowers"),
+
+            knex("socialPosts")
+                .whereColumn("socialUsers.id", "socialPosts.userId")
+                .count()
+                .as("totalPosts"),
+
+            knex.raw(
+                "EXISTS(?) AS isFollowing",
+                [
+                    knex("socialFollowers")
+                        .where("socialFollowers.followerId", currentUserId)
+                        .where("socialFollowers.followingId", userId)
+                        .select(1)
+                        .limit(1)
+                ]
+            )
+        )
+        .first()
 
     if (!user) {
-        return res.status(404).json({ message: "User not found" })
+        return res.status(404).json({ error: "User not found" })
     }
 
     res.json(user)
@@ -26,9 +64,42 @@ routes.get("/:userId", async (req, res) => {
 routes.get("/:userId/posts", async (req, res) => {
     const { userId } = req.params
 
-    const { currentUserId } = req.session
+    const { currentUserId } = req
 
-    const posts = await query("SELECT social_posts.id, social_posts.desc, social_posts.imgUrl, social_posts.createdAt, social_users.name AS userName, social_users.profileImgUrl, ( SELECT COUNT(social_comments.id) FROM social_comments WHERE social_comments.postId = social_posts.id ) AS totalComments, ( SELECT COUNT(social_likes.postId) FROM social_likes WHERE social_likes.postId = social_posts.id ) AS totalLikes, EXISTS( SELECT 1 FROM social_likes WHERE social_likes.userId = :currentUserId AND social_likes.postId = social_posts.id ) AS isLiked, ( CASE WHEN social_users.id = :currentUserId THEN TRUE ELSE FALSE END ) AS isPosted FROM social_users INNER JOIN social_posts ON social_posts.userId = social_users.id WHERE social_users.id = :userId ORDER BY social_posts.id DESC", { currentUserId, userId })
+    const posts = await knex("socialUsers")
+        .where("socialUsers.id", userId)
+        .join("socialPosts", "socialPosts.userId", "socialUsers.id")
+        .select(
+            "socialPosts.id",
+            "socialPosts.desc",
+            "socialPosts.imgUrl",
+            "socialPosts.createdAt",
+            "socialPosts.userId",
+            "socialUsers.name AS userName",
+            "socialUsers.profileImgUrl",
+
+            knex("socialLikes")
+                .whereColumn("socialLikes.postId", "socialPosts.id")
+                .count()
+                .as("totalLikes"),
+
+            knex("socialComments")
+                .whereColumn("socialComments.postId", "socialPosts.id")
+                .count()
+                .as("totalComments"),
+
+            knex.raw(
+                "EXISTS(?) AS isLiked",
+                [
+                    knex("socialLikes")
+                        .whereColumn("socialLikes.postId", "socialPosts.id")
+                        .whereColumn("socialusers.id", "socialLikes.userId")
+                        .select(1)
+                ]
+            ),
+
+            knex.raw("IF(socialUsers.id = ?, 1, 0) AS isPosted", [currentUserId])
+        )
 
     res.json(posts)
 })
@@ -36,30 +107,53 @@ routes.get("/:userId/posts", async (req, res) => {
 routes.patch("/:userId/toggle-follow", async (req, res) => {
     const { userId } = req.params
 
-    const { currentUserId } = req.session
+    const { currentUserId } = req
 
-    if (!await fetch('SELECT 1 FROM social_users WHERE id = :userId LIMIT 1', { userId })) {
-        return res.status(404).json({ message: "User not found" })
+    const isUserExists = await knex("socialUsers")
+        .where({ id: userId })
+        .first()
+
+    if (!isUserExists) {
+        return res.status(404).json({ error: "User not found" })
     }
 
-    if (await fetch('SELECT 1 FROM social_followers WHERE followerId = ? AND followingId = ?', [currentUserId, userId])) {
-        await query('DELETE FROM social_followers WHERE followerId = ? AND followingId = ?', [currentUserId, userId])
-        return res.json({ message: "Unfollow the user successfully" })
+    const isFollowing = await knex("socialFollowers")
+        .where({ followerId: currentUserId })
+        .where({ followingId: userId })
+        .first()
+
+    if (await isFollowing) {
+        await knex("socialFollowers")
+            .where({ followerId: currentUserId })
+            .where({ followingId: userId })
+            .del()
+
+        return res.json({ success: "Unfollow the user successfully" })
     }
 
     if (userId == currentUserId) {
-        return res.status(400).json({ message: "You can not follow yourself" })
+        return res.status(400).json({ error: "You can not follow yourself" })
     }
 
-    await query('INSERT INTO social_followers (followerId, followingId) VALUES (?, ?)', [currentUserId, userId])
+    await knex("socialFollowers").insert({
+        followerId: currentUserId,
+        followingId: userId
+    })
 
-    res.status(201).json({ message: "Follow the user successfully" })
+    res.status(201).json({ success: "Follow the user successfully" })
 })
 
 routes.get("/:userId/followers", async (req, res) => {
     const { userId } = req.params
 
-    const users = await query("SELECT social_users.id, social_users.name, social_users.profileImgUrl FROM social_followers INNER JOIN social_users ON social_users.id = social_followers.followerId WHERE social_followers.followingId = ?", [userId])
+    const users = await knex("socialFollowers")
+        .where("socialFollowers.followingId", userId)
+        .join("socialUsers", "socialUsers.id", "socialFollowers.followerId")
+        .select(
+            "socialUsers.id",
+            "socialUsers.name",
+            "socialUsers.profileImgUrl",
+        )
 
     res.json(users)
 })
@@ -67,7 +161,14 @@ routes.get("/:userId/followers", async (req, res) => {
 routes.get("/:userId/followings", async (req, res) => {
     const { userId } = req.params
 
-    const users = await query("SELECT social_users.id, social_users.name, social_users.profileImgUrl FROM social_followers INNER JOIN social_users ON social_users.id = social_followers.followingId WHERE social_followers.followerId = ?", [userId])
+    const users = await knex("socialFollowers")
+        .where("socialFollowers.followerId", userId)
+        .join("socialUsers", "socialUsers.id", "socialFollowers.followingId")
+        .select(
+            "socialUsers.id",
+            "socialUsers.name",
+            "socialUsers.profileImgUrl",
+        )
 
     res.json(users)
 })

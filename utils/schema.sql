@@ -1,4 +1,4 @@
-CREATE TABLE social_users (
+CREATE TABLE socialUsers (
     `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(30) NOT NULL,
     `email` VARCHAR(30) NOT NULL UNIQUE,
@@ -11,7 +11,15 @@ CREATE TABLE social_users (
     `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE social_posts (
+CREATE TABLE socialTokens (
+    `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+    `userId` BIGINT(20) NOT NULL,
+    `token` VARCHAR(100) NOT NULL UNIQUE,
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`userId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE socialPosts (
     `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     `desc` VARCHAR(255),
     `imgUrl` VARCHAR(100),
@@ -19,32 +27,32 @@ CREATE TABLE social_posts (
     `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `userId` BIGINT(20),
-    FOREIGN KEY (`userId`) REFERENCES `social_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`userId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE social_comments (
+CREATE TABLE socialComments (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `comment` VARCHAR(255),
     `userId` BIGINT(20),
     `postId` BIGINT(20),
     `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`userId`) REFERENCES `social_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`postId`) REFERENCES `social_posts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`userId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`postId`) REFERENCES `socialPosts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE social_likes (
+CREATE TABLE socialLikes (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `userId` BIGINT(20),
     `postId` BIGINT(20),
-    FOREIGN KEY (`userId`) REFERENCES `social_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`postId`) REFERENCES `social_posts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`userId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`postId`) REFERENCES `socialPosts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE social_followers (
+CREATE TABLE socialFollowers (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `followerId` BIGINT(20),
     `followingId` BIGINT(20),
-    FOREIGN KEY (`followerId`) REFERENCES `social_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`followingId`) REFERENCES `social_users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (`followerId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`followingId`) REFERENCES `socialUsers`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

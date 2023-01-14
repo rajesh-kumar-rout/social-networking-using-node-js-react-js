@@ -1,25 +1,15 @@
-import { createPool } from "mysql2/promise"
 import { config } from "dotenv"
+import knex from "knex"
 
 config()
 
-export const pool = createPool({
-    connectionLimit: 1,
-    namedPlaceholders: true,
-    host: process.env.DB_HOST, 
-    user: process.env.DB_USER, 
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD
+export default knex({
+    client: "mysql",
+    connection: {
+        host: process.env.DB_HOST,
+        port: 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
+    }
 })
-
-export const fetch = async(sql, params) => {
-    const [result] = await pool.execute(sql, params);
-    return result?.[0]
-}
-
-export const query = async(sql, params) => {
-    const [result] = await pool.execute(sql, params)
-    return result
-}
-
-
