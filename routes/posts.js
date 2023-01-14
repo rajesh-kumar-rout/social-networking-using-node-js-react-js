@@ -82,7 +82,7 @@ routes.post(
         .default(""),
 
     body("img")
-        .optional()
+        .optional({ checkFalsy: true })
         .isString()
         .custom(isBase64Img),
 
@@ -94,7 +94,7 @@ routes.post(
         const { currentUserId } = req
 
         if (!desc && !img) {
-            return res.status(400).json({ error: "Either des or image is required" })
+            return res.status(422).json({ error: "Either des or image is required" })
         }
 
         let imgUrl = null, imgId = null
