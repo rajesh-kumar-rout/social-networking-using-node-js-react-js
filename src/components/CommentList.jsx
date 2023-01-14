@@ -27,16 +27,7 @@ export default function CommentList({ postId }) {
 
         const { data } = await axios.post(`/posts/${postId}/comments`, { comment })
 
-        const newComment = {
-            id: data.id,
-            comment: data.comment,
-            createdAt: data.createdAt,
-            userName: currentUser.name,
-            profileImgUrl: currentUser.profileImgUrl,
-            isCommented: 1
-        }
-
-        setComments([newComment, ...comments])
+        setComments([data, ...comments])
         setIsLoading(false)
     }
 
@@ -56,7 +47,9 @@ export default function CommentList({ postId }) {
     return (
         <div className="border-t-2 border-gray-300">
             {isLoading ? (
-                <div className="h-10 w-10 rounded-full border-4 my-4 mx-auto border-indigo-600 border-b-transparent animate-spin"></div>
+                <div className="py-4">
+                    <div className="h-10 w-10 rounded-full mx-auto border-4 border-indigo-600 border-b-transparent animate-spin"></div>
+                </div>
             ) : (
                 <>
                     <div className="flex gap-3 px-3 py-4 ">
@@ -67,8 +60,7 @@ export default function CommentList({ postId }) {
 
                         <form onSubmit={handleAddComment} className="flex-1">
                             <input
-                                className="border-2 border-gray-300 rounded-md p-2 outline-none block w-full focus:ring-1
-                                focus:border-indigo-600  focus:ring-indigo-600 text-sm"
+                                className="form-control text-sm"
                                 name="comment"
                                 placeholder="Write your comment..."
                             />

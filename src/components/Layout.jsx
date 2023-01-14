@@ -7,11 +7,11 @@ export default function Layout() {
         <div>
             <NavBar />
 
-            <div className="mt-20 bg-gray-200 overflow-y-auto" style={{height: 'calc(100vh - 144px)'}}>
+            <div className="mt-20 bg-gray-200 overflow-y-auto" style={{ height: "calc(100vh - 144px)" }}>
                 <Outlet />
             </div>
-            
-            <Footer/>
+
+            <Footer />
         </div>
     )
 }

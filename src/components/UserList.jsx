@@ -8,8 +8,11 @@ export default function UserList({ title, users }) {
 
             <div className="divider-y-2 divide-gray-300">
                 {users.map(user => (
-                    <Link to={`/profile/${user.id}`} className="border-t-2 border-gray-300 first:border-none py-3 px-4 flex 
-                    items-center gap-3" key={user.id}>
+                    <Link 
+                        to={`/profile/${user.id}`} 
+                        className="border-t-2 border-gray-300 first:border-none py-3 px-4 flex items-center gap-3" 
+                        key={user.id}
+                    >
                         <img 
                             src={user.profileImgUrl ? user.profileImgUrl : DEFAULT_PROFILE_IMG} 
                             className="h-12 w-12 object-cover rounded-full" 

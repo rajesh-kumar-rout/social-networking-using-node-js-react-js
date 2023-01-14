@@ -40,8 +40,13 @@ export default function HomePage() {
     }
 
     if (posts.length === 0) {
-        return <p className="flex justify-center items-center text-indigo-600 h-full text-center
-        text-xl font-bold">No Posts Found <br/> Follow people to see their post and photos</p>
+        return (
+            <p 
+                className="flex justify-center items-center text-indigo-600 h-full text-center text-xl font-bold"
+            >
+                No Posts Found <br/> Follow people to see their post and photos
+            </p>
+        )
     }
 
     return (

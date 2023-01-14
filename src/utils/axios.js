@@ -1,20 +1,18 @@
 import axios from "axios"
 import { BASE_URL } from "./constants"
-import Cookie from "js-cookie"
+
 axios.defaults.baseURL = BASE_URL
 
-axios.defaults.withCredentials = true
-
 axios.interceptors.request.use(config => {
-    if (Cookie.get("x-csrf-token")) {
-        config.headers["csrf-token"] = Cookie.get("x-csrf-token")
+    if (localStorage.getItem("token")) {
+        config.headers.authorization = localStorage.getItem("token")
     }
     return config
 })
 
 axios.interceptors.response.use(response => response, error => {
     if (error.response.status === 401) {
-
+        localStorage.removeItem("token")
         window.location.reload()
     }
 

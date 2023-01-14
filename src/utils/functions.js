@@ -19,8 +19,10 @@ export const dateToAgo = (date) => {
 
 export const getBase64 = async (image) => {
     const reader = new FileReader()
+    
     reader.readAsDataURL(image)
-    return new Promise((resolve, reject) => {
+
+    return new Promise((resolve) => {
         reader.onload = () => {
             resolve(reader.result)
         }

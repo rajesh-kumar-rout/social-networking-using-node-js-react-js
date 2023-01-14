@@ -17,8 +17,10 @@ export default function Profile({ user, onToggleFollow }) {
                     style={{ height: 350 }}
                 />
 
-                <div className="flex flex-col lg:flex-row items-center lg:items-end gap-4 relative bottom-20 lg:bottom-14 
-                -mb-20 lg:-mb-14 lg:pl-10">
+                <div
+                    className="flex flex-col lg:flex-row items-center lg:items-end gap-4 relative bottom-20 lg:bottom-14 -mb-20 
+                    lg:-mb-14 lg:pl-10"
+                >
                     <img
                         src={user.profileImgUrl ? postImgUrl(user.profileImgUrl) : DEFAULT_PROFILE_IMG}
                         className="h-40 w-40 object-cover rounded-md border-white border-2"
@@ -33,21 +35,11 @@ export default function Profile({ user, onToggleFollow }) {
                         </div>
 
                         {userId == currentUser.id ? (
-                            <Link
-                                to="/edit-account"
-                                className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-800 
-                                disabled:bg-indigo-400 transition-all duration-300 focus:ring-2 focus:ring-offset-2 
-                                focus:ring-indigo-600"
-                            >
+                            <Link to="/edit-account" className="btn btn-primary">
                                 Edit Account
                             </Link>
                         ) : (
-                            <button
-                                className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-800 
-                                disabled:bg-indigo-400 transition-all duration-300 focus:ring-2 focus:ring-offset-2 
-                                focus:ring-indigo-600"
-                                onClick={onToggleFollow}
-                            >
+                            <button className="btn btn-primary" onClick={onToggleFollow}>
                                 {user.isFollowing ? "Un Follow" : "Follow"}
                             </button>
                         )}

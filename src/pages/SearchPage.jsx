@@ -42,7 +42,7 @@ export default function SearchPage() {
             </div>
 
             {filteredUsers.length === 0 ? (
-                <p className="text-xl font-bold text-indigo-600">There is no user as "{query}"</p>
+                <p className="text-xl text-center font-bold text-indigo-600">There is no user as "{query}"</p>
             ) : (
                 <UserList
                     title={`${filteredUsers.length} Users Found`}

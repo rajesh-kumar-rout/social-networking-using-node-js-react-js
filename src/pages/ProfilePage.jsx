@@ -17,7 +17,7 @@ export default function ProfilePage() {
             axios.get(`/users/${userId}`),
             axios.get(`/users/${userId}/posts`)
         ])
-        console.log(userRes);
+
         setUser(userRes.data)
         setPosts(postRes.data)
         setIsLoading(false)
@@ -25,25 +25,32 @@ export default function ProfilePage() {
 
     const handleDeletePost = async (postId) => {
         setIsLoading(true)
+
         await axios.delete(`/posts/${postId}`)
-        toast.error("Post deleted successfully")
+
+        toast.success("Post deleted successfully")
         setPosts(posts.filter(post => post.id !== postId))
+
         setIsLoading(false)
     }
 
     const handleToggleFollow = async () => {
         setIsLoading(true)
+
         await axios.patch(`/users/${user.id}/toggle-follow`)
+
         setUser({
             ...user,
             isFollowing: !user.isFollowing,
             totalFollowers: user.isFollowing ? (user.totalFollowers - 1) : (user.totalFollowers + 1)
         })
+
         setIsLoading(false)
     }
 
     const handleToggleLike = async (postId) => {
         axios.patch(`/posts/${postId}/toggle-like`)
+        
         const newPosts = [...posts]
         const index = posts.findIndex(post => post.id === postId)
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1
