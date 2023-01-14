@@ -36,7 +36,7 @@ export default function Profile({ user, onToggleFollow }) {
 
                         {userId == currentUser.id ? (
                             <Link to="/edit-account" className="btn btn-primary">
-                                Edit Account
+                                Update Profile
                             </Link>
                         ) : (
                             <button className="btn btn-primary" onClick={onToggleFollow}>

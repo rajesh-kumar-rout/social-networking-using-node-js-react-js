@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Loader from "../components/Loader"
-import UserList from "../components/UserList"
+import UserList from "../components/Users"
 import axios from "../utils/axios"
 import { MdSearch } from "react-icons/md"
 

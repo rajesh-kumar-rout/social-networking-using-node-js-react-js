@@ -28,17 +28,20 @@ export default function NavBar() {
     return (
         <div className="bg-white shadow-md fixed left-0 right-0 top-0 h-20">
             <div className="bg-white max-w-5xl px-2 flex justify-between items-center h-full mx-auto">
-                <Link to="/" className="text-lg lg:text-2xl border-2 border-indigo-600 px-2 font-bold text-indigo-600">
+                <Link to="/" className="text-lg lg:text-2xl px-2 font-bold text-teal-600">
                     MY DIARY
                 </Link>
 
                 <div className="flex gap-3">
-                    <Link className="navbar-icon" to="/">
+                    <Link className="navbar-icon relative group" to="/">
                         <MdHome size={24} />
+                        <p className="bg-gray-800 absolute text-white px-2 py-1 rounded text-xs top-full mt-1 hidden group-hover:inline-block">Home</p>
                     </Link>
 
-                    <Link className="navbar-icon" to="/search">
+                    <Link className="navbar-icon relative group" to="/search">
                         <MdSearch size={24} />
+                        <p className="bg-gray-800 absolute text-white px-2 py-1 rounded text-xs top-full mt-1 hidden group-hover:inline-block">Search</p>
+
                     </Link>
 
                     <Link className="navbar-icon" to="/add-post">
@@ -55,7 +58,8 @@ export default function NavBar() {
                         </div>
 
                         {isDropDownOpened && (
-                            <div className="absolute right-0 top-0 mt-16 rounded-md bg-white shadow-md flex flex-col w-48 py-2">
+                            <div className="absolute right-0 top-full mt-5 z-50  text-white rounded-md bg-teal-600 shadow-md flex 
+                            flex-col gap-5 w-48 p-5">
                                 <NavLink
                                     className={({ isActive }) => `navbar-dropdown-item ${isActive ? 'navbar-dropdown-item-active' : ''}`}
                                     to={`/auth/profile/${currentUser.id}`}

@@ -2,21 +2,22 @@ import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "./Auth"
 import { toast } from "react-toastify"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
-import Comment from "./Comment"
 import axios from "../utils/axios"
+import { dateToAgo } from "../utils/functions"
+import Comment from "./Comment"
 
-export default function CommentList({ postId }) {
+export default function CommentBox({ postId, onCommentDelete, onCommentCreate }) {
     const [comments, setComments] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const { currentUser } = useContext(AuthContext)
 
-    const fetchComments = async () => {
+    async function fetchComments() {
         const { data } = await axios.get(`/posts/${postId}/comments`)
         setComments(data)
         setIsLoading(false)
     }
 
-    const handleAddComment = async (event) => {
+    async function handleAddComment(event) {
         event.preventDefault()
 
         const comment = event.target.comment.value.trim()
@@ -28,15 +29,19 @@ export default function CommentList({ postId }) {
         const { data } = await axios.post(`/posts/${postId}/comments`, { comment })
 
         setComments([data, ...comments])
+
         setIsLoading(false)
     }
 
-    const handleDeleteComment = async (commentId) => {
+    async function handleDeleteComment(commentId) {
         setIsLoading(true)
 
         await axios.delete(`/posts/comments/${commentId}`)
 
         setComments(comments.filter(comment => comment.id !== commentId))
+
+        onCommentDelete(postId)
+
         setIsLoading(false)
     }
 
@@ -53,9 +58,9 @@ export default function CommentList({ postId }) {
             ) : (
                 <>
                     <div className="flex gap-3 px-3 py-4 ">
-                        <img 
-                            src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG} 
-                            className="h-9 w-9 rounded-full object-cover" 
+                        <img
+                            src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG}
+                            className="h-9 w-9 rounded-full object-cover"
                         />
 
                         <form onSubmit={handleAddComment} className="flex-1">
@@ -70,9 +75,8 @@ export default function CommentList({ postId }) {
 
                     {comments.map(comment => (
                         <Comment
-                            key={comment.id}
-                            comment={comment}
                             onDeleteComment={handleDeleteComment}
+                            key={comment.id}
                         />
                     ))}
                 </>

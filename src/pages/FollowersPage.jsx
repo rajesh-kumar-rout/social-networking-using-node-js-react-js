@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../components/Auth"
-import UserList from "../components/UserList"
+import UserList from "../components/Users"
 import Loader from "../components/Loader"
 import EmptyMessage from "../components/EmptyMessage"
 import axios from "../utils/axios"

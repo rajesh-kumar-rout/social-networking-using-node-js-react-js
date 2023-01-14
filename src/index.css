@@ -1,11 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Righteous&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 *{
     @apply font-poppins;
+}
+
+html {
+    height: 100%;
 }
 
 @layer components {
@@ -35,12 +39,12 @@
     }
 
     .btn {
-        @apply px-4 py-2 rounded-md text-center transition-all duration-300;
+        @apply px-4 py-2 rounded-md text-center transition-all duration-300 font-semibold;
     }
 
     .btn-primary {
-        @apply bg-indigo-600 text-white hover:bg-indigo-800 disabled:bg-indigo-400 focus:ring-2 focus:ring-offset-2 
-        focus:ring-indigo-600;
+        @apply bg-teal-600 text-white hover:bg-teal-800 disabled:bg-teal-400 focus:ring-2 focus:ring-offset-2 
+        focus:ring-teal-600;
     }
 
     .navbar-icon {
@@ -48,11 +52,7 @@
     }
 
     .navbar-dropdown-item {
-        @apply text-gray-700 py-2 px-3 hover:bg-indigo-600 hover:text-white flex items-center gap-2;
-    }
-
-    .navbar-dropdown-item-active {
-        @apply bg-indigo-600 text-white;
+        @apply text-white hover:text-gray-300 flex items-center gap-2;
     }
 
     .post-action-btn {
