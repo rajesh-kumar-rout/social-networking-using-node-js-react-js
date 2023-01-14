@@ -95,6 +95,7 @@ routes.get("/:userId/posts", async (req, res) => {
                         .whereColumn("socialLikes.postId", "socialPosts.id")
                         .whereColumn("socialUsers.id", "socialLikes.userId")
                         .select(1)
+                        .limit(1)
                 ]
             ),
 
