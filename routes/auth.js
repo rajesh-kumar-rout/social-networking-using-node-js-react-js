@@ -67,7 +67,7 @@ routes.post(
             .first()
 
         if (isEmailTaken) {
-            return res.status(409).json({ message: "Email already taken" })
+            return res.status(409).json({ error: "Email already taken" })
         }
 
         const [userId] = await knex("socialUsers").insert({
@@ -109,7 +109,7 @@ routes.patch(
             .first()
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
-            return res.status(422).json({ message: "Old password does not match" })
+            return res.status(422).json({ error: "Old password does not match" })
         }
 
         await knex("socialUsers")
@@ -158,7 +158,7 @@ routes.patch(
             .first()
 
         if (isEmailTaken) {
-            return res.status(409).json({ message: "Email already taken" })
+            return res.status(409).json({ error: "Email already taken" })
         }
 
         const user = await knex("socialUsers")
