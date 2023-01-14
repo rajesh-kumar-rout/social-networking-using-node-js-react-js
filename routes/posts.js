@@ -44,6 +44,7 @@ routes.get("/feeds", async (req, res) => {
 
             knex.raw("0 AS isPosted")
         )
+        .orderBy("socialPosts.createdAt", "desc")
 
     res.json(posts)
 })

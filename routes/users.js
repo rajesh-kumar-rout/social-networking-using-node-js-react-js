@@ -101,6 +101,7 @@ routes.get("/:userId/posts", async (req, res) => {
 
             knex.raw("IF(socialUsers.id = ?, 1, 0) AS isPosted", [currentUserId])
         )
+        .orderBy("socialPosts.createdAt", "desc")
 
     res.json(posts)
 })
