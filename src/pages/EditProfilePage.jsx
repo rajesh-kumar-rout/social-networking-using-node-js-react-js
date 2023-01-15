@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import axios from "../utils/axios"
 import { changePasswordSchema } from "../utils/validationSchema"
 
-export default function ChangePasswordPage() {
+export default function EditProfilePage() {
 
     const handleSubmit = async (values, { resetForm, setSubmitting }) => {
         setSubmitting(true)

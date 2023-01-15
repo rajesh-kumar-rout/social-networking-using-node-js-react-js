@@ -71,7 +71,7 @@ export default function NavBar() {
                             flex-col gap-5 w-48 p-5">
                                 <NavLink
                                     className={({ isActive }) => `navbar-dropdown-item ${isActive ? 'navbar-dropdown-item-active' : ''}`}
-                                    to={`/auth/profile/${currentUser.id}`}
+                                    to={`/profile/${currentUser.id}`}
                                 >
                                     Profile
                                 </NavLink>

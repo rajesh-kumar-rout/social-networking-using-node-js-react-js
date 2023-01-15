@@ -1,9 +1,13 @@
 import { MdArrowBack } from "react-icons/md"
-export default function Followers() {
+import { useNavigate } from "react-router-dom"
+
+export default function ProfileFollowersPage() {
+    const navigate = useNavigate()
+
     return (
         <div className="bg-white border-2 border-gray-300 rounded-md max-w-xl mx-auto my-8">
             <p className="px-4 py-3 border-b-2 border-gray-300 text-lg font-bold text-teal-600 flex items-center gap-2">
-                <MdArrowBack size={24} className="cursor-pointer" onClick={() => alert('back')} />
+                <MdArrowBack size={24} className="cursor-pointer" onClick={() => navigate(-1)} />
                 All Followings
             </p>
 

@@ -30,7 +30,7 @@ export default function SearchPage() {
 
     return (
         <div className="px-2">
-            <div className="bg-white flex items-center max-w-2xl mx-auto gap-3 p-4 border-2 rounded-md border-gray-300 my-8">
+            {/* <div className="bg-white flex items-center max-w-2xl mx-auto gap-3 p-4 border-2 rounded-md border-gray-300 my-8">
                 <MdSearch size={28} />
 
                 <input
@@ -39,7 +39,7 @@ export default function SearchPage() {
                     onChange={event => setQuery(event.target.value)}
                     placeholder="Search Here..."
                 />
-            </div>
+            </div> */}
 
             {filteredUsers.length === 0 ? (
                 <p className="text-xl text-center font-bold text-indigo-600">There is no user as "{query}"</p>
