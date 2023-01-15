@@ -39,67 +39,130 @@ export default function SignUpPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <div className="h-screen w-full bg-gray-200 py-8">
-                    <Form className="form">
-                        <p className="form-title">Sign Up</p>
+                <div className="h-screen w-full overflow-y-auto bg-gray-200 py-8">
+                    <Form className="bg-white border-2 border-gray-300 rounded-md max-w-xl mx-auto">
+                        <p className="border-b-2 border-gray-300 px-4 py-3 text-center text-lg font-bold text-teal-600">Register</p>
 
-                        <div className="form-group">
-                            <label htmlFor="name" className="form-label">Name</label>
-                            <Field
-                                type="text"
-                                id="name"
-                                name="name"
-                                className="form-control"
-                            />
-                            <ErrorMessage component="p" name="name" className="form-error" />
+                        <div className="p-4">
+                            <div className="form-group">
+                                <label htmlFor="name" className="form-label">First Name</label>
+                                <Field
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    className="form-control"
+                                />
+                                <ErrorMessage component="p" name="name" className="form-error" />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="name" className="form-label">Last Name</label>
+                                <Field
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    className="form-control"
+                                />
+                                <ErrorMessage component="p" name="name" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Email</label>
+                                <Field
+                                    type="email"
+                                    id="email"
+                                    className="form-control"
+                                    name="email"
+                                />
+                                <ErrorMessage component="p" name="email" className="form-error" />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Date of birth</label>
+                                <Field
+                                    type="email"
+                                    id="email"
+                                    className="form-control"
+                                    name="email"
+                                />
+                                <ErrorMessage component="p" name="email" className="form-error" />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Gender</label>
+                                <div className="space-y-2 flex gap-6 ">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="radio"
+                                            id="email"
+                                            className="w-4 h-4 text-teal-600"
+                                            name="email"
+                                            as="radio"
+                                        />
+                                        <label htmlFor="">Male</label>
+
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="radio"
+                                            id="email"
+                                            className="w-4 h-4 text-teal-600"
+                                            name="email"
+                                            as="radio"
+                                        />
+                                        <label htmlFor="">Female</label>
+
+                                    </div>
+                                </div>
+                                <ErrorMessage component="p" name="email" className="form-error" />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Work</label>
+                                <Field
+                                    type="email"
+                                    id="email"
+                                    className="form-control"
+                                    name="email"
+                                />
+                                <ErrorMessage component="p" name="email" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="password" className="form-label">Password</label>
+                                <Field
+                                    type="password"
+                                    id="password"
+                                    className="form-control"
+                                    name="password"
+                                />
+                                <ErrorMessage component="p" name="password" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                <Field
+                                    type="password"
+                                    id="confirmPassword"
+                                    className="form-control"
+                                    name="confirmPassword"
+                                />
+                                <ErrorMessage component="p" name="confirmPassword" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary w-full"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? "Loading..." : "Sign Up"}
+                                </button>
+                            </div>
+
+                            <p className="text-center text-gray-700">Already have an account ?
+                                <Link className=" text-teal-600" to="/login"> Login</Link></p>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="email" className="form-label">Email</label>
-                            <Field
-                                type="email"
-                                id="email"
-                                className="form-control"
-                                name="email"
-                            />
-                            <ErrorMessage component="p" name="email" className="form-error" />
-                        </div>
 
-                        <div className="form-group">
-                            <label htmlFor="password" className="form-label">Password</label>
-                            <Field
-                                type="password"
-                                id="password"
-                                className="form-control"
-                                name="password"
-                            />
-                            <ErrorMessage component="p" name="password" className="form-error" />
-                        </div>
 
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                            <Field
-                                type="password"
-                                id="confirmPassword"
-                                className="form-control"
-                                name="confirmPassword"
-                            />
-                            <ErrorMessage component="p" name="confirmPassword" className="form-error" />
-                        </div>
-
-                        <div className="form-group">
-                            <button
-                                type="submit"
-                                className="btn btn-primary w-full"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "Loading..." : "Sign Up"}
-                            </button>
-                        </div>
-
-                        <p className="text-center">Already have an account ? <Link className="underline text-indigo-600" to="/login">Login</Link></p>
-
-                        <Footer />
+                        {/* <Footer /> */}
                     </Form>
                 </div>
             )}

@@ -7,8 +7,12 @@ module.exports = {
       fontFamily: {
         "poppins": ["Poppins", "sans-serif"],
         "Pacifico": ['Pacifico', 'cursive']
+      },
+      screens: {
+        'post': '600px'
       }
     },
+
   },
   plugins: [],
 }

@@ -11,10 +11,11 @@ export default function Comment({ comment, onDeleteComment }) {
             />
 
             <div className="flex justify-between flex-1">
-                <div>
-                    <p className="text-sm font-semibold">
-                        {comment.userName}
-                        <span className="text-xs text-gray-600"> • {dateToAgo(comment.createdAt)}</span>
+                <div className="">
+                    <p className="">
+                        <span className="text-sm font-[500]">{comment.userName}</span>
+                        {/* <span className="text-xs text-gray-600"> • {dateToAgo(comment.createdAt)}</span> */}
+                        <span className="text-sm text-gray-600"> • {comment.createdAt}</span> 
                     </p>
                     <p className="text-sm text-gray-700 mt-1">{comment.comment}</p>
                 </div>

@@ -64,7 +64,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
     const [isCommentBoxOpened, setIsCommentBoxOpened] = useState(false)
 
     return (
-        <div className="bg-white border-2 border-gray-300 rounded-md mx-auto w-[600px]">
+        <div className="bg-white border-2 border-gray-300 post:rounded-md mx-auto post:w-[600px] w-full border-x-0 post:border-x-2 rounded-none">
             <div className="p-3 flex gap-3">
                 <img 
                     src={post.profileImgUrl ? post.profileImgUrl : DEFAULT_PROFILE_IMG} 

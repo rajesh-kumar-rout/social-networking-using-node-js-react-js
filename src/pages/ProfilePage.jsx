@@ -1,11 +1,13 @@
-import { useParams } from "react-router-dom"
+import { Route, Router, Routes, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import Post from "../components/Post"
 import Loader from "../components/Loader"
 import Profile from "../components/Profile"
 import axios from "../utils/axios"
-import { MdBook, MdCake, MdFavorite, MdHome, MdLocationCity, MdLockClock, MdMale, MdOutlineSchool, MdOutlineWork, MdSchool, MdWork } from "react-icons/md"
+import { MdBook, MdCake, MdFavorite, MdFavoriteBorder, MdHome, MdHomeFilled, MdLocationCity, MdLocationOn, MdLockClock, MdMale, MdOutlineCake, MdOutlineFavorite, MdOutlineHome, MdOutlineHomeMax, MdOutlineLocationOn, MdOutlineSchool, MdOutlineWork, MdSchedule, MdSchool, MdWork, MdWorkOutline } from "react-icons/md"
+import Photos from "./Photos"
+import Followers from "./Followers"
 
 export default function ProfilePage() {
     const { userId } = useParams()
@@ -81,6 +83,10 @@ export default function ProfilePage() {
         <div>
             <Profile user={user} onToggleFollow={handleToggleFollow} />
 
+            {/* <Photos/> */}
+
+            {/* <Followers/> */}
+
             {posts.length ? (
                 <div className="space-y-5 my-5 flex gap-4 max-w-5xl mx-auto justify-start">
                     <div className="col-span-4 space-y-4">
@@ -96,11 +102,11 @@ export default function ProfilePage() {
                             <h2 className="text-lg font-bold border-b-2 border-gray-300 py-3 px-4 text-teal-600">Intro</h2>
                             <div className="space-y-4 p-4">
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdOutlineWork size={24} />
+                                    <MdWorkOutline size={24} />
                                     <p className="text-gray-600">Works at Not Yet Working Iam Still Studying</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdSchool size={24} />
+                                    <MdOutlineSchool size={24} />
                                     <p className="text-gray-600">Studies at N.c autonomous college,jajpur,orissa</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
@@ -108,24 +114,20 @@ export default function ProfilePage() {
                                     <p className="text-gray-600">Studied at gurukul kalinga +2sc. residensial college</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdLocationCity size={24} />
+                                    <MdOutlineLocationOn size={24} />
                                     <p className="text-gray-600">
                                         Lives in Bangalore, India</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdHome size={24} />
+                                    <MdOutlineHome size={24} />
                                     <p className="text-gray-600">From Jajpur, Odisha</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdFavorite size={24} />
+                                    <MdFavoriteBorder size={24} />
                                     <p className="text-gray-600">Single</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdLockClock size={24} />
-                                    <p className="text-gray-600">Joined on June 2016</p>
-                                </div>
-                                <div className="flex items-center gap-4 text-gray-700">
-                                    <MdLockClock size={24} />
+                                    <MdSchedule size={24} />
                                     <p className="text-gray-600">Joined on June 2016</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
@@ -133,7 +135,7 @@ export default function ProfilePage() {
                                     <p className="text-gray-600">Male</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-gray-700">
-                                    <MdCake size={24} />
+                                    <MdOutlineCake size={24} />
                                     <p className="text-gray-600">Birth Day - 2 Jan 2022</p>
                                 </div>
                             </div>
