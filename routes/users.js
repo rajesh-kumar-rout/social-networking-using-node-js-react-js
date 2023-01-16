@@ -4,11 +4,29 @@ import knex from "../utils/database.js"
 const routes = Router()
 
 routes.get("/", async (req, res) => {
-    const users = await knex("socialUsers").select(
-        "id",
-        "name",
-        "profileImgUrl"
-    )
+    const { query } = req.query
+
+    const users = await knex("socialUsers")
+        .whereLike("name", `%${query}%`)
+        .select(
+            "id",
+            "name",
+            "profileImgUrl"
+        )
+
+    res.json(users)
+})
+
+routes.get("/me/suggested", async (req, res) => {
+    const { currentUserId } = req
+
+    const users = await knex("socialUsers")
+        .whereNot({ id: currentUserId })
+        .select(
+            "id",
+            "name",
+            "profileImgUrl"
+        )
 
     res.json(users)
 })
@@ -25,6 +43,15 @@ routes.get("/:userId", async (req, res) => {
             "socialUsers.name",
             "socialUsers.profileImgUrl",
             "socialUsers.coverImgUrl",
+            "socialUsers.work",
+            "socialUsers.college",
+            "socialUsers.school",
+            "socialUsers.currentAddress",
+            "socialUsers.permanentAddress",
+            "socialUsers.relationship",
+            "socialUsers.createdAt",
+            "socialUsers.gender",
+            "socialUsers.birthDate",
 
             knex("socialFollowers")
                 .whereColumn("socialUsers.id", "socialFollowers.followerId")
@@ -106,6 +133,21 @@ routes.get("/:userId/posts", async (req, res) => {
     res.json(posts)
 })
 
+routes.get("/:userId/photos", async (req, res) => {
+    const { userId } = req.params
+
+    const { limit } = req.query
+
+    const photos = await knex("socialPosts")
+        .where({ userId })
+        .whereNotNull("imgUrl")
+        .limit(limit)
+        .orderBy("id", "desc")
+        .select("imgUrl")
+
+    res.json(photos)
+})
+
 routes.patch("/:userId/toggle-follow", async (req, res) => {
     const { userId } = req.params
 
@@ -163,9 +205,12 @@ routes.get("/:userId/followers", async (req, res) => {
 routes.get("/:userId/followings", async (req, res) => {
     const { userId } = req.params
 
+    const { limit } = req.query
+
     const users = await knex("socialFollowers")
         .where("socialFollowers.followerId", userId)
         .join("socialUsers", "socialUsers.id", "socialFollowers.followingId")
+        .limit(limit)
         .select(
             "socialUsers.id",
             "socialUsers.name",
