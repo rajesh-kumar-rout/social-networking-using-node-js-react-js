@@ -6,7 +6,7 @@ import { body } from "express-validator"
 import { isAuthenticated } from "../middlewares/authentication.js"
 import { destroy, upload } from "../utils/cloudinary.js"
 import knex from "../utils/database.js"
-import { checkValidationError, isBase64Img } from "../utils/validation.js"
+import { checkValidationError } from "../utils/validation.js"
 
 config()
 
@@ -46,21 +46,53 @@ routes.post(
 routes.post(
     "/register",
 
-    body("name")
-        .trim()
-        .isLength({ min: 2, max: 30 }),
+    body("name").trim().isLength({ min: 2, max: 30 }),
 
     body("email")
         .trim()
         .toLowerCase()
-        .isEmail(),
+        .isEmail()
+        .isLength({ max: 30 }),
+
+    body("work")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("school")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("college")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("currentCity")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("homeTown")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("bio").trim().isLength({ min: 2, max: 30 }),
+
+    body("gender").notEmpty().isIn("Male", "Female", "Others"),
+
+    body("relationship").notEmpty().isIn("Single", "Married", "In a relationship"),
+
+    body("birthDate").optional().isDate(),
 
     body("password").isLength({ min: 6, max: 20 }),
 
     checkValidationError,
 
     async (req, res) => {
-        const { name, email, password } = req.body
+        const { name, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, password } = req.body
 
         const isEmailTaken = await knex("socialUsers")
             .where({ email })
@@ -73,6 +105,15 @@ routes.post(
         const [userId] = await knex("socialUsers").insert({
             name,
             email,
+            work,
+            school,
+            college,
+            currentCity,
+            homeTown,
+            birthDate,
+            relationship,
+            gender,
+            bio,
             password: await bcrypt.hash(password, 10)
         })
 
@@ -118,7 +159,6 @@ routes.patch(
                 password: await bcrypt.hash(newPassword, 10)
             })
 
-
         res.json({ success: "Password changed successfully" })
     }
 )
@@ -137,20 +177,49 @@ routes.patch(
         .toLowerCase()
         .isEmail(),
 
-    body("profileImg")
-        .optional({ checkFalsy: true })
-        .custom(isBase64Img),
+    body("work")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
 
-    body("coverImg")
-        .optional({ checkFalsy: true })
-        .custom(isBase64Img),
+    body("school")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("college")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("currentCity")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("homeTown")
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 30 }),
+
+    body("bio").trim().isLength({ min: 2, max: 30 }),
+
+    body("gender").notEmpty().isIn("Male", "Female", "Others"),
+
+    body("relationship").notEmpty().isIn("Single", "Married", "In a relationship"),
+
+    body("birthDate").optional().isDate(),
+
+    body("image").optional().isURL(),
+
+    body("video").optional().isURL(),
 
     checkValidationError,
 
     async (req, res) => {
         const { currentUserId } = req
 
-        const { name, email, coverImg, profileImg } = req.body
+        const { name, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, coverImage, profileImage } = req.body
 
         const isEmailTaken = await knex("socialUsers")
             .where({ email })
@@ -165,18 +234,18 @@ routes.patch(
             .where({ id: currentUserId })
             .first()
 
-        if (coverImg) {
-            const { secure_url, public_id } = await upload(coverImg)
-            user.coverImgUrl && await destroy(user.coverImgId)
-            user.coverImgUrl = secure_url
-            user.coverImgId = public_id
+        if (coverImage) {
+            const { imageUrl, imageId } = await upload(coverImage)
+            user.coverImageUrl && await destroy(user.coverImageId)
+            user.coverImageUrl = imageUrl
+            user.coverImageId = imageId
         }
 
-        if (profileImg) {
-            const { secure_url, public_id } = await upload(profileImg)
-            user.profileImgUrl && await destroy(user.profileImgId)
-            user.profileImgUrl = secure_url
-            user.profileImgId = public_id
+        if (profileImage) {
+            const { imageUrl, imageId } = await upload(profileImage)
+            user.profileImageUrl && await destroy(user.profileImageId)
+            user.profileImageUrl = imageUrl
+            user.profileImageId = imageId
         }
 
         await knex("socialUsers")
@@ -184,16 +253,31 @@ routes.patch(
             .update({
                 name,
                 email,
-                profileImgUrl: user.profileImgUrl,
-                profileImgId: user.profileImgUrl,
-                coverImgId: user.coverImgId,
-                coverImgUrl: user.coverImgUrl
+                work,
+                school,
+                college,
+                currentCity,
+                homeTown,
+                birthDate,
+                relationship,
+                gender,
+                bio,
+                profileImageUrl: user.profileImageUrl,
+                profileImageId: user.profileImageId,
+                coverImageUrl: user.coverImageUrl,
+                coverImageId: user.coverImageId
             })
 
-        res.json({
-            profileImgUrl: user.profileImgUrl,
-            coverImgUrl: user.coverImgUrl
-        })
+        const updatedUser = await knex("socialUsers")
+            .where({ id: currentUserId })
+            .select(
+                "id",
+                "name",
+                "email"
+            )
+            .first()
+
+        res.json(updatedUser)
     }
 )
 
@@ -201,21 +285,19 @@ routes.get("/", async (req, res) => {
     const token = req.headers.authorization ?? null
 
     const user = await knex("socialTokens")
-        .where({ token  })
+        .where({ token })
         .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .select(
             "socialUsers.id",
             "socialUsers.name",
-            "socialUsers.email",
-            "socialUsers.createdAt",
-            "socialUsers.updatedAt",
+            "socialUsers.email"
         )
         .first()
 
     res.json(user)
 })
 
-routes.get("/logout", isAuthenticated, async (req, res) => {
+routes.delete("/logout", isAuthenticated, async (req, res) => {
     const token = req.headers.authorization ?? null
 
     await knex("socialTokens")
@@ -223,6 +305,16 @@ routes.get("/logout", isAuthenticated, async (req, res) => {
         .del()
 
     res.json({ success: "Logout successfull" })
+})
+
+routes.delete("/", isAuthenticated, async (req, res) => {
+    const { currentUserId } = req
+
+    await knex("socialUsers")
+        .where({ id: currentUserId })
+        .del()
+
+    res.json({ success: "Account deleted successfull" })
 })
 
 export default routes

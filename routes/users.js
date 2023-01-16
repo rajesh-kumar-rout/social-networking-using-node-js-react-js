@@ -7,11 +7,11 @@ routes.get("/", async (req, res) => {
     const { query } = req.query
 
     const users = await knex("socialUsers")
-        .whereLike("name", `%${query}%`)
+        .where("name", "like", `%${query}%`)
         .select(
             "id",
             "name",
-            "profileImgUrl"
+            "profileImageUrl"
         )
 
     res.json(users)
@@ -25,7 +25,7 @@ routes.get("/me/suggested", async (req, res) => {
         .select(
             "id",
             "name",
-            "profileImgUrl"
+            "profileImageUrl"
         )
 
     res.json(users)
@@ -41,13 +41,13 @@ routes.get("/:userId", async (req, res) => {
         .select(
             "socialUsers.id",
             "socialUsers.name",
-            "socialUsers.profileImgUrl",
-            "socialUsers.coverImgUrl",
+            "socialUsers.profileImageUrl",
+            "socialUsers.coverImageUrl",
             "socialUsers.work",
             "socialUsers.college",
             "socialUsers.school",
-            "socialUsers.currentAddress",
-            "socialUsers.permanentAddress",
+            "socialUsers.currentCity",
+            "socialUsers.homeTown",
             "socialUsers.relationship",
             "socialUsers.createdAt",
             "socialUsers.gender",
@@ -98,12 +98,12 @@ routes.get("/:userId/posts", async (req, res) => {
         .join("socialPosts", "socialPosts.userId", "socialUsers.id")
         .select(
             "socialPosts.id",
-            "socialPosts.desc",
-            "socialPosts.imgUrl",
+            "socialPosts.description",
+            "socialPosts.imageUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
             "socialUsers.name AS userName",
-            "socialUsers.profileImgUrl",
+            "socialUsers.profileImageUrl",
 
             knex("socialLikes")
                 .whereColumn("socialLikes.postId", "socialPosts.id")
@@ -128,7 +128,7 @@ routes.get("/:userId/posts", async (req, res) => {
 
             knex.raw("IF(socialUsers.id = ?, 1, 0) AS isPosted", [currentUserId])
         )
-        .orderBy("socialPosts.createdAt", "desc")
+        .orderBy("socialPosts.createdAt", "description")
 
     res.json(posts)
 })
@@ -140,10 +140,10 @@ routes.get("/:userId/photos", async (req, res) => {
 
     const photos = await knex("socialPosts")
         .where({ userId })
-        .whereNotNull("imgUrl")
+        .whereNotNull("imageUrl")
         .limit(limit)
-        .orderBy("id", "desc")
-        .select("imgUrl")
+        .orderBy("id", "description")
+        .select("imageUrl")
 
     res.json(photos)
 })
@@ -196,7 +196,7 @@ routes.get("/:userId/followers", async (req, res) => {
         .select(
             "socialUsers.id",
             "socialUsers.name",
-            "socialUsers.profileImgUrl",
+            "socialUsers.profileImageUrl",
         )
 
     res.json(users)
@@ -214,7 +214,7 @@ routes.get("/:userId/followings", async (req, res) => {
         .select(
             "socialUsers.id",
             "socialUsers.name",
-            "socialUsers.profileImgUrl",
+            "socialUsers.profileImageUrl",
         )
 
     res.json(users)

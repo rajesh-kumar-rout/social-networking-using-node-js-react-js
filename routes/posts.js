@@ -1,8 +1,8 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
-import knex from "../utils/database.js"
 import { destroy, upload } from "../utils/cloudinary.js"
-import { checkValidationError, isBase64Img } from "../utils/validation.js"
+import knex from "../utils/database.js"
+import { checkValidationError, isYoutubeVideo, makeYoutubeVideoUrl } from "../utils/validation.js"
 
 const routes = Router()
 
@@ -15,12 +15,12 @@ routes.get("/feeds", async (req, res) => {
         .join("socialPosts", "socialPosts.userId", "socialUsers.id")
         .select(
             "socialPosts.id",
-            "socialPosts.desc",
-            "socialPosts.imgUrl",
+            "socialPosts.description",
+            "socialPosts.imageUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
             "socialUsers.name AS userName",
-            "socialUsers.profileImgUrl",
+            "socialUsers.profileImageUrl",
 
             knex("socialLikes")
                 .whereColumn("socialLikes.postId", "socialPosts.id")
@@ -44,7 +44,7 @@ routes.get("/feeds", async (req, res) => {
 
             knex.raw("0 AS isPosted")
         )
-        .orderBy("socialPosts.createdAt", "desc")
+        .orderBy("socialPosts.createdAt", "description")
 
     res.json(posts)
 })
@@ -60,7 +60,7 @@ routes.get("/:postId/comments", async (req, res) => {
         .select(
             "socialUsers.id AS userId",
             "socialUsers.name AS userName",
-            "socialUsers.profileImgUrl",
+            "socialUsers.profileImageUrl",
             "socialComments.id",
             "socialComments.comment",
             "socialComments.createdAt",
@@ -74,42 +74,53 @@ routes.get("/:postId/comments", async (req, res) => {
     res.json(comments)
 })
 
-routes.post(
-    "/",
+routes.post("/",
 
-    body("desc")
+    body("description")
         .optional()
-        .isLength({ max: 255 })
-        .default(""),
+        .trim()
+        .isLength({ max: 255 }),
 
-    body("img")
-        .optional({ checkFalsy: true })
-        .isString()
-        .custom(isBase64Img),
+    body("image")
+        .optional()
+        .trim()
+        .isURL(),
+
+    body("video")
+        .optional()
+        .trim()
+        .isURL()
+        .custom(isYoutubeVideo)
+        .customSanitizer(makeYoutubeVideoUrl),
 
     checkValidationError,
 
     async (req, res) => {
-        const { desc, img } = req.body
+        const { description, image, video } = req.body
 
         const { currentUserId } = req
 
-        if (!desc && !img) {
-            return res.status(422).json({ error: "Either des or image is required" })
+        if (!description && !image && !video) {
+            return res.status(422).json({ error: "Either desription or image or video is required" })
         }
 
-        let imgUrl = null, imgId = null
+        if(image && video) {
+            return res.status(422).json({ error: "Either provide image or video" })
+        }
 
-        if (img) {
-            let imgRes = await upload(img)
-            imgUrl = imgRes.secure_url
-            imgId = imgRes.public_id
+        let imageUrl = null, imageId = null
+
+        if (image) {
+            const imageRes = await upload(image)
+            imageUrl = imageRes.imageUrl
+            imageId = imageRes.imageId
         }
 
         await knex("socialPosts").insert({
-            desc,
-            imgUrl,
-            imgId,
+            description,
+            imageUrl,
+            imageId,
+            videoUrl: video,
             userId: currentUserId
         })
 
@@ -153,7 +164,7 @@ routes.post(
             .select(
                 "socialUsers.id AS userId",
                 "socialUsers.name AS userName",
-                "socialUsers.profileImgUrl",
+                "socialUsers.profileImageUrl",
                 "socialComments.id",
                 "socialComments.comment",
                 "socialComments.createdAt",
@@ -233,8 +244,8 @@ routes.delete("/:postId", async (req, res) => {
         return res.status(404).json({ error: "Post not found" })
     }
 
-    if (post.imgId) {
-        await destroy(post.imgId)
+    if (post.imageId) {
+        await destroy(post.imageId)
     }
 
     await knex("socialPosts")

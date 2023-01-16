@@ -1,8 +1,11 @@
 import { validationResult } from "express-validator"
 
-export function isBase64Img(value) {
-    return value.startsWith("data:image/jpeg") || value.startsWith("data:image/png") || 
-        value.startsWith("data:image/jpg")
+export function isYoutubeVideo(value) {
+    return value.startsWith("https://youtu.be/")
+}
+
+export function makeYoutubeVideoUrl(value) {
+    return "https://youtube.com/embed/" + value.split("be/")[1]
 }
 
 export const checkValidationError = (req, res, next) => {
