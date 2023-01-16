@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 import Loader from "../components/Loader"
 import UserList from "../components/Users"
 import axios from "../utils/axios"
-import { MdSearch } from "react-icons/md"
 
 export default function SearchPage() {
+    const { query } = useParams()
     const [users, setUsers] = useState([])
-    const [isFetching, setIssFetching] = useState(true)
-    const [query, setQuery] = useState("")
-    const [filteredUsers, setFilteredUsers] = useState([])
+    const [isFetching, setIsFetching] = useState(true)
 
     const fetchUsers = async () => {
-        const { data } = await axios.get("/users")
+        const { data } = await axios.get(`/users?query=${query}`)
+
         setUsers(data)
-        setIssFetching(false)
+
+        setIsFetching(false)
     }
 
     useEffect(() => {
         fetchUsers()
-    }, [])
-
-    useEffect(() => {
-        setFilteredUsers(users.filter(user => user.name.toLowerCase().includes(query.toLocaleLowerCase())))
-    }, [query, users])
+    }, [query])
 
     if (isFetching) {
         return <Loader />
@@ -30,25 +27,7 @@ export default function SearchPage() {
 
     return (
         <div className="px-2">
-            {/* <div className="bg-white flex items-center max-w-2xl mx-auto gap-3 p-4 border-2 rounded-md border-gray-300 my-8">
-                <MdSearch size={28} />
-
-                <input
-                    type="search"
-                    className="w-full outline-none"
-                    onChange={event => setQuery(event.target.value)}
-                    placeholder="Search Here..."
-                />
-            </div> */}
-
-            {filteredUsers.length === 0 ? (
-                <p className="text-xl text-center font-bold text-indigo-600">There is no user as "{query}"</p>
-            ) : (
-                <UserList
-                    title={`${filteredUsers.length} Users Found`}
-                    users={filteredUsers}
-                />
-            )}
+            <UserList title={`${users.length} Users Found`} users={users} />
         </div>
     )
 }

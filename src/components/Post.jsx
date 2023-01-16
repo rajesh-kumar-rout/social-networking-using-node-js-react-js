@@ -66,9 +66,9 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
     return (
         <div className="bg-white border-2 border-gray-300 post:rounded-md mx-auto post:w-[600px] w-full border-x-0 post:border-x-2 rounded-none">
             <div className="p-3 flex gap-3">
-                <img 
-                    src={post.profileImgUrl ? post.profileImgUrl : DEFAULT_PROFILE_IMG} 
-                    className="w-12 h-12 rounded-full object-cover" 
+                <img
+                    src={post.profileImgUrl ? post.profileImgUrl : DEFAULT_PROFILE_IMG}
+                    className="w-12 h-12 rounded-full object-cover"
                 />
 
                 <div>
@@ -83,25 +83,29 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                 <img src={postImgUrl(post.imgUrl)} className="w-full object-cover" />
             )}
 
+            {post.videoUrl && (
+                <iframe width="100%" height="345" src={post.videoUrl}></iframe>
+            )}
+
             <div className="p-3 flex justify-between">
                 <div className="flex items-center gap-3">
-                    <button 
-                        className="post-action-btn fill-pink-600" 
+                    <button
+                        className="post-action-btn fill-pink-600"
                         onClick={() => onToggleLike(post.id)}
                     >
                         {post.isLiked ? <FaHeart size={24} fill="fill-pink-600" /> : <FaRegHeart size={24} />}
                     </button>
 
-                    <button 
-                        className="post-action-btn" 
+                    <button
+                        className="post-action-btn"
                         onClick={() => setIsCommentBoxOpened(!isCommentBoxOpened)}
                     >
                         <FaRegComment size={24} />
                     </button>
 
                     {post.isPosted === 1 && (
-                        <button 
-                            className="post-action-btn" 
+                        <button
+                            className="post-action-btn"
                             onClick={() => onDeletePost(post.id)}
                         >
                             <FaRegTrashAlt size={24} />

@@ -26,6 +26,12 @@ export default function NavBar() {
         window.location.href = "/login"
     }
 
+    function handleSubmit(event) {
+        event.preventDefault()
+        navigate(`/search/${event.target.query.value}`)
+        event.target.reset()
+    }
+
     return (
         <div className="bg-white border-b-2 border-gray-300 fixed left-0 right-0 top-0 h-20">
             <div className="bg-white max-w-5xl px-2 flex justify-between items-center h-full mx-auto">
@@ -33,12 +39,9 @@ export default function NavBar() {
                     MY DIARY
                 </Link>
 
-                <form onSubmit={(e) =>{
-                    e.preventDefault()
-                    navigate("/search")
-                }} className="bg-gray-100 px-4 py-2 flex items-center w-[300px] rounded-md gap-4">
-                    <MdSearch size={24} className="text-gray-600"/>
-                    <input type="search" className="bg-transparent outline-none w-full" placeholder="Search here..."/>
+                <form onSubmit={handleSubmit} className="bg-gray-100 px-4 py-2 flex items-center w-[300px] rounded-md gap-4">
+                    <MdSearch size={24} className="text-gray-600" />
+                    <input type="search" name="query" className="bg-transparent outline-none w-full" placeholder="Search here..." />
                 </form>
 
                 <div className="flex gap-3">

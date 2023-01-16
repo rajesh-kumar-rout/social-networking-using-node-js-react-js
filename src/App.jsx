@@ -24,7 +24,7 @@ export default function App() {
                 <Route element={<Authenticated />}>
                     <Route element={<Layout />}>
                         <Route index element={<HomePage />} />
-                        <Route path="/search" element={<SearchPage />} />
+                        <Route path="/search/:query" element={<SearchPage />} />
                         <Route path="/add-post" element={<AddPostPage />} />
                         {/* <Route path="/auth/profile/:userId" element={<ProfilePage />} /> */}
                         {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}

@@ -87,12 +87,12 @@ export default function SignUpPage() {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email" className="form-label">Gender</label>
-                                <div className="space-y-2 flex gap-6 ">
+                                <div className="mt-1 flex gap-6">
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="radio"
                                             id="email"
-                                            className="w-4 h-4 text-teal-600"
+                                            className=" text-teal-600 focus:ring-teal-600"
                                             name="email"
                                             as="radio"
                                         />
@@ -103,7 +103,7 @@ export default function SignUpPage() {
                                         <input
                                             type="radio"
                                             id="email"
-                                            className="w-4 h-4 text-teal-600"
+                                            className="text-teal-600 focus:ring-teal-600"
                                             name="email"
                                             as="radio"
                                         />
