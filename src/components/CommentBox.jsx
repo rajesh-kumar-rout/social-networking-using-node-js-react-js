@@ -57,8 +57,6 @@ export default function CommentBox({ postId, onCommentDelete, onCommentCreate })
 
         setComments(comments.filter(comment => comment.id !== commentId))
 
-        onCommentDelete(postId)
-
         setIsLoading(false)
     }
 
@@ -76,13 +74,14 @@ export default function CommentBox({ postId, onCommentDelete, onCommentCreate })
                 <>
                     <div className="flex gap-3 px-3 py-4 ">
                         <img
-                            src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG}
+                            src={currentUser.profileImageUrl ? currentUser.profileImageUrl : DEFAULT_PROFILE_IMG}
                             className="h-9 w-9 rounded-full object-cover"
                         />
 
                         <form onSubmit={handleAddComment} className="flex-1">
-                            <textarea
-                                className="form-control text-sm resize-none bg-gray-100"
+                            <input
+                                contentEditable
+                                className="form-control text-sm resize-none bg-gray-100 h-20 block text-start"
                                 name="comment"
                                 placeholder="Write your comment..."
                             />

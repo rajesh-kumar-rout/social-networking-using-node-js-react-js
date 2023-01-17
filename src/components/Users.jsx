@@ -14,7 +14,7 @@ export default function Users({ title, users }) {
                     key={user.id}
                 >
                     <img
-                        src={user.profileImgUrl ? user.profileImgUrl : DEFAULT_PROFILE_IMG}
+                        src={user.profileImageUrl ? user.profileImageUrl : DEFAULT_PROFILE_IMG}
                         className="h-12 w-12 object-cover rounded-full"
                     />
                     <p className="font-semibold">{user.name}</p>

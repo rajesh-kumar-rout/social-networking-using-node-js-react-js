@@ -1,8 +1,21 @@
+import { useEffect, useState } from "react"
 import { MdArrowBack } from "react-icons/md"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import axios from "../utils/axios"
 
 export default function ProfileFollowersPage() {
     const navigate = useNavigate()
+    const { userId } = useParams()
+    const [followings, setFollowings] = useState([])
+
+    async function fetchFollowings() {
+        const { data } = await axios.get(`/users/${userId}/followings`)
+        setFollowings(data)
+    }
+
+    useEffect(() => {
+        fetchFollowings()
+    }, [])
 
     return (
         <div className="bg-white border-2 border-gray-300 rounded-md max-w-xl mx-auto my-8">
@@ -12,11 +25,13 @@ export default function ProfileFollowersPage() {
             </p>
 
             <div className="p-4">
-                <div className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
-                    <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1370690627/photo/side-view-of-woman-wants-to-scream-covers-mouth-with-palm-stares-at-something-terrible.jpg?b=1&s=170667a&w=0&k=20&c=N6-Ip3xict73SOJ15F-84-Z51_ZmXvvoXwZlTBi9POg=" alt="" />
-                    <p className="font-semibold">Rajan Singh</p>
-                </div>
-                <div className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                {followings.map(following => (
+                    <Link to={`/profile/${following.id}`} className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                        <img className="rounded-full h-12 w-12 object-cover" src={following.profileImageUrl} alt="" />
+                        <p className="font-semibold">{following.name}</p>
+                    </Link>
+                ))}
+                {/* <div className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                     <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1338134336/photo/headshot-portrait-african-30s-man-smile-look-at-camera.jpg?b=1&s=170667a&w=0&k=20&c=j-oMdWCMLx5rIx-_W33o3q3aW9CiAWEvv9XrJQ3fTMU=" alt="" />
                     <p className="font-semibold">Alia Bhat</p>
                 </div>
@@ -35,7 +50,7 @@ export default function ProfileFollowersPage() {
                 <div className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                     <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=" alt="" />
                     <p className="font-semibold">John Abraham</p>
-                </div>
+                </div> */}
             </div>
         </div>
     )

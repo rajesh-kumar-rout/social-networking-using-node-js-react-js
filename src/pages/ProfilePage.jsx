@@ -84,7 +84,7 @@ export default function ProfilePage() {
             <div className="bg-white shadow-md pb-8">
                 <div className="mx-auto max-w-[1000px]">
                     <img
-                        src={user.coverImgUrl ? user.coverImgUrl : DEFAULT_COVER_IMG}
+                        src={user.coverImageUrl ? user.coverImageUrl : DEFAULT_COVER_IMG}
                         className="rounded-b-md object-cover w-full"
                         style={{ height: 350 }}
                     />
@@ -94,7 +94,7 @@ export default function ProfilePage() {
                     lg:-mb-14 lg:pl-10"
                     >
                         <img
-                            src={user.profileImgUrl ? postImgUrl(user.profileImgUrl) : DEFAULT_PROFILE_IMG}
+                            src={user.profileImageUrl ? postImgUrl(user.profileImageUrl) : DEFAULT_PROFILE_IMG}
                             className="h-40 w-40 object-cover rounded-md border-white border-2"
                         />
 
@@ -107,7 +107,7 @@ export default function ProfilePage() {
                             </div>
 
                             {userId == currentUser.id ? (
-                                <Link to="/edit-profile" className="btn btn-primary">
+                                <Link to="/auth/edit-profile" className="btn btn-primary">
                                     Update Profile
                                 </Link>
                             ) : (

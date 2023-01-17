@@ -10,17 +10,25 @@ export default function ProfileIndexPage() {
     const { userId } = useParams()
     const [user, setUser] = useState()
     const [posts, setPosts] = useState([])
+    const [photos, setPhotos] = useState([])
+    const [followings, setFollowings] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     async function fetchUser() {
-        const [userRes, postRes] = await Promise.all([
+        const [userRes, postsRes, photosRes, followingsRes] = await Promise.all([
             axios.get(`/users/${userId}`),
-            axios.get(`/users/${userId}/posts`)
+            axios.get(`/users/${userId}/posts`),
+            axios.get(`/users/${userId}/photos?limit=9`),
+            axios.get(`/users/${userId}/followings?limit=9`),
         ])
 
         setUser(userRes.data)
 
-        setPosts(postRes.data)
+        setPosts(postsRes.data)
+
+        setPhotos(photosRes.data)
+
+        setFollowings(followingsRes.data)
 
         setIsLoading(false)
     }
@@ -77,60 +85,74 @@ export default function ProfileIndexPage() {
     }
 
     return (
-        <div className="space-y-5 my-5 flex flex-col md:flex-row gap-4 max-w-5xl mx-auto justify-start">
-            <div className="col-span-4 space-y-4">
+        <div className="my-5 flex flex-col md:flex-row gap-4 max-w-5xl mx-auto justify-start">
+            <div className="space-y-4">
                 <div className="bg-white border-2 border-gray-300 rounded-md">
                     <h2 className="text-lg font-bold border-b-2 border-gray-300 py-3 px-4 text-teal-600">Bio</h2>
-                    <p className="text-gray-600 p-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus recusandae impedit consequuntur temporibus, itaque magnam.</p>
+                    <p className="text-gray-600 p-4">{user.bio}</p>
                 </div>
 
                 <div className="bg-white border-2 border-gray-300 rounded-md">
                     <h2 className="text-lg font-bold border-b-2 border-gray-300 py-3 px-4 text-teal-600">Intro</h2>
                     <div className="space-y-4 p-4">
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdWorkOutline size={24} />
-                            <p className="text-gray-600">Works at Not Yet Working Iam Still Studying</p>
-                        </div>
+                        {user.work && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdWorkOutline size={24} />
+                                <p className="text-gray-600">Works at {user.work}</p>
+                            </div>
+                        )}
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdOutlineSchool size={24} />
-                            <p className="text-gray-600">Studies at N.c autonomous college,jajpur,orissa</p>
-                        </div>
+                        {user.college && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdOutlineSchool size={24} />
+                                <p className="text-gray-600">Studies at {user.college}</p>
+                            </div>
+                        )}
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdOutlineSchool size={24} />
-                            <p className="text-gray-600">Studied at gurukul kalinga +2sc. residensial college</p>
-                        </div>
+                        {user.school && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdOutlineSchool size={24} />
+                                <p className="text-gray-600">Went to {user.school}</p>
+                            </div>
+                        )}
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdOutlineLocationOn size={24} />
-                            <p className="text-gray-600">Lives in Bangalore, India</p>
-                        </div>
+                        {user.currentCity && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdOutlineLocationOn size={24} />
+                                <p className="text-gray-600">Lives in {user.currentCity}</p>
+                            </div>
+                        )}
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdOutlineHome size={24} />
-                            <p className="text-gray-600">From Jajpur, Odisha</p>
-                        </div>
+                        {user.homeTown && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdOutlineHome size={24} />
+                                <p className="text-gray-600">From {user.homeTown}</p>
+                            </div>
+                        )}
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdFavoriteBorder size={24} />
-                            <p className="text-gray-600">Single</p>
-                        </div>
+                        {user.relationship && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdFavoriteBorder size={24} />
+                                <p className="text-gray-600">{user.relationship}</p>
+                            </div>
+                        )}
 
                         <div className="flex items-center gap-4 text-gray-700">
                             <MdSchedule size={24} />
-                            <p className="text-gray-600">Joined on June 2016</p>
+                            <p className="text-gray-600">Joined on {user.createdAt}</p>
                         </div>
 
                         <div className="flex items-center gap-4 text-gray-700">
                             <MdMale size={24} />
-                            <p className="text-gray-600">Male</p>
+                            <p className="text-gray-600">{user.gender}</p>
                         </div>
 
-                        <div className="flex items-center gap-4 text-gray-700">
-                            <MdOutlineCake size={24} />
-                            <p className="text-gray-600">Birth Day - 2 Jan 2022</p>
-                        </div>
+                        {user.birthDate && (
+                            <div className="flex items-center gap-4 text-gray-700">
+                                <MdOutlineCake size={24} />
+                                <p className="text-gray-600">Birth Day - {user.birthDate}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -141,12 +163,10 @@ export default function ProfileIndexPage() {
                     </h2>
 
                     <div className="p-4 grid grid-cols-3 gap-1">
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
-                        <img className="rounded object-cover" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674721/jjys4e2kx3msqwrfpuy2.webp" alt="" />
+                        {photos.map(photo => (
+                            <img className="rounded object-cover" src={photo.imageUrl} alt="" />
+
+                        ))}
                     </div>
                 </div>
                 <div className="bg-white border-2 border-gray-300 rounded-md">
@@ -156,11 +176,13 @@ export default function ProfileIndexPage() {
                     </h2>
 
                     <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
-                        <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1370690627/photo/side-view-of-woman-wants-to-scream-covers-mouth-with-palm-stares-at-something-terrible.jpg?b=1&s=170667a&w=0&k=20&c=N6-Ip3xict73SOJ15F-84-Z51_ZmXvvoXwZlTBi9POg=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">Rajan Singh</p>
-                        </div>
-                        <div>
+                        {followings.map(following => (
+                            <Link to={`/profile/${following.id}`}>
+                                <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
+                                <p className="text-xs font-semibold mt-1 text-center">{following.name}</p>
+                            </Link>
+                        ))}
+                        {/* <div>
                             <img className="rounded object-cover" src="https://media.istockphoto.com/id/1338134336/photo/headshot-portrait-african-30s-man-smile-look-at-camera.jpg?b=1&s=170667a&w=0&k=20&c=j-oMdWCMLx5rIx-_W33o3q3aW9CiAWEvv9XrJQ3fTMU=" alt="" />
                             <p className="text-xs font-semibold mt-1 text-center">Alia Bhat</p>
                         </div>
@@ -179,12 +201,12 @@ export default function ProfileIndexPage() {
                         <div>
                             <img className="rounded object-cover" src="https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=" alt="" />
                             <p className="text-xs font-semibold mt-1 text-center">John Abraham</p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
 
-            <div className="col-span-8">
+            <div className="space-y-4">
                 {posts.map(post => (
                     <Post
                         key={post.id}

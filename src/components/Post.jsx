@@ -67,7 +67,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
         <div className="bg-white border-2 border-gray-300 post:rounded-md mx-auto post:w-[600px] w-full border-x-0 post:border-x-2 rounded-none">
             <div className="p-3 flex gap-3">
                 <img
-                    src={post.profileImgUrl ? post.profileImgUrl : DEFAULT_PROFILE_IMG}
+                    src={post.profileImageUrl ? post.profileImageUrl : DEFAULT_PROFILE_IMG}
                     className="w-12 h-12 rounded-full object-cover"
                 />
 
@@ -77,10 +77,10 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                 </div>
             </div>
 
-            {post.desc && <div className="text-sm text-gray-600 px-3 pb-3">{post.desc}</div>}
+            {post.description && <div className="text-sm text-gray-600 px-3 pb-3">{post.description}</div>}
 
-            {post.imgUrl && (
-                <img src={postImgUrl(post.imgUrl)} className="w-full object-cover" />
+            {post.imageUrl && (
+                <img src={postImgUrl(post.imageUrl)} className="w-full object-cover" />
             )}
 
             {post.videoUrl && (

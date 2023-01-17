@@ -6,7 +6,7 @@ export default function Comment({ comment, onDeleteComment }) {
     return (
         <div className="flex gap-3 px-3 py-4 border-t-2 border-gray-300">
             <img 
-                src={comment.profileImgUrl ? comment.profileImgUrl : DEFAULT_PROFILE_IMG} 
+                src={comment.profileImageUrl ? comment.profileImageUrl : DEFAULT_PROFILE_IMG} 
                 className="h-9 w-9 rounded-full object-cover" 
             />
 
@@ -15,7 +15,7 @@ export default function Comment({ comment, onDeleteComment }) {
                     <p className="">
                         <span className="text-sm font-[500]">{comment.userName}</span>
                         {/* <span className="text-xs text-gray-600"> • {dateToAgo(comment.createdAt)}</span> */}
-                        <span className="text-sm text-gray-600"> • {comment.createdAt}</span> 
+                        <span className="text-sm text-gray-600"> • {dateToAgo(comment.createdAt)}</span> 
                     </p>
                     <p className="text-sm text-gray-700 mt-1">{comment.comment}</p>
                 </div>

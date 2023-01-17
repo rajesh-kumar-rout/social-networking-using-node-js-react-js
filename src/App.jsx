@@ -28,8 +28,8 @@ export default function App() {
                         <Route path="/add-post" element={<AddPostPage />} />
                         {/* <Route path="/auth/profile/:userId" element={<ProfilePage />} /> */}
                         {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
-                        <Route path="/auth/change-password" element={<EditProfilePage />} />
-                        <Route path="/edit-profile" element={<EditProfilePage />} />
+                        {/* <Route path="/auth/edit-profile" element={<EditProfilePage />} /> */}
+                        <Route path="/auth/edit-profile" element={<EditProfilePage />} />
                         <Route path="/auth/followers" element={<FollowersPage />} />
                         <Route path="/auth/followings" element={<FollowingPage />} />
 

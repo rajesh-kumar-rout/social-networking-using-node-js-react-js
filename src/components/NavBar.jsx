@@ -21,7 +21,6 @@ export default function NavBar() {
 
     const handleLogout = async (event) => {
         event.preventDefault()
-        await axios.get("/auth/logout")
         localStorage.removeItem("token")
         window.location.href = "/login"
     }
@@ -63,7 +62,7 @@ export default function NavBar() {
                     <div className="relative">
                         <div onClick={handleDropDown} className="flex items-center cursor-pointer">
                             <img
-                                src={currentUser.profileImgUrl ? currentUser.profileImgUrl : DEFAULT_PROFILE_IMG}
+                                src={currentUser.profileImageUrl ? currentUser.profileImageUrl : DEFAULT_PROFILE_IMG}
                                 className="h-9 w-9 rounded-full object-cover"
                             />
                             <MdArrowDropDown size={24} />
@@ -95,9 +94,9 @@ export default function NavBar() {
 
                                 <NavLink
                                     className={({ isActive }) => `navbar-dropdown-item ${isActive ? 'navbar-dropdown-item-active' : ''}`}
-                                    to="/auth/change-password"
+                                    to="/auth/edit-profile"
                                 >
-                                    Change Password
+                                    Edit Profile
                                 </NavLink>
 
                                 <NavLink

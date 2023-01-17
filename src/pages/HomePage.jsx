@@ -37,8 +37,8 @@ export default function HomePage() {
     }
 
     async function handleToggleLike(postId) {
-        axios.patch(`/posts/${postId}/toggle-like`)
-
+        const {data} = await axios.patch(`/posts/${postId}/toggle-like`)
+console.log(data);
         const newPosts = [...posts]
 
         const index = newPosts.findIndex(post => post.id === postId)
@@ -85,12 +85,17 @@ export default function HomePage() {
                     <div className="p-4">
                         {users.map(user => (
                             <Link to={`/profile/${user.id}`} className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
-                                <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1370690627/photo/side-view-of-woman-wants-to-scream-covers-mouth-with-palm-stares-at-something-terrible.jpg?b=1&s=170667a&w=0&k=20&c=N6-Ip3xict73SOJ15F-84-Z51_ZmXvvoXwZlTBi9POg=" alt="" />
+                                <img className="rounded-full h-12 w-12 object-cover" src={user.profileImageUrl} alt="" />
                                 <p className="font-semibold">{user.name}</p>
                             </Link>
                         ))}
 
-                        <Link to="/profile/2" className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                        {/* <Link to="" className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                            <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1370690627/photo/side-view-of-woman-wants-to-scream-covers-mouth-with-palm-stares-at-something-terrible.jpg?b=1&s=170667a&w=0&k=20&c=N6-Ip3xict73SOJ15F-84-Z51_ZmXvvoXwZlTBi9POg=" alt="" />
+                            <p className="font-semibold">{user.name}</p>
+                        </Link> */}
+
+                        {/* <Link to="/profile/2" className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                             <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1338134336/photo/headshot-portrait-african-30s-man-smile-look-at-camera.jpg?b=1&s=170667a&w=0&k=20&c=j-oMdWCMLx5rIx-_W33o3q3aW9CiAWEvv9XrJQ3fTMU=" alt="" />
                             <p className="font-semibold">Alia Bhat</p>
                         </Link>
@@ -109,7 +114,7 @@ export default function HomePage() {
                         <Link to="/profile/2" className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                             <img className="rounded-full h-12 w-12 object-cover" src="https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=" alt="" />
                             <p className="font-semibold">John Abraham</p>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
             </div>
