@@ -81,7 +81,7 @@ routes.post(
 
     body("bio").trim().isLength({ min: 2, max: 30 }),
 
-    body("gender").notEmpty().isIn("Male", "Female", "Others"),
+    body("gender").notEmpty().isIn(["Male", "Female", "Others"]),
 
     body("relationship").notEmpty().isIn("Single", "Married", "In a relationship"),
 
@@ -92,7 +92,7 @@ routes.post(
     checkValidationError,
 
     async (req, res) => {
-        const { name, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, password } = req.body
+        const { name, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage, relationship, gender, bio, password } = req.body
 
         const isEmailTaken = await knex("socialUsers")
             .where({ email })
@@ -100,6 +100,22 @@ routes.post(
 
         if (isEmailTaken) {
             return res.status(409).json({ error: "Email already taken" })
+        }
+
+        let profileImageUrl = null, profileImageId = null
+
+        if (profileImage) {
+            const { imageUrl, imageId } = await upload(profileImage)
+            profileImageUrl = imageUrl
+            profileImageId = imageId
+        }
+
+        let coverImageUrl = null, coverImageId = null
+
+        if (coverImage) {
+            const { imageUrl, imageId } = await upload(coverImage)
+            coverImageUrl = imageUrl
+            coverImageId = imageId
         }
 
         const [userId] = await knex("socialUsers").insert({
@@ -114,6 +130,10 @@ routes.post(
             relationship,
             gender,
             bio,
+            profileImageUrl,
+            profileImageId,
+            coverImageUrl,
+            coverImageId,
             password: await bcrypt.hash(password, 10)
         })
 
@@ -206,9 +226,9 @@ routes.patch(
 
     body("gender").notEmpty().isIn("Male", "Female", "Others"),
 
-    body("relationship").notEmpty().isIn("Single", "Married", "In a relationship"),
+    body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
 
-    body("birthDate").optional().isDate(),
+    body("birthDate").optional(),
 
     body("image").optional().isURL(),
 
@@ -218,7 +238,7 @@ routes.patch(
 
     async (req, res) => {
         const { currentUserId } = req
-
+console.log(req.body.birthDate);
         const { name, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, coverImage, profileImage } = req.body
 
         const isEmailTaken = await knex("socialUsers")
@@ -273,7 +293,9 @@ routes.patch(
             .select(
                 "id",
                 "name",
-                "email"
+                "email",
+                "profileImageUrl",
+                "coverImageUrl",
             )
             .first()
 
@@ -286,12 +308,20 @@ routes.get("/", async (req, res) => {
 
     const user = await knex("socialTokens")
         .where({ token })
-        .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .select(
-            "socialUsers.id",
             "socialUsers.name",
-            "socialUsers.email"
+            "socialUsers.email",
+            "socialUsers.profileImageUrl",
+            "socialUsers.coverImageUrl",
+            "socialUsers.work",
+            "socialUsers.school",
+            "socialUsers.college",
+            "socialUsers.gender",
+            "socialUsers.relationship",
+            knex.raw("DATE_FORMAT(socialUsers.birthDate, '%Y-%m-%d') AS birthDate"),
+            knex.raw("DATE_FORMAT(socialUsers.createdAt, '%Y-%m-%d') AS createdAt")
         )
+        .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .first()
 
     res.json(user)

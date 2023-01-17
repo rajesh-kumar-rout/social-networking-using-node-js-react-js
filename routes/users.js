@@ -44,14 +44,15 @@ routes.get("/:userId", async (req, res) => {
             "socialUsers.profileImageUrl",
             "socialUsers.coverImageUrl",
             "socialUsers.work",
+            "socialUsers.bio",
             "socialUsers.college",
             "socialUsers.school",
             "socialUsers.currentCity",
             "socialUsers.homeTown",
             "socialUsers.relationship",
-            "socialUsers.createdAt",
             "socialUsers.gender",
-            "socialUsers.birthDate",
+            knex.raw("DATE_FORMAT(socialUsers.birthDate, '%d %b %Y') AS birthDate"),
+            knex.raw("DATE_FORMAT(socialUsers.createdAt, '%d %b %Y') AS createdAt"),
 
             knex("socialFollowers")
                 .whereColumn("socialUsers.id", "socialFollowers.followerId")
@@ -100,6 +101,7 @@ routes.get("/:userId/posts", async (req, res) => {
             "socialPosts.id",
             "socialPosts.description",
             "socialPosts.imageUrl",
+            "socialPosts.videoUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
             "socialUsers.name AS userName",
@@ -128,7 +130,7 @@ routes.get("/:userId/posts", async (req, res) => {
 
             knex.raw("IF(socialUsers.id = ?, 1, 0) AS isPosted", [currentUserId])
         )
-        .orderBy("socialPosts.createdAt", "description")
+        .orderBy("socialPosts.createdAt", "desc")
 
     res.json(posts)
 })

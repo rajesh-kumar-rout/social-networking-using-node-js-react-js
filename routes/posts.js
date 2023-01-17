@@ -17,6 +17,7 @@ routes.get("/feeds", async (req, res) => {
             "socialPosts.id",
             "socialPosts.description",
             "socialPosts.imageUrl",
+            "socialPosts.videoUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
             "socialUsers.name AS userName",
@@ -37,14 +38,14 @@ routes.get("/feeds", async (req, res) => {
                 [
                     knex("socialLikes")
                         .whereColumn("socialLikes.postId", "socialPosts.id")
-                        .whereColumn("socialUsers.id", "socialLikes.userId")
+                        .whereColumn("socialLikes.userId", currentUserId)
                         .select(1)
                 ]
             ),
 
             knex.raw("0 AS isPosted")
         )
-        .orderBy("socialPosts.createdAt", "description")
+        .orderBy("socialPosts.createdAt", "desc")
 
     res.json(posts)
 })
@@ -210,8 +211,6 @@ routes.patch("/:postId/toggle-like", async (req, res) => {
         .where({ userId: currentUserId })
         .where({ postId })
         .first()
-
-
 
     if (await isLiked) {
         await knex("socialLikes")
