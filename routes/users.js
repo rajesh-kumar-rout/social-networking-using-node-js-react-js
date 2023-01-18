@@ -4,15 +4,21 @@ import knex from "../utils/database.js"
 const routes = Router()
 
 routes.get("/", async (req, res) => {
-    const { query } = req.query
+    const query = knex("socialUsers").select(
+        "id",
+        "firstName",
+        "lastName",
+        knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
+        "profileImageUrl"
+    )
+console.log(req.query.search?.split(" "));
+    req.query.search?.split(" ").forEach(queryPart => {
+        console.log("call");
+        query.where("firstName", "like", `%${queryPart}%`)
+            .orWhere("lastName", "like", `%${queryPart}%`)
+    })
 
-    const users = await knex("socialUsers")
-        .where("name", "like", `%${query}%`)
-        .select(
-            "id",
-            "name",
-            "profileImageUrl"
-        )
+    const users = await query
 
     res.json(users)
 })
@@ -24,7 +30,9 @@ routes.get("/me/suggested", async (req, res) => {
         .whereNot({ id: currentUserId })
         .select(
             "id",
-            "name",
+            "firstName",
+            "lastName",
+            knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
             "profileImageUrl"
         )
 
@@ -40,7 +48,9 @@ routes.get("/:userId", async (req, res) => {
         .where({ id: userId })
         .select(
             "socialUsers.id",
-            "socialUsers.name",
+            "socialUsers.firstName",
+            "socialUsers.lastName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS fullName"),
             "socialUsers.profileImageUrl",
             "socialUsers.coverImageUrl",
             "socialUsers.work",
@@ -104,7 +114,7 @@ routes.get("/:userId/posts", async (req, res) => {
             "socialPosts.videoUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
-            "socialUsers.name AS userName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
             "socialUsers.profileImageUrl",
 
             knex("socialLikes")
@@ -197,7 +207,9 @@ routes.get("/:userId/followers", async (req, res) => {
         .join("socialUsers", "socialUsers.id", "socialFollowers.followerId")
         .select(
             "socialUsers.id",
-            "socialUsers.name",
+            "socialUsers.firstName",
+            "socialUsers.lastName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS fullName"),
             "socialUsers.profileImageUrl",
         )
 
@@ -215,7 +227,9 @@ routes.get("/:userId/followings", async (req, res) => {
         .limit(limit)
         .select(
             "socialUsers.id",
-            "socialUsers.name",
+            "socialUsers.firstName",
+            "socialUsers.lastName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS fullName"),
             "socialUsers.profileImageUrl",
         )
 

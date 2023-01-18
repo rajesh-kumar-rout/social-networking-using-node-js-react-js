@@ -46,7 +46,9 @@ routes.post(
 routes.post(
     "/register",
 
-    body("name").trim().isLength({ min: 2, max: 30 }),
+    body("firstName").trim().isLength({ max: 20 }),
+
+    body("lastName").trim().isLength({ max: 20 }),
 
     body("email")
         .trim()
@@ -57,33 +59,33 @@ routes.post(
     body("work")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("school")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("college")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("currentCity")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("homeTown")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
-    body("bio").trim().isLength({ min: 2, max: 30 }),
+    body("bio").trim().isLength({ max: 255 }),
 
     body("gender").notEmpty().isIn(["Male", "Female", "Others"]),
 
-    body("relationship").notEmpty().isIn("Single", "Married", "In a relationship"),
+    body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
 
     body("birthDate").optional().isDate(),
 
@@ -92,7 +94,7 @@ routes.post(
     checkValidationError,
 
     async (req, res) => {
-        const { name, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage, relationship, gender, bio, password } = req.body
+        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage, relationship, gender, bio, password } = req.body
 
         const isEmailTaken = await knex("socialUsers")
             .where({ email })
@@ -119,7 +121,8 @@ routes.post(
         }
 
         const [userId] = await knex("socialUsers").insert({
-            name,
+            firstName,
+            lastName,
             email,
             work,
             school,
@@ -188,9 +191,9 @@ routes.patch(
 
     isAuthenticated,
 
-    body("name")
-        .trim()
-        .isLength({ min: 2, max: 30 }),
+    body("firstName").trim().isLength({ max: 20 }),
+
+    body("lastName").trim().isLength({ max: 20 }),
 
     body("email")
         .trim()
@@ -200,31 +203,31 @@ routes.patch(
     body("work")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("school")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("college")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("currentCity")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
     body("homeTown")
         .optional()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .isLength({ max: 30 }),
 
-    body("bio").trim().isLength({ min: 2, max: 30 }),
+    body("bio").trim().isLength({ max: 255 }),
 
-    body("gender").notEmpty().isIn("Male", "Female", "Others"),
+    body("gender").notEmpty().isIn(["Male", "Female", "Others"]),
 
     body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
 
@@ -238,8 +241,8 @@ routes.patch(
 
     async (req, res) => {
         const { currentUserId } = req
-console.log(req.body.birthDate);
-        const { name, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, coverImage, profileImage } = req.body
+
+        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, coverImage, profileImage } = req.body
 
         const isEmailTaken = await knex("socialUsers")
             .where({ email })
@@ -271,7 +274,8 @@ console.log(req.body.birthDate);
         await knex("socialUsers")
             .where({ id: currentUserId })
             .update({
-                name,
+                firstName,
+                lastName,
                 email,
                 work,
                 school,
@@ -292,7 +296,9 @@ console.log(req.body.birthDate);
             .where({ id: currentUserId })
             .select(
                 "id",
-                "name",
+                "firstName",
+                "lastName",
+                knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
                 "email",
                 "profileImageUrl",
                 "coverImageUrl",
@@ -309,16 +315,22 @@ routes.get("/", async (req, res) => {
     const user = await knex("socialTokens")
         .where({ token })
         .select(
-            "socialUsers.name",
+            "socialUsers.id",
+            "socialUsers.firstName",
+            "socialUsers.lastName",
+            "socialUsers.bio",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS fullName"),
             "socialUsers.email",
             "socialUsers.profileImageUrl",
             "socialUsers.coverImageUrl",
-            "socialUsers.work",
-            "socialUsers.school",
-            "socialUsers.college",
+            knex.raw("IFNULL(socialUsers.work, '') AS work"),
+            knex.raw("IFNULL(socialUsers.school, '') AS school"),
+            knex.raw("IFNULL(socialUsers.college, '') AS college"),
+            knex.raw("IFNULL(socialUsers.homeTown, '') AS homeTown"),
+            knex.raw("IFNULL(socialUsers.currentCity, '') AS currentCity"),
             "socialUsers.gender",
             "socialUsers.relationship",
-            knex.raw("DATE_FORMAT(socialUsers.birthDate, '%Y-%m-%d') AS birthDate"),
+            knex.raw("IFNULL(DATE_FORMAT(socialUsers.birthDate, '%Y-%m-%d'), '') AS birthDate"),
             knex.raw("DATE_FORMAT(socialUsers.createdAt, '%Y-%m-%d') AS createdAt")
         )
         .join("socialUsers", "socialUsers.id", "socialTokens.userId")

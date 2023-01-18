@@ -20,7 +20,7 @@ routes.get("/feeds", async (req, res) => {
             "socialPosts.videoUrl",
             "socialPosts.createdAt",
             "socialPosts.userId",
-            "socialUsers.name AS userName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
             "socialUsers.profileImageUrl",
 
             knex("socialLikes")
@@ -60,7 +60,7 @@ routes.get("/:postId/comments", async (req, res) => {
         .join("socialUsers", "socialUsers.id", "socialComments.userId")
         .select(
             "socialUsers.id AS userId",
-            "socialUsers.name AS userName",
+            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
             "socialUsers.profileImageUrl",
             "socialComments.id",
             "socialComments.comment",
@@ -164,7 +164,7 @@ routes.post(
             .join("socialUsers", "socialUsers.id", "socialComments.userId")
             .select(
                 "socialUsers.id AS userId",
-                "socialUsers.name AS userName",
+                knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
                 "socialUsers.profileImageUrl",
                 "socialComments.id",
                 "socialComments.comment",

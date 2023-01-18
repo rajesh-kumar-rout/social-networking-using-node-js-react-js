@@ -1,6 +1,7 @@
 CREATE TABLE socialUsers (
     `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(30) NOT NULL,
+    `firtName` VARCHAR(20) NOT NULL,
+    `lastName` VARCHAR(20),
     `bio` VARCHAR(30) NOT NULL,
     `email` VARCHAR(30) NOT NULL UNIQUE,
     `password` VARCHAR(100) NOT NULL,
