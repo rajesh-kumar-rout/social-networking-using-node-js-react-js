@@ -17,16 +17,22 @@ export const dateToAgo = (date) => {
     return format.charAt(0).toUpperCase() + format.slice(1)
 }
 
-export const getBase64 = async (image) => {
+export const handleImage = async (event, setFieldValue) => {
+    const file = event.target.files[0]
+
+    if(file.size > 300000) {
+        return event.setCustomValidity("File must be within 3kb")
+    }
+
+    event.setCustomValidity("")
+
     const reader = new FileReader()
     
-    reader.readAsDataURL(image)
+    reader.readAsDataURL(file)
 
-    return new Promise((resolve) => {
-        reader.onload = () => {
-            resolve(reader.result)
-        }
-    })
+    reader.onload = () => {
+        setFieldValue(event.target.name, reader.result)
+    }
 }
 
 

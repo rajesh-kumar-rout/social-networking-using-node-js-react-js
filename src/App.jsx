@@ -15,7 +15,7 @@ import ProfileIndexPage from "./pages/ProfileIndexPage"
 import ProfilePage from "./pages/ProfilePage"
 import ProfilePhotosPage from "./pages/ProfilePhotosPage"
 import SearchPage from "./pages/SearchPage"
-import SignUpPage from "./pages/SignUpPage"
+import RegisterPage from "./pages/RegisterPage"
 
 export default function App() {
     return (
@@ -46,7 +46,7 @@ export default function App() {
 
                 <Route element={<NotAuthenticated />}>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/sign-up" element={<SignUpPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                 </Route>
             </Route>
         </Routes>
