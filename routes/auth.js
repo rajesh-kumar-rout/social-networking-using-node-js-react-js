@@ -87,7 +87,7 @@ routes.post(
 
     body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
 
-    body("birthDate").optional().isDate(),
+    body("birthDate").optional({ checkFalsy: true }).isDate(),
 
     body("password").isLength({ min: 6, max: 20 }),
 
@@ -187,7 +187,7 @@ routes.patch(
 )
 
 routes.patch(
-    "/edit-account",
+    "/edit-profile",
 
     isAuthenticated,
 
@@ -298,10 +298,20 @@ routes.patch(
                 "id",
                 "firstName",
                 "lastName",
+                "bio",
                 knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
                 "email",
                 "profileImageUrl",
                 "coverImageUrl",
+                knex.raw("IFNULL(work, '') AS work"),
+                knex.raw("IFNULL(school, '') AS school"),
+                knex.raw("IFNULL(college, '') AS college"),
+                knex.raw("IFNULL(homeTown, '') AS homeTown"),
+                knex.raw("IFNULL(currentCity, '') AS currentCity"),
+                "gender",
+                "relationship",
+                knex.raw("IFNULL(DATE_FORMAT(birthDate, '%Y-%m-%d'), '') AS birthDate"),
+                knex.raw("DATE_FORMAT(createdAt, '%Y-%m-%d') AS createdAt")
             )
             .first()
 

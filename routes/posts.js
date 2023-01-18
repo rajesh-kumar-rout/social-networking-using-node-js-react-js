@@ -82,10 +82,7 @@ routes.post("/",
         .trim()
         .isLength({ max: 255 }),
 
-    body("image")
-        .optional()
-        .trim()
-        .isURL(),
+    body("image").optional().isString(),
 
     body("video")
         .optional()

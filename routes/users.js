@@ -11,7 +11,7 @@ routes.get("/", async (req, res) => {
         knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
         "profileImageUrl"
     )
-console.log(req.query.search?.split(" "));
+
     req.query.search?.split(" ").forEach(queryPart => {
         console.log("call");
         query.where("firstName", "like", `%${queryPart}%`)
