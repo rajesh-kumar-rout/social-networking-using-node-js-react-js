@@ -164,7 +164,7 @@ export default function ProfileIndexPage() {
 
                     <div className="p-4 grid grid-cols-3 gap-1">
                         {photos.map(photo => (
-                            <img className="rounded object-cover" src={photo.imageUrl} alt="" />
+                            <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
 
                         ))}
                     </div>
@@ -177,9 +177,9 @@ export default function ProfileIndexPage() {
 
                     <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
                         {followings.map(following => (
-                            <Link to={`/profile/${following.id}`}>
+                            <Link key={following.id} to={`/profile/${following.id}`}>
                                 <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
-                                <p className="text-xs font-semibold mt-1 text-center">{following.name}</p>
+                                <p className="text-xs font-semibold mt-1 text-center">{following.fullName}</p>
                             </Link>
                         ))}
                         {/* <div>

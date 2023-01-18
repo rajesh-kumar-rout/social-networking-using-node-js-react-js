@@ -26,9 +26,9 @@ export default function ProfileFollowersPage() {
 
             <div className="p-4">
                 {followings.map(following => (
-                    <Link to={`/profile/${following.id}`} className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                    <Link key={following.id} to={`/profile/${following.id}`} className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                         <img className="rounded-full h-12 w-12 object-cover" src={following.profileImageUrl} alt="" />
-                        <p className="font-semibold">{following.name}</p>
+                        <p className="font-semibold">{following.fullName}</p>
                     </Link>
                 ))}
                 {/* <div className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">

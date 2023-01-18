@@ -3,9 +3,7 @@ import Account from "./components/Auth"
 import Authenticated from "./components/Authenticated"
 import Layout from "./components/Layout"
 import NotAuthenticated from "./components/NotAuthenticated"
-import AddPostPage from "./pages/AddPostPage"
 import EditProfilePage from "./pages/EditProfilePage"
-import EditAccountPage from "./pages/EditAccountPage"
 import FollowersPage from "./pages/FollowersPage"
 import FollowingPage from "./pages/FollowingsPage"
 import HomePage from "./pages/HomePage"
@@ -14,8 +12,8 @@ import ProfileFollowersPage from "./pages/ProfileFollowersPage"
 import ProfileIndexPage from "./pages/ProfileIndexPage"
 import ProfilePage from "./pages/ProfilePage"
 import ProfilePhotosPage from "./pages/ProfilePhotosPage"
-import SearchPage from "./pages/SearchPage"
 import RegisterPage from "./pages/RegisterPage"
+import SearchPage from "./pages/SearchPage"
 
 export default function App() {
     return (
@@ -25,7 +23,7 @@ export default function App() {
                     <Route element={<Layout />}>
                         <Route index element={<HomePage />} />
                         <Route path="/search/:query" element={<SearchPage />} />
-                        <Route path="/add-post" element={<AddPostPage />} />
+                        {/* <Route path="/add-post" element={<AddPostPage />} /> */}
                         {/* <Route path="/auth/profile/:userId" element={<ProfilePage />} /> */}
                         {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
                         {/* <Route path="/auth/edit-profile" element={<EditProfilePage />} /> */}

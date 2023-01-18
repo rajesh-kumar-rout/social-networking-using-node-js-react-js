@@ -10,7 +10,7 @@ export default function SearchPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchUsers = async () => {
-        const { data } = await axios.get(`/users?query=${query}`)
+        const { data } = await axios.get(`/users?search=${query}`)
 
         setUsers(data)
 

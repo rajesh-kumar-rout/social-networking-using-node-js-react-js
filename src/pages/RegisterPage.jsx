@@ -1,9 +1,10 @@
 import { ErrorMessage, Field, Form, Formik } from "formik"
+import moment from "moment"
 import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 import axios from "../utils/axios"
 import { handleImage } from "../utils/functions"
-import { signUpSchema } from "../utils/validationSchema"
+import { registerSchema } from "../utils/validationSchema"
 
 export default function RegisterPage() {
 
@@ -20,7 +21,7 @@ export default function RegisterPage() {
             window.location.href = "/"
 
         } catch ({ response }) {
-
+console.log(response);
             response?.status === 409 && toast.error("Email already exists")
         }
 
@@ -32,6 +33,7 @@ export default function RegisterPage() {
             initialValues={{
                 firstName: "",
                 lastName: "",
+                bio: "",
                 email: "",
                 school: "",
                 college: "",
@@ -39,14 +41,14 @@ export default function RegisterPage() {
                 homeTown: "",
                 currentCity: "",
                 gender: "",
-                relationship: "",
+                relationship: "Single",
                 birthDate: "",
                 profileImage: "",
                 coverImage: "",
                 password: "",
                 confirmPassword: ""
             }}
-            validationSchema={signUpSchema}
+            validationSchema={registerSchema}
             onSubmit={handleSubmit}
         >
             {({ isSubmitting, setFieldValue, handleBlur }) => (
@@ -56,7 +58,7 @@ export default function RegisterPage() {
 
                         <div className="p-4">
                             <div className="form-group">
-                                <label htmlFor="firstName" className="form-label">First Name</label>
+                                <label htmlFor="firstName" className="form-label form-label-required">First Name</label>
                                 <Field
                                     type="text"
                                     id="firstName"
@@ -78,7 +80,19 @@ export default function RegisterPage() {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="email" className="form-label">Email</label>
+                                <label htmlFor="bio" className="form-label">Bio</label>
+                                <Field
+                                    type="text"
+                                    id="bio"
+                                    name="bio"
+                                    className="form-control"
+                                    as="textarea"
+                                />
+                                <ErrorMessage component="p" name="bio" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label form-label-required">Email</label>
                                 <Field
                                     type="email"
                                     id="email"
@@ -95,21 +109,22 @@ export default function RegisterPage() {
                                     id="birthDate"
                                     className="form-control"
                                     name="birthDate"
+                                    max={moment().subtract(10, "years").format("YYYY-MM-DD")}
                                 />
                                 <ErrorMessage component="p" name="birthDate" className="form-error" />
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">Gender</label>
+                                <label className="form-label form-label-required">Gender</label>
 
                                 <div className="mt-1 flex gap-6">
                                     <div className="flex items-center gap-2">
                                         <Field
                                             type="radio"
-                                            id="email"
+                                            id="male"
                                             className=" text-teal-600 focus:ring-teal-600"
                                             name="gender"
-                                            value="male"
+                                            value="Male"
                                         />
                                         <label htmlFor="male">Male</label>
                                     </div>
@@ -119,12 +134,12 @@ export default function RegisterPage() {
                                             type="radio"
                                             id="female"
                                             className="text-teal-600 focus:ring-teal-600"
-                                            name="female"
+                                            name="gender"
+                                            value="Female"
                                         />
                                         <label htmlFor="female">Female</label>
                                     </div>
                                 </div>
-
                                 <ErrorMessage component="p" name="gender" className="form-error" />
                             </div>
 
@@ -137,6 +152,28 @@ export default function RegisterPage() {
                                     name="work"
                                 />
                                 <ErrorMessage component="p" name="work" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="school" className="form-label">School</label>
+                                <Field
+                                    type="text"
+                                    id="school"
+                                    className="form-control"
+                                    name="school"
+                                />
+                                <ErrorMessage component="p" name="school" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="college" className="form-label">College</label>
+                                <Field
+                                    type="text"
+                                    id="college"
+                                    className="form-control"
+                                    name="college"
+                                />
+                                <ErrorMessage component="p" name="college" className="form-error" />
                             </div>
 
                             <div className="form-group">
@@ -167,7 +204,7 @@ export default function RegisterPage() {
                                     id="relationship"
                                     className="form-control"
                                     name="relationship"
-                                    as="relationship"
+                                    as="select"
                                 >
                                     <option value="Single">Single</option>
                                     <option value="Married">Married</option>
@@ -184,7 +221,6 @@ export default function RegisterPage() {
                                     name="profileImage"
                                     onBlur={handleBlur}
                                     onChange={event => handleImage(event, setFieldValue)}
-                                    ref={profileImageRef}
                                     accept=".jpeg, .jpg, .png"
                                 />
                             </div>
@@ -199,12 +235,11 @@ export default function RegisterPage() {
                                     onBlur={handleBlur}
                                     onChange={event => handleImage(event, setFieldValue)}
                                     accept=".jpeg, .jpg, .png"
-                                    ref={coverImageRef}
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="password" className="form-label">Password</label>
+                                <label htmlFor="password" className="form-label form-label-required">Password</label>
                                 <Field
                                     type="password"
                                     id="password"
@@ -215,7 +250,7 @@ export default function RegisterPage() {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                <label htmlFor="confirmPassword" className="form-label form-label-required">Confirm Password</label>
                                 <Field
                                     type="password"
                                     id="confirmPassword"

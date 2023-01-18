@@ -26,7 +26,12 @@ html {
     }
 
     .form-label {
-        @apply font-semibold mb-1 inline-block;
+        @apply font-semibold mb-1 flex items-center;
+    }
+
+    .form-label-required::after {
+        content: '*';
+        @apply text-red-600 ml-1 flex items-center;
     }
 
     .form-error {

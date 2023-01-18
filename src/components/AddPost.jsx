@@ -38,7 +38,7 @@ export default function AddPost() {
                 <img className="w-10 h-10 object-cover rounded-full" src="https://res.cloudinary.com/dhyc0vsbz/image/upload/w_510,h_360,c_fill/v1673674375/ytm0vtt148wl59sfqeqk.jpg" alt="" />
                 <div className="flex-1">
                     <textarea name="description" className="bg-gray-100 resize-none border-2 focus:ring-1 focus:border-teal-600 focus:ring-teal-600 
-            outline-none border-gray-300 p-2 rounded-md text-gray-800 w-full" placeholder={`What's on your mind, ${currentUser.name}?`} />
+            outline-none border-gray-300 p-2 rounded-md text-gray-800 w-full" placeholder={`What's on your mind, ${currentUser.firstName}?`} />
 
                     {type === "photo" && <input type="text" name="image" className="bg-gray-100 resize-none border-2 focus:ring-2 focus:ring-teal-600 outline-none
              border-gray-300 p-2 rounded-md text-gray-800 w-full mt-2" placeholder="Enter video link" />}

@@ -100,7 +100,7 @@ export default function ProfilePage() {
 
                         <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between flex-1">
                             <div>
-                                <p className="text-center lg:text-start text-2xl font-bold mb-2">{user.name}</p>
+                                <p className="text-center lg:text-start text-2xl font-bold mb-2">{user.fullName}</p>
                                 <p className="flex items-center gap-3 text-gray-700 mb-3 lg:mb-0">
                                     {user.totalFollowers} Followers • {user.totalFollowings} Followings • {user.totalPosts} Posts
                                 </p>

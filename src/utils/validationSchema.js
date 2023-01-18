@@ -46,18 +46,48 @@ export const loginSchema = object().shape({
     password: string().required("Password is required")
 })
 
-export const signUpSchema = object().shape({
-    name: string()
+export const registerSchema = object().shape({
+    firstName: string()
         .trim()
-        .min(2, "Name must be at least 2 characters")
-        .max(30, "Name must be within 30 characters")
-        .required("Name is required"),
+        .max(20, "First name must be within 20 characters")
+        .required("First name is required"),
+
+    lastName: string()
+        .trim()
+        .max(20, "Last name must be within 20 characters"),
+
+    bio: string()
+        .trim()
+        .max(255, "Bio must be within 255 characters")
+        .required("Bio is required"),
 
     email: string()
         .email("Invalid email")
         .trim()
         .max(30, "Email must be within 30 characters")
         .required("Email is required"),
+
+    work: string()
+        .trim()
+        .max(30, "Work must be within 30 characters"),
+
+    school: string()
+        .trim()
+        .max(30, "School must be within 30 characters"),
+
+    college: string()
+        .trim()
+        .max(30, "College must be within 30 characters"),
+
+    gender: string().required("Please select your gender"),
+
+    currentCity: string()
+        .trim()
+        .max(30, "Current city must be within 30 characters"),
+
+    homeTown: string()
+        .trim()
+        .max(30, "Homw town must be within 30 characters"),
 
     password: string()
         .min(6, "Password must be at least 6 characters")
@@ -67,4 +97,47 @@ export const signUpSchema = object().shape({
     confirmPassword: string()
         .required("Please confirm your password")
         .oneOf([ref("password")], "Password does not match"),
+})
+export const editProfileSchema = object().shape({
+    firstName: string()
+        .trim()
+        .max(20, "First name must be within 20 characters")
+        .required("First name is required"),
+
+    lastName: string()
+        .trim()
+        .max(20, "Last name must be within 20 characters"),
+
+    bio: string()
+        .trim()
+        .max(255, "Bio must be within 255 characters")
+        .required("Bio is required"),
+
+    email: string()
+        .email("Invalid email")
+        .trim()
+        .max(30, "Email must be within 30 characters")
+        .required("Email is required"),
+
+    work: string()
+        .trim()
+        .max(30, "Work must be within 30 characters"),
+
+    school: string()
+        .trim()
+        .max(30, "School must be within 30 characters"),
+
+    college: string()
+        .trim()
+        .max(30, "College must be within 30 characters"),
+
+    gender: string().required("Please select your gender"),
+
+    currentCity: string()
+        .trim()
+        .max(30, "Current city must be within 30 characters"),
+
+    homeTown: string()
+        .trim()
+        .max(30, "Homw town must be within 30 characters")
 })

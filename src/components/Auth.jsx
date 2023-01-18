@@ -11,6 +11,7 @@ export default function Auth() {
 
     const fetchAccount = async () => {
         const { data } = await axios.get("/auth")
+        console.log(data);
         setCurrentUser(data)
         setIsFetching(false)
     }

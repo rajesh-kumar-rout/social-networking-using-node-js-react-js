@@ -38,7 +38,7 @@ export default function HomePage() {
 
     async function handleToggleLike(postId) {
         const {data} = await axios.patch(`/posts/${postId}/toggle-like`)
-console.log(data);
+
         const newPosts = [...posts]
 
         const index = newPosts.findIndex(post => post.id === postId)
@@ -84,9 +84,9 @@ console.log(data);
 
                     <div className="p-4">
                         {users.map(user => (
-                            <Link to={`/profile/${user.id}`} className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
+                            <Link key={user.id} to={`/profile/${user.id}`} className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                                 <img className="rounded-full h-12 w-12 object-cover" src={user.profileImageUrl} alt="" />
-                                <p className="font-semibold">{user.name}</p>
+                                <p className="font-semibold">{user.fullName}</p>
                             </Link>
                         ))}
 

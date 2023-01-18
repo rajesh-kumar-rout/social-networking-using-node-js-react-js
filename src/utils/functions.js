@@ -21,10 +21,10 @@ export const handleImage = async (event, setFieldValue) => {
     const file = event.target.files[0]
 
     if(file.size > 300000) {
-        return event.setCustomValidity("File must be within 3kb")
+        return event.target.setCustomValidity("File must be within 3kb")
     }
 
-    event.setCustomValidity("")
+    event.target.setCustomValidity("")
 
     const reader = new FileReader()
     
