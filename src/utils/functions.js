@@ -35,6 +35,20 @@ export const handleImage = async (event, setFieldValue) => {
     }
 }
 
+export const getBase64 = async (file) => {
+    if(!file) return ""
+    
+    const reader = new FileReader()
+    
+    reader.readAsDataURL(file)
+
+    return new Promise((resolve, reject) => {
+        reader.onload = () => {
+            resolve(reader.result)
+        }
+    })
+}
+
 
 
 

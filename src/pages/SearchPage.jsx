@@ -26,7 +26,7 @@ export default function SearchPage() {
     }
 
     return (
-        <div className="px-2">
+        <div>
             <UserList title={`${users.length} Users Found`} users={users} />
         </div>
     )

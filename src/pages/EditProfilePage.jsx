@@ -9,7 +9,7 @@ import { handleImage } from "../utils/functions"
 import { changePasswordSchema, editAccountSchema, editProfileSchema } from "../utils/validationSchema"
 
 export default function EditProfilePage() {
-    const { currentUser } = useContext(AuthContext)
+    const { currentUser, setCurrentUser } = useContext(AuthContext)
     const [user, setUser] = useState({})
     const [isDeleting, setIsDeleting] = useState(false)
 
@@ -17,9 +17,11 @@ export default function EditProfilePage() {
         setSubmitting(true)
 
         try {
-            await axios.patch("/auth/edit-account", values)
+            const { data } = await axios.patch("/auth/edit-profile", values)
 
-            toast.success("Account updated successfully")
+            setCurrentUser(data)
+
+            toast.success("Profile updated successfully")
 
         } catch ({ response }) {
 
@@ -254,7 +256,7 @@ export default function EditProfilePage() {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div>
                                 <label htmlFor="coverImage" className="form-label">Cover Image</label>
                                 <input
                                     type="file"

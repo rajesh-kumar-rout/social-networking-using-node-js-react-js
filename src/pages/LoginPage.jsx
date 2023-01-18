@@ -78,9 +78,9 @@ export default function LoginPage() {
                                 </button>
                             </div>
 
-                            <p className="text-center text-gray-700">Do not have an account ? <Link to="/sign-up" className=" text-teal-600">Register</Link></p>
-                            {/* <a href="" className="font-bold text-teal-600 text-center block">Register</a> */}
-
+                            <p className="text-center text-gray-700">
+                                Do not have an account ? <Link to="/register" className=" text-teal-600">Register</Link>
+                            </p>
                         </div>
                         <Footer />
                     </Form>

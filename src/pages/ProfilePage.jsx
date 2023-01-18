@@ -81,7 +81,7 @@ export default function ProfilePage() {
 
     return (
         <div>
-            <div className="bg-white shadow-md pb-8">
+            <div className="bg-white border-b-2 border-gray-300 pb-8">
                 <div className="mx-auto max-w-[1000px]">
                     <img
                         src={user.coverImageUrl ? user.coverImageUrl : DEFAULT_COVER_IMG}

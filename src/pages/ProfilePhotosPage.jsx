@@ -25,6 +25,7 @@ export default function ProfilePhotosPage() {
             </p>
 
             <div className="p-4 grid grid-cols-4 gap-2">
+            {photos.length === 0 && <p className="text-sm text-gray-600">No Photos Found</p>}
                 {photos.map(photo => (
                 <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
 

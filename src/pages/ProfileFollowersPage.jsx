@@ -25,6 +25,7 @@ export default function ProfileFollowersPage() {
             </p>
 
             <div className="p-4">
+            {followings.length === 0 && <p className="text-sm text-gray-600">No Followings Found</p>}
                 {followings.map(following => (
                     <Link key={following.id} to={`/profile/${following.id}`} className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 last:pb-0">
                         <img className="rounded-full h-12 w-12 object-cover" src={following.profileImageUrl} alt="" />

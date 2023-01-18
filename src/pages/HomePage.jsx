@@ -61,7 +61,7 @@ export default function HomePage() {
 
     return (
         <div className="my-8 flex flex-col md:flex-row gap-4 justify-center mx-auto">
-            <div>
+            <div className="space-y-4">
                 <AddPost />
 
                 {posts.map(post => (

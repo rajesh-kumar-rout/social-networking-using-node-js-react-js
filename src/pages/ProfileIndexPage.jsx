@@ -163,12 +163,14 @@ export default function ProfileIndexPage() {
                     </h2>
 
                     <div className="p-4 grid grid-cols-3 gap-1">
+                        {photos.length === 0 && <p className="text-sm text-gray-600">No Photos Found</p>}
+
                         {photos.map(photo => (
                             <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
-
                         ))}
                     </div>
                 </div>
+
                 <div className="bg-white border-2 border-gray-300 rounded-md">
                     <h2 className="border-b-2 border-gray-300 py-3 px-4 flex justify-between items-center">
                         <p className="text-lg font-bold text-teal-600">Followings</p>
@@ -176,6 +178,8 @@ export default function ProfileIndexPage() {
                     </h2>
 
                     <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
+                        {followings.length === 0 && <p className="text-sm text-gray-600">No Followings Found</p>}
+
                         {followings.map(following => (
                             <Link key={following.id} to={`/profile/${following.id}`}>
                                 <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
@@ -206,7 +210,10 @@ export default function ProfileIndexPage() {
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
+                {posts.length === 0 && <p className="font-bold w-full post:w-[600px] text-center text-teal-600 bg-white 
+                border-2 border-x-0 post:border-x-2 border-gray-300
+                rounded-md p-4">No Posts Found</p>}
                 {posts.map(post => (
                     <Post
                         key={post.id}
