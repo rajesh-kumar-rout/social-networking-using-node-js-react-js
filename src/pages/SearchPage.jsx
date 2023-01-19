@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 import Loader from "../components/Loader"
 import UserList from "../components/Users"
 import axios from "../utils/axios"
 
 export default function SearchPage() {
-    const { query } = useParams()
+    const [searchParams] = useSearchParams()
+    const query = searchParams.get("query")
     const [users, setUsers] = useState([])
     const [isFetching, setIsFetching] = useState(true)
 
@@ -18,6 +19,8 @@ export default function SearchPage() {
     }
 
     useEffect(() => {
+        setUsers([])
+        setIsFetching(true)
         fetchUsers()
     }, [query])
 
@@ -25,9 +28,5 @@ export default function SearchPage() {
         return <Loader />
     }
 
-    return (
-        <div>
-            <UserList title={`${users.length} Users Found`} users={users} />
-        </div>
-    )
+    return <UserList title={`${users.length} Users Found`} users={users} />
 }

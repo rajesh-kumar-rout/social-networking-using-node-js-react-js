@@ -1,36 +1,18 @@
 import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "./Auth"
 import { toast } from "react-toastify"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import axios from "../utils/axios"
-import { dateToAgo } from "../utils/functions"
+import { DEFAULT_PROFILE_IMG } from "../utils/constants"
+import { AuthContext } from "./Auth"
 import Comment from "./Comment"
 
-const commentss = [
-    {
-        profileImgUrl: "https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=",
-
-        comment: 'Lorem Ipsum is simply dummy text of the printing',
-        createdAt: '1 day ago',
-        userName: 'Amir Khan'
-    },
-    {
-        profileImgUrl: "https://media.istockphoto.com/id/1370690627/photo/side-view-of-woman-wants-to-scream-covers-mouth-with-palm-stares-at-something-terrible.jpg?b=1&s=170667a&w=0&k=20&c=N6-Ip3xict73SOJ15F-84-Z51_ZmXvvoXwZlTBi9POg=",
-
-        comment: 'Lorem Ipsum is simply dummy text of the printing',
-        createdAt: '2 day ago',
-        userName: 'John Abraham'
-    },
-]
-
-export default function CommentBox({ postId, onCommentDelete, onCommentCreate }) {
-    const [comments, setComments] = useState(commentss)
+export default function CommentBox({ postId }) {
+    const [comments, setComments] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const { currentUser } = useContext(AuthContext)
 
     async function fetchComments() {
         const { data } = await axios.get(`/posts/${postId}/comments`)
-        // setComments(data)
+        setComments(data)
         setIsLoading(false)
     }
 
@@ -78,13 +60,13 @@ export default function CommentBox({ postId, onCommentDelete, onCommentCreate })
                             className="h-9 w-9 rounded-full object-cover"
                         />
 
-                        <form onSubmit={handleAddComment} className="flex-1">
-                            <input
-                                contentEditable
-                                className="form-control text-sm resize-none bg-gray-100 h-20 block text-start"
+                        <form onSubmit={handleAddComment} className="flex-1 flex flex-col gap-2 justify-end items-end">
+                            <textarea
+                                className="form-control bg-gray-100 text-sm resize-none"
                                 name="comment"
                                 placeholder="Write your comment..."
                             />
+                            <button className="px-2 py-1 rounded bg-teal-600 text-white text-sm font-semibold">Post</button>
                         </form>
                     </div>
 

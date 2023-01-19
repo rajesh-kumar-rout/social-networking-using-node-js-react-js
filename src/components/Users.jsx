@@ -4,7 +4,7 @@ import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 export default function Users({ title, users }) {
 
     return (
-        <div className="bg-white max-w-2xl border-2 border-gray-300 rounded-md mx-auto my-6">
+        <div className="bg-white max-w-xl border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md mx-auto my-6">
             <p className="border-b-2 border-gray-300 px-4 py-3 font-bold text-lg text-teal-600">{title}</p>
 
             <div>

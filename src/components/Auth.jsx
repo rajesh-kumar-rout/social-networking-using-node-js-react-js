@@ -21,7 +21,11 @@ export default function Auth() {
     }, [])
 
     if (isFetching) {
-        return <Loader />
+        return (
+            <div className="flex items-center justify-center w-full h-screen">
+                <Loader />
+            </div>
+        )
     }
 
     return (

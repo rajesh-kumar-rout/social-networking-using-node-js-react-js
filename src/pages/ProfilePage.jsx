@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, Outlet, useParams } from "react-router-dom"
-import { toast } from "react-toastify"
 import { AuthContext } from "../components/Auth"
 import Loader from "../components/Loader"
-import Profile from "../components/Profile"
 import axios from "../utils/axios"
 import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { postImgUrl } from "../utils/functions"
@@ -28,18 +26,6 @@ export default function ProfilePage() {
         setIsLoading(false)
     }
 
-    async function handleDeletePost(postId) {
-        setIsLoading(true)
-
-        await axios.delete(`/posts/${postId}`)
-
-        toast.success("Post deleted successfully")
-
-        setPosts(posts.filter(post => post.id !== postId))
-
-        setIsLoading(false)
-    }
-
     async function handleToggleFollow() {
         setIsLoading(true)
 
@@ -52,20 +38,6 @@ export default function ProfilePage() {
         })
 
         setIsLoading(false)
-    }
-
-    async function handleToggleLike(postId) {
-        axios.patch(`/posts/${postId}/toggle-like`)
-
-        const newPosts = [...posts]
-
-        const index = posts.findIndex(post => post.id === postId)
-
-        newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1
-
-        newPosts[index].isLiked = !newPosts[index].isLiked
-
-        setPosts(newPosts)
     }
 
     useEffect(() => {
@@ -90,8 +62,8 @@ export default function ProfilePage() {
                     />
 
                     <div
-                        className="flex flex-col lg:flex-row items-center lg:items-end gap-4 relative bottom-20 lg:bottom-14 -mb-20 
-                    lg:-mb-14 lg:pl-10"
+                        className="flex flex-col lg:flex-row items-center lg:items-end gap-4 relative bottom-20 lg:bottom-14 
+                        -mb-20 lg:-mb-14 lg:pl-10"
                     >
                         <img
                             src={user.profileImageUrl ? postImgUrl(user.profileImageUrl) : DEFAULT_PROFILE_IMG}

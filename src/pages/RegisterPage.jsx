@@ -21,7 +21,7 @@ export default function RegisterPage() {
             window.location.href = "/"
 
         } catch ({ response }) {
-console.log(response);
+
             response?.status === 409 && toast.error("Email already exists")
         }
 

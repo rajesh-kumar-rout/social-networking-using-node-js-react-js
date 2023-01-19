@@ -81,18 +81,22 @@ export default function ProfileIndexPage() {
     }, [userId])
 
     if (isLoading) {
-        return <Loader />
+        return (
+            <div className="my-4">
+                <Loader />
+            </div>
+        )
     }
 
     return (
-        <div className="my-5 flex flex-col md:flex-row gap-4 max-w-5xl mx-auto justify-start">
+        <div className="my-5 flex flex-col lg:flex-row gap-4 max-w-5xl mx-auto justify-start">
             <div className="space-y-4">
-                <div className="bg-white border-2 border-gray-300 rounded-md">
+                <div className="bg-white border-2 border-x-0 md:border-x-2 border-gray-300 md:rounded-md">
                     <h2 className="text-lg font-bold border-b-2 border-gray-300 py-3 px-4 text-teal-600">Bio</h2>
                     <p className="text-gray-600 p-4">{user.bio}</p>
                 </div>
 
-                <div className="bg-white border-2 border-gray-300 rounded-md">
+                <div className="bg-white border-2 border-x-0 md:border-x-2 border-gray-300 md:rounded-md">
                     <h2 className="text-lg font-bold border-b-2 border-gray-300 py-3 px-4 text-teal-600">Intro</h2>
                     <div className="space-y-4 p-4">
                         {user.work && (
@@ -156,64 +160,65 @@ export default function ProfileIndexPage() {
                     </div>
                 </div>
 
-                <div className="bg-white border-2 border-gray-300 rounded-md">
+                <div className="bg-white border-2 border-x-0 md:border-x-2 border-gray-300 md:rounded-md">
                     <h2 className="border-b-2 border-gray-300 py-3 px-4 flex justify-between items-center">
                         <p className="text-lg font-bold text-teal-600">Photos</p>
-                        <Link to="photos" className="text-sm font-semibold text-teal-600 border border-transparent rounded-md p-1 hover:border-teal-600 ">View All</Link>
+                        <Link
+                            to="photos"
+                            className="text-sm font-semibold text-teal-600 border border-transparent rounded-md p-1 
+                            hover:border-teal-600"
+                        >
+                            View All
+                        </Link>
                     </h2>
 
-                    <div className="p-4 grid grid-cols-3 gap-1">
-                        {photos.length === 0 && <p className="text-sm text-gray-600">No Photos Found</p>}
-
-                        {photos.map(photo => (
-                            <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
-                        ))}
-                    </div>
+                    {photos.length === 0 ? (
+                        <p className="text-sm text-gray-600 p-4 text-center">No Photos Found</p>
+                    ) : (
+                        <div className="p-4 grid grid-cols-3 gap-1">
+                            {photos.map(photo => (
+                                <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                <div className="bg-white border-2 border-gray-300 rounded-md">
+                <div className="bg-white border-2 border-x-0 md:border-x-2 border-gray-300 md:rounded-md">
                     <h2 className="border-b-2 border-gray-300 py-3 px-4 flex justify-between items-center">
                         <p className="text-lg font-bold text-teal-600">Followings</p>
-                        <Link to="followings" className="text-sm font-semibold text-teal-600 border border-transparent rounded-md p-1 hover:border-teal-600 ">View All</Link>
+                        <Link
+                            to="followings"
+                            className="text-sm font-semibold text-teal-600 border border-transparent rounded-md p-1 
+                            hover:border-teal-600"
+                        >
+                            View All
+                        </Link>
                     </h2>
 
-                    <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
-                        {followings.length === 0 && <p className="text-sm text-gray-600">No Followings Found</p>}
-
-                        {followings.map(following => (
-                            <Link key={following.id} to={`/profile/${following.id}`}>
-                                <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
-                                <p className="text-xs font-semibold mt-1 text-center">{following.fullName}</p>
-                            </Link>
-                        ))}
-                        {/* <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1338134336/photo/headshot-portrait-african-30s-man-smile-look-at-camera.jpg?b=1&s=170667a&w=0&k=20&c=j-oMdWCMLx5rIx-_W33o3q3aW9CiAWEvv9XrJQ3fTMU=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">Alia Bhat</p>
+                    {followings.length === 0 ? (
+                        <p className="text-sm text-gray-600 text-center p-4">No Followings Found</p>
+                    ) : (
+                        <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
+                            {followings.map(following => (
+                                <Link key={following.id} to={`/profile/${following.id}`}>
+                                    <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
+                                    <p className="text-xs font-semibold mt-1 text-center">{following.fullName}</p>
+                                </Link>
+                            ))}
                         </div>
-                        <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">Ranbir Kapoor</p>
-                        </div>
-                        <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1386479313/photo/happy-millennial-afro-american-business-woman-posing-isolated-on-white.jpg?b=1&s=170667a&w=0&k=20&c=ahypUC_KTc95VOsBkzLFZiCQ0VJwewfrSV43BOrLETM=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">Salman Khan</p>
-                        </div>
-                        <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1399788030/photo/portrait-of-young-confident-indian-woman-pose-on-background.jpg?b=1&s=170667a&w=0&k=20&c=8D_YP_bxKh8CH_W3n0kKr9bzQjZeYxUv9QgqfXjHNX8=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">Amir Khan</p>
-                        </div>
-                        <div>
-                            <img className="rounded object-cover" src="https://media.istockphoto.com/id/1368424494/photo/studio-portrait-of-a-cheerful-woman.jpg?b=1&s=170667a&w=0&k=20&c=VEE1756TeCzYH2uPsFZ_P8H3Di2j_jw8aOT6zd7V8JY=" alt="" />
-                            <p className="text-xs font-semibold mt-1 text-center">John Abraham</p>
-                        </div> */}
-                    </div>
+                    )}
                 </div>
             </div>
 
             <div className="space-y-4 flex-1">
-                {posts.length === 0 && <p className="font-bold w-full post:w-[600px] text-center text-teal-600 bg-white 
-                border-2 border-x-0 post:border-x-2 border-gray-300
-                rounded-md p-4">No Posts Found</p>}
+                {posts.length === 0 && (
+                    <p
+                        className="font-bold w-full sm:w-[600px] text-center text-teal-600 bg-white border-2 border-x-0 
+                        sm:border-x-2 border-gray-300 rounded-md p-4"
+                    >
+                        No Posts Found
+                    </p>
+                )}
                 {posts.map(post => (
                     <Post
                         key={post.id}

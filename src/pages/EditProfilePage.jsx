@@ -1,16 +1,14 @@
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import moment from "moment"
-import { useContext, useEffect, useReducer, useState } from "react"
+import { useContext, useState } from "react"
 import { toast } from "react-toastify"
 import { AuthContext } from "../components/Auth"
-import Loader from "../components/Loader"
 import axios from "../utils/axios"
 import { handleImage } from "../utils/functions"
-import { changePasswordSchema, editAccountSchema, editProfileSchema } from "../utils/validationSchema"
+import { changePasswordSchema, editProfileSchema } from "../utils/validationSchema"
 
 export default function EditProfilePage() {
     const { currentUser, setCurrentUser } = useContext(AuthContext)
-    const [user, setUser] = useState({})
     const [isDeleting, setIsDeleting] = useState(false)
 
     const handleProfileUpdate = async (values, { setSubmitting }) => {
@@ -84,7 +82,8 @@ export default function EditProfilePage() {
                 onSubmit={handleProfileUpdate}
             >
                 {({ isSubmitting, setFieldValue, handleBlur }) => (
-                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-gray-300 rounded-md">
+                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 
+                    sm:rounded-md">
                         <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-teal-600 font-bold">Update Your Profile</p>
 
                         <div className="p-4">
@@ -293,7 +292,8 @@ export default function EditProfilePage() {
                 }}
             >
                 {({ isSubmitting }) => (
-                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-gray-300 rounded-md">
+                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 
+                    sm:rounded-md">
                         <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-teal-600 font-bold">Change Password</p>
 
                         <div className="p-4">
@@ -344,14 +344,14 @@ export default function EditProfilePage() {
                 )}
             </Formik>
 
-            <div className="max-w-xl mx-auto my-8 bg-white border-2 border-gray-300 rounded-md">
+            <div className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md">
                 <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-red-600 font-bold">Delete Account</p>
 
                 <div className="p-4 text-gray-600">
                     Are you sure you want to delete your account ? This action can not be un done. Once you delete your
                     account all your photos and post will be deleted too.
-
                 </div>
+
                 <div className="px-4 py-3 border-t-2 border-gray-300">
                     <button
                         type="submit"
