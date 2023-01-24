@@ -1,10 +1,10 @@
+import cors from "cors"
 import { config } from "dotenv"
 import express from "express"
 import { authenticate, isAuthenticated } from "./middlewares/authentication.js"
 import authRoutes from "./routes/auth.js"
 import postRoutes from "./routes/posts.js"
 import userRoutes from "./routes/users.js"
-import cors from "cors"
 
 config()
 

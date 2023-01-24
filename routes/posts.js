@@ -60,16 +60,12 @@ routes.get("/:postId/comments", async (req, res) => {
         .join("socialUsers", "socialUsers.id", "socialComments.userId")
         .select(
             "socialUsers.id AS userId",
-            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
+            knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS userName"),
             "socialUsers.profileImageUrl",
             "socialComments.id",
-            "socialComments.comment",
+            "socialComments.comments",
             "socialComments.createdAt",
-
-            knex.raw(
-                "IF(socialComments.userId = ?, 1, 0) AS isCommented",
-                [currentUserId]
-            )
+            knex.raw("IIF(socialComments.userId = ?, 1, 0) AS isCommented", [currentUserId])
         )
 
     res.json(comments)
@@ -84,7 +80,7 @@ routes.post("/",
 
     body("image").optional().isString(),
 
-    body("video")
+    body("videoUrl")
         .optional()
         .trim()
         .isURL()
@@ -94,15 +90,15 @@ routes.post("/",
     checkValidationError,
 
     async (req, res) => {
-        const { description, image, video } = req.body
+        const { description, image, videoUrl } = req.body
 
         const { currentUserId } = req
 
-        if (!description && !image && !video) {
+        if (!description && !image && !videoUrl) {
             return res.status(422).json({ error: "Either desription or image or video is required" })
         }
 
-        if(image && video) {
+        if(image && videoUrl) {
             return res.status(422).json({ error: "Either provide image or video" })
         }
 
@@ -118,7 +114,7 @@ routes.post("/",
             description,
             imageUrl,
             imageId,
-            videoUrl: video,
+            videoUrl,
             userId: currentUserId
         })
 
@@ -151,7 +147,7 @@ routes.post(
         }
 
         const [insertId] = await knex("socialComments").insert({
-            comment,
+            comments: comment,
             userId: currentUserId,
             postId
         })
@@ -161,10 +157,10 @@ routes.post(
             .join("socialUsers", "socialUsers.id", "socialComments.userId")
             .select(
                 "socialUsers.id AS userId",
-                knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
+                knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS userName"),
                 "socialUsers.profileImageUrl",
                 "socialComments.id",
-                "socialComments.comment",
+                "socialComments.comments",
                 "socialComments.createdAt",
                 knex.raw("1 AS isCommented")
             )

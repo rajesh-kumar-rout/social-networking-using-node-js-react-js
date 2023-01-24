@@ -46,9 +46,15 @@ routes.post(
 routes.post(
     "/register",
 
-    body("firstName").trim().isLength({ max: 20 }),
+    body("firstName")
+        .isString()
+        .trim()
+        .isLength({ max: 30 }),
 
-    body("lastName").trim().isLength({ max: 20 }),
+    body("lastName")
+        .isString()
+        .trim()
+        .isLength({ max: 30 }),
 
     body("email")
         .trim()
@@ -57,35 +63,38 @@ routes.post(
         .isLength({ max: 30 }),
 
     body("work")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("school")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("college")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("currentCity")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("homeTown")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
-    body("bio").trim().isLength({ max: 255 }),
+    body("bio")
+        .isString()
+        .trim()
+        .isLength({ max: 255 }),
 
-    body("gender").notEmpty().isIn(["Male", "Female", "Others"]),
+    body("gender").isIn(["Male", "Female", "Others"]),
 
-    body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
+    body("relationship").isIn(["Single", "Married", "In a relationship"]),
 
     body("birthDate").optional({ checkFalsy: true }).isDate(),
 
@@ -190,53 +199,59 @@ routes.patch(
     "/edit-profile",
 
     isAuthenticated,
+    
+    body("firstName")
+        .isString()
+        .trim()
+        .isLength({ max: 30 }),
 
-    body("firstName").trim().isLength({ max: 20 }),
-
-    body("lastName").trim().isLength({ max: 20 }),
+    body("lastName")
+        .isString()
+        .trim()
+        .isLength({ max: 30 }),
 
     body("email")
         .trim()
         .toLowerCase()
-        .isEmail(),
+        .isEmail()
+        .isLength({ max: 30 }),
 
     body("work")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("school")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("college")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("currentCity")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
     body("homeTown")
-        .optional()
+        .isString()
         .trim()
         .isLength({ max: 30 }),
 
-    body("bio").trim().isLength({ max: 255 }),
+    body("bio")
+        .isString()
+        .trim()
+        .isLength({ max: 255 }),
 
-    body("gender").notEmpty().isIn(["Male", "Female", "Others"]),
+    body("gender").isIn(["Male", "Female", "Others"]),
 
-    body("relationship").notEmpty().isIn(["Single", "Married", "In a relationship"]),
+    body("relationship").isIn(["Single", "Married", "In a relationship"]),
 
-    body("birthDate").optional(),
-
-    body("image").optional().isURL(),
-
-    body("video").optional().isURL(),
-
+    body("birthDate").optional({ checkFalsy: true }).isDate(),
+    
     checkValidationError,
 
     async (req, res) => {
@@ -299,19 +314,19 @@ routes.patch(
                 "firstName",
                 "lastName",
                 "bio",
-                knex.raw("CONCAT(firstName, ' ', lastName) AS fullName"),
+                knex.raw("(firstName || ' ' || lastName) AS fullName"),
                 "email",
                 "profileImageUrl",
                 "coverImageUrl",
-                knex.raw("IFNULL(work, '') AS work"),
-                knex.raw("IFNULL(school, '') AS school"),
-                knex.raw("IFNULL(college, '') AS college"),
-                knex.raw("IFNULL(homeTown, '') AS homeTown"),
-                knex.raw("IFNULL(currentCity, '') AS currentCity"),
+                "work",
+                "school",
+                "college",
+                "homeTown",
+                "currentCity",
                 "gender",
                 "relationship",
-                knex.raw("IFNULL(DATE_FORMAT(birthDate, '%Y-%m-%d'), '') AS birthDate"),
-                knex.raw("DATE_FORMAT(createdAt, '%Y-%m-%d') AS createdAt")
+                knex.raw("IFNULL(STRFTIME('%d-%m-%Y', birthDate), '') AS birthDate"),
+                knex.raw("STRFTIME('%d-%m-%Y', createdAt) AS createdAt")
             )
             .first()
 
@@ -329,19 +344,19 @@ routes.get("/", async (req, res) => {
             "socialUsers.firstName",
             "socialUsers.lastName",
             "socialUsers.bio",
-            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS fullName"),
+            knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS fullName"),
             "socialUsers.email",
             "socialUsers.profileImageUrl",
             "socialUsers.coverImageUrl",
-            knex.raw("IFNULL(socialUsers.work, '') AS work"),
-            knex.raw("IFNULL(socialUsers.school, '') AS school"),
-            knex.raw("IFNULL(socialUsers.college, '') AS college"),
-            knex.raw("IFNULL(socialUsers.homeTown, '') AS homeTown"),
-            knex.raw("IFNULL(socialUsers.currentCity, '') AS currentCity"),
+            "socialUsers.work",
+            "socialUsers.school",
+            "socialUsers.college",
+            "socialUsers.homeTown",
+            "socialUsers.currentCity",
             "socialUsers.gender",
             "socialUsers.relationship",
-            knex.raw("IFNULL(DATE_FORMAT(socialUsers.birthDate, '%Y-%m-%d'), '') AS birthDate"),
-            knex.raw("DATE_FORMAT(socialUsers.createdAt, '%Y-%m-%d') AS createdAt")
+            knex.raw("IFNULL(STRFTIME('%d-%m-%Y', socialUsers.birthDate), '') AS birthDate"),
+            knex.raw("STRFTIME('%d-%m-%Y', socialUsers.createdAt) AS createdAt")
         )
         .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .first()
