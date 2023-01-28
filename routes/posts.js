@@ -60,7 +60,7 @@ routes.get("/:postId/comments", async (req, res) => {
         .join("socialUsers", "socialUsers.id", "socialComments.userId")
         .select(
             "socialUsers.id AS userId",
-            knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS userName"),
+            knex.raw("CONCAT(firstName, '', lastName) AS userName"),
             "socialUsers.profileImageUrl",
             "socialComments.id",
             "socialComments.comments",
@@ -157,7 +157,7 @@ routes.post(
             .join("socialUsers", "socialUsers.id", "socialComments.userId")
             .select(
                 "socialUsers.id AS userId",
-                knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS userName"),
+                knex.raw("CONCAT(firstName, '', lastName) AS userName"),
                 "socialUsers.profileImageUrl",
                 "socialComments.id",
                 "socialComments.comments",

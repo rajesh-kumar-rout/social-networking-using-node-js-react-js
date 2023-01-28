@@ -1,7 +1,4 @@
-import { config } from "dotenv"
 import knex from "../utils/database.js"
-
-config()
 
 export async function authenticate(req, res, next) {
     const token = req.headers.authorization ?? null

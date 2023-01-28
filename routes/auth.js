@@ -313,20 +313,21 @@ routes.patch(
                 "id",
                 "firstName",
                 "lastName",
-                "bio",
-                knex.raw("(firstName || ' ' || lastName) AS fullName"),
+                knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
                 "email",
+                "bio",
+                "birthDate",
+                "work",
+                "currentCity",
+                "homeTown",
                 "profileImageUrl",
                 "coverImageUrl",
-                "work",
                 "school",
                 "college",
-                "homeTown",
-                "currentCity",
                 "gender",
                 "relationship",
-                knex.raw("IFNULL(STRFTIME('%d-%m-%Y', birthDate), '') AS birthDate"),
-                knex.raw("STRFTIME('%d-%m-%Y', createdAt) AS createdAt")
+                "createdAt",
+                "updatedAt"
             )
             .first()
 
@@ -344,7 +345,7 @@ routes.get("/", async (req, res) => {
             "socialUsers.firstName",
             "socialUsers.lastName",
             "socialUsers.bio",
-            knex.raw("(socialUsers.firstName || ' ' || socialUsers.lastName) AS fullName"),
+            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
             "socialUsers.email",
             "socialUsers.profileImageUrl",
             "socialUsers.coverImageUrl",
@@ -355,8 +356,9 @@ routes.get("/", async (req, res) => {
             "socialUsers.currentCity",
             "socialUsers.gender",
             "socialUsers.relationship",
-            knex.raw("IFNULL(STRFTIME('%d-%m-%Y', socialUsers.birthDate), '') AS birthDate"),
-            knex.raw("STRFTIME('%d-%m-%Y', socialUsers.createdAt) AS createdAt")
+            "birthDate",
+            "createdAt",
+            "updatedAt"
         )
         .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .first()

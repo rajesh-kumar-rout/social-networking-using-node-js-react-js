@@ -15,5 +15,6 @@ export async function upload(image) {
         imageId: res.public_id
     }
 }
+
 export const destroy = cloudinary.uploader.destroy
 
