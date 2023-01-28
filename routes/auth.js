@@ -356,9 +356,9 @@ routes.get("/", async (req, res) => {
             "socialUsers.currentCity",
             "socialUsers.gender",
             "socialUsers.relationship",
-            "birthDate",
-            "createdAt",
-            "updatedAt"
+            "socialUsers.birthDate",
+            "socialUsers.createdAt",
+            "socialUsers.updatedAt"
         )
         .join("socialUsers", "socialUsers.id", "socialTokens.userId")
         .first()
