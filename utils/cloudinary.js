@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary"
-import { config } from "dotenv"
+import dotenv from "dotenv"
 
-config()
+dotenv.config()
 
 cloudinary.config({ secure: true })
 

@@ -1,38 +1,38 @@
 import { Router } from "express"
+import Post from "../models/post.js"
+import User from "../models/user.js"
 import knex from "../utils/database.js"
 
 const routes = Router()
 
 routes.get("/", async (req, res) => {
-    const query = knex("socialUsers").select(
-        "id",
-        "firstName",
-        "lastName",
-        knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-        "profileImageUrl"
-    )
+    const { limit } = req.query
 
-    req.query.search?.split(" ").forEach(queryPart => {
-        console.log("call");
-        query.where("firstName", "like", `%${queryPart}%`)
-            .orWhere("lastName", "like", `%${queryPart}%`)
-    })
-
-    const users = await query
+    const users = await User.find()
+        .select({
+            firstName: 1,
+            lastName: 1,
+            profileImage: {
+                url: 1
+            }
+        })
+        .limit(limit)
 
     res.json(users)
 })
 
 routes.get("/me/suggested", async (req, res) => {
-    const { currentUserId } = req
+    const { limit } = req.query
 
-    const users = await knex("socialUsers")
-        .whereNot({ id: currentUserId })
-        .select(
-            "id",
-            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-            "profileImageUrl"
-        )
+    const users = await User.find()
+        .select({
+            firstName: 1,
+            lastName: 1,
+            profileImage: {
+                url: 1
+            }
+        })
+        .limit(limit)
 
     res.json(users)
 })
@@ -40,59 +40,29 @@ routes.get("/me/suggested", async (req, res) => {
 routes.get("/:userId", async (req, res) => {
     const { userId } = req.params
 
-    const { currentUserId } = req
+    const { _id } = req
 
-    const user = await knex("socialUsers")
-        .where({ id: userId })
-        .select(
-            "socialUsers.id",
-            "socialUsers.firstName",
-            "socialUsers.lastName",
-            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-            "socialUsers.profileImageUrl",
-            "socialUsers.coverImageUrl",
-            "socialUsers.work",
-            "socialUsers.bio",
-            "socialUsers.college",
-            "socialUsers.school",
-            "socialUsers.currentCity",
-            "socialUsers.homeTown",
-            "socialUsers.relationship",
-            "socialUsers.gender",
-            "socialUsers.birthDate",
-            "socialUsers.createdAt",
-
-            knex("socialFollowers")
-                .whereColumn("socialUsers.id", "socialFollowers.followerId")
-                .count()
-                .as("totalFollowings"),
-
-            knex("socialFollowers")
-                .whereColumn("socialUsers.id", "socialFollowers.followingId")
-                .count()
-                .as("totalFollowers"),
-
-            knex("socialPosts")
-                .whereColumn("socialUsers.id", "socialPosts.userId")
-                .count()
-                .as("totalPosts"),
-
-            knex.raw(
-                "EXISTS(??) AS isFollowing",
-                [
-                    knex("socialFollowers")
-                        .where("socialFollowers.followerId", 1)
-                        .where("socialFollowers.followingId", 2)
-                        .select(1)
-                        .limit(1)
-                ]
-            )
-        )
-        .first()
+    const user = await User.findById(userId)
 
     if (!user) {
-        return res.status(404).json({ error: "User not found" })
+        return res.status(404).json({ success: "User not found" })
     }
+
+    user.totalFollowings = user.followings.length
+
+    user.totalFollowers = user.followers.length
+
+    user.toalPosts = await Post.count({ userId: _id })
+
+    user.isFollowing = user.followers.includes(_id)
+
+    user.followers = undefined
+
+    user.followings = undefined
+
+    user.password = undefined
+
+    user.email = undefined
 
     res.json(user)
 })
@@ -148,12 +118,7 @@ routes.get("/:userId/photos", async (req, res) => {
 
     const { limit } = req.query
 
-    const photos = await knex("socialPosts")
-        .where({ userId })
-        .whereNotNull("imageUrl")
-        .limit(limit)
-        .orderBy("id", "description")
-        .select("imageUrl")
+    const photos = await Post.find({ userId, $ne: { image: null } }, { image: { url: 1 } }).limit(limit)
 
     res.json(photos)
 })
@@ -161,38 +126,32 @@ routes.get("/:userId/photos", async (req, res) => {
 routes.patch("/:userId/toggle-follow", async (req, res) => {
     const { userId } = req.params
 
-    const { currentUserId } = req
+    const { _id } = req
 
-    const isUserExists = await knex("socialUsers")
-        .where({ id: userId })
-        .first()
+    const user = await User.findById(userId)
 
-    if (!isUserExists) {
+    if (!user) {
         return res.status(404).json({ error: "User not found" })
     }
 
-    const isFollowing = await knex("socialFollowers")
-        .where({ followerId: currentUserId })
-        .where({ followingId: userId })
-        .first()
+    const currentUser = await User.findById(_id)
 
-    if (isFollowing) {
-        await knex("socialFollowers")
-            .where({ followerId: currentUserId })
-            .where({ followingId: userId })
-            .del()
+    if (user.followers.includes(_id)) {
 
-        return res.json({ success: "Unfollow the user successfully" })
+        user.followers.pop(_id)
+
+        currentUser.followings.pop(userId)
+
+    } else {
+
+        user.followers.push(_id)
+
+        currentUser.followings.push(userId)
     }
 
-    if (userId == currentUserId) {
-        return res.status(400).json({ error: "You can not follow yourself" })
-    }
+    await user.save()
 
-    await knex("socialFollowers").insert({
-        followerId: currentUserId,
-        followingId: userId
-    })
+    await currentUser.save()
 
     res.status(201).json({ success: "Follow the user successfully" })
 })
@@ -200,34 +159,33 @@ routes.patch("/:userId/toggle-follow", async (req, res) => {
 routes.get("/:userId/followers", async (req, res) => {
     const { userId } = req.params
 
-    const users = await knex("socialFollowers")
-        .where("socialFollowers.followingId", userId)
-        .join("socialUsers", "socialUsers.id", "socialFollowers.followerId")
-        .select(
-            "socialUsers.id",
-            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-            "socialUsers.profileImageUrl",
-        )
+    const user = await User.findById(userId)
 
-    res.json(users)
+    const followers = await User.find({ _id: { $in: user.followers } }, {
+        firstName: 1,
+        lastName: 1,
+        image: {
+            url: 1
+        }
+    })
+
+    res.json(followers)
 })
 
 routes.get("/:userId/followings", async (req, res) => {
     const { userId } = req.params
 
-    const { limit } = req.query
+    const user = await User.findById(userId)
 
-    const users = await knex("socialFollowers")
-        .where("socialFollowers.followerId", userId)
-        .join("socialUsers", "socialUsers.id", "socialFollowers.followingId")
-        .limit(limit)
-        .select(
-            "socialUsers.id",
-            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-            "socialUsers.profileImageUrl",
-        )
+    const followings = await User.find({ _id: { $in: user.followings } }, {
+        firstName: 1,
+        lastName: 1,
+        image: {
+            url: 1
+        }
+    })
 
-    res.json(users)
+    res.json(followings)
 })
 
 export default routes

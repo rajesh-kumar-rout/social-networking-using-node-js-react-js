@@ -1,14 +1,15 @@
 import bcrypt from "bcrypt"
-import crypto from "crypto"
-import { config } from "dotenv"
+import dotenv from "dotenv"
 import { Router } from "express"
 import { body } from "express-validator"
+import jwt from "jsonwebtoken"
 import { isAuthenticated } from "../middlewares/authentication.js"
+import Post from "../models/post.js"
+import User from "../models/user.js"
 import { destroy, upload } from "../utils/cloudinary.js"
-import knex from "../utils/database.js"
 import { checkValidationError } from "../utils/validation.js"
 
-config()
+dotenv.config()
 
 const routes = Router()
 
@@ -24,22 +25,23 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await knex("socialUsers")
-            .where({ email })
-            .first()
+        const user = await User.findOne({ email })
 
         if (!(user && await bcrypt.compare(password, user.password))) {
             return res.status(422).json({ error: "Invalid email or password" })
         }
 
-        const token = crypto.randomUUID()
+        const authToken = jwt.sign(
+            {
+                userId: user.id
+            },
+            process.env.AUTH_TOKEN_SECRECT,
+            {
+                expiresIn: "72h"
+            }
+        )
 
-        await knex("socialTokens").insert({
-            userId: user.id,
-            token
-        })
-
-        res.json({ token })
+        res.json({ authToken })
     }
 )
 
@@ -103,60 +105,65 @@ routes.post(
     checkValidationError,
 
     async (req, res) => {
-        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage, relationship, gender, bio, password } = req.body
+        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage,
+            relationship, gender, bio, password } = req.body
 
-        const isEmailTaken = await knex("socialUsers")
-            .where({ email })
-            .first()
+        const hashedPassword = await bcrypt.hash(password)
 
-        if (isEmailTaken) {
+        if (await User.findOne({ email })) {
             return res.status(409).json({ error: "Email already taken" })
         }
 
-        let profileImageUrl = null, profileImageId = null
-
-        if (profileImage) {
-            const { imageUrl, imageId } = await upload(profileImage)
-            profileImageUrl = imageUrl
-            profileImageId = imageId
-        }
-
-        let coverImageUrl = null, coverImageId = null
-
-        if (coverImage) {
-            const { imageUrl, imageId } = await upload(coverImage)
-            coverImageUrl = imageUrl
-            coverImageId = imageId
-        }
-
-        const [userId] = await knex("socialUsers").insert({
+        const user = User.create({
             firstName,
             lastName,
             email,
+            password: hashedPassword,
+            bio,
+            birthDate,
             work,
-            school,
-            college,
             currentCity,
             homeTown,
-            birthDate,
+            school,
+            college,
             relationship,
-            gender,
-            bio,
-            profileImageUrl,
-            profileImageId,
-            coverImageUrl,
-            coverImageId,
-            password: await bcrypt.hash(password, 10)
+            gender
         })
 
-        const token = crypto.randomUUID()
+        if (profileImage) {
+            const { imageUrl, imageId } = await upload(profileImage)
 
-        await knex("socialTokens").insert({
-            userId,
-            token
+            user.profileImage.url = imageUrl
+
+            user.profileImage.id = imageId
+        }
+
+        if (coverImage) {
+            const { imageUrl, imageId } = await upload(coverImage)
+
+            user.coverImage.url = imageUrl
+
+            user.coverImage.id = imageId
+        }
+
+        await user.save();
+
+        user.password = undefined
+
+        const authToken = jwt.sign(
+            {
+                userId: user.id
+            },
+            process.env.AUTH_TOKEN_SECRECT,
+            {
+                expiresIn: "72h"
+            }
+        )
+
+        res.status(201).json({
+            user,
+            authToken
         })
-
-        res.status(201).json({ token })
     }
 )
 
@@ -172,24 +179,19 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { _id } = req
 
         const { oldPassword, newPassword } = req.body
 
-        const user = await knex("socialUsers")
-            .select("password")
-            .where({ id: currentUserId })
-            .first()
+        const user = await User.findById(_id)
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
             return res.status(422).json({ error: "Old password does not match" })
         }
 
-        await knex("socialUsers")
-            .where({ id: currentUserId })
-            .update({
-                password: await bcrypt.hash(newPassword, 10)
-            })
+        user.password = await bcrypt.hash(newPassword)
+
+        await user.save()
 
         res.json({ success: "Password changed successfully" })
     }
@@ -199,7 +201,7 @@ routes.patch(
     "/edit-profile",
 
     isAuthenticated,
-    
+
     body("firstName")
         .isString()
         .trim()
@@ -251,137 +253,97 @@ routes.patch(
     body("relationship").isIn(["Single", "Married", "In a relationship"]),
 
     body("birthDate").optional({ checkFalsy: true }).isDate(),
-    
+
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { _id } = req
 
-        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio, coverImage, profileImage } = req.body
+        const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio,
+            coverImage, profileImage } = req.body
 
-        const isEmailTaken = await knex("socialUsers")
-            .where({ email })
-            .whereNot({ id: currentUserId })
-            .first()
-
-        if (isEmailTaken) {
+        if (await User.findOne({ email, $ne: { _id } })) {
             return res.status(409).json({ error: "Email already taken" })
         }
 
-        const user = await knex("socialUsers")
-            .where({ id: currentUserId })
-            .first()
+        const user = await User.findById(_id)
 
         if (coverImage) {
+
             const { imageUrl, imageId } = await upload(coverImage)
-            user.coverImageUrl && await destroy(user.coverImageId)
-            user.coverImageUrl = imageUrl
-            user.coverImageId = imageId
+
+            if (user.coverImage) {
+                await destroy(user.coverImage.id)
+            }
+
+            user.coverImage.url = imageUrl
+
+            user.coverImage.id = imageId
         }
 
         if (profileImage) {
+
             const { imageUrl, imageId } = await upload(profileImage)
-            user.profileImageUrl && await destroy(user.profileImageId)
-            user.profileImageUrl = imageUrl
-            user.profileImageId = imageId
+
+            if (user.profileImage) {
+                await destroy(user.profileImage.id)
+            }
+
+            user.profileImage.url = imageUrl
+
+            user.profileImage.id = imageId
         }
 
-        await knex("socialUsers")
-            .where({ id: currentUserId })
-            .update({
-                firstName,
-                lastName,
-                email,
-                work,
-                school,
-                college,
-                currentCity,
-                homeTown,
-                birthDate,
-                relationship,
-                gender,
-                bio,
-                profileImageUrl: user.profileImageUrl,
-                profileImageId: user.profileImageId,
-                coverImageUrl: user.coverImageUrl,
-                coverImageId: user.coverImageId
-            })
+        user.firstName = firstName
 
-        const updatedUser = await knex("socialUsers")
-            .where({ id: currentUserId })
-            .select(
-                "id",
-                "firstName",
-                "lastName",
-                knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-                "email",
-                "bio",
-                "birthDate",
-                "work",
-                "currentCity",
-                "homeTown",
-                "profileImageUrl",
-                "coverImageUrl",
-                "school",
-                "college",
-                "gender",
-                "relationship",
-                "createdAt",
-                "updatedAt"
-            )
-            .first()
+        user.lastName = lastName
 
-        res.json(updatedUser)
+        user.email = email
+
+        user.bio = bio
+
+        user.birthDate = birthDate
+
+        user.work = work
+
+        user.currentCity = currentCity
+
+        user.homeTown = homeTown
+
+        user.school = school
+
+        user.college = college
+
+        user.relationship = relationship
+
+        user.gender = gender
+
+        await user.save();
+
+        user.password = undefined
+
+        res.json(user)
     }
 )
 
 routes.get("/", async (req, res) => {
-    const token = req.headers.authorization ?? null
+    const { _id } = req
 
-    const user = await knex("socialTokens")
-        .where({ token })
-        .select(
-            "socialUsers.id",
-            "socialUsers.firstName",
-            "socialUsers.lastName",
-            "socialUsers.bio",
-            knex.raw("CONCAT(firstName, '', lastName) AS fullName"),
-            "socialUsers.email",
-            "socialUsers.profileImageUrl",
-            "socialUsers.coverImageUrl",
-            "socialUsers.work",
-            "socialUsers.school",
-            "socialUsers.college",
-            "socialUsers.homeTown",
-            "socialUsers.currentCity",
-            "socialUsers.gender",
-            "socialUsers.relationship",
-            "socialUsers.birthDate",
-            "socialUsers.createdAt",
-            "socialUsers.updatedAt"
-        )
-        .join("socialUsers", "socialUsers.id", "socialTokens.userId")
-        .first()
+    const user = User.findById(_id)
 
     res.json(user)
 })
 
-routes.delete("/logout", isAuthenticated, async (req, res) => {
-    const token = req.headers.authorization ?? null
-
-    await knex("socialTokens")
-        .where({ token })
-        .del()
-
-    res.json({ success: "Logout successfull" })
-})
-
 routes.delete("/", isAuthenticated, async (req, res) => {
-    const { currentUserId } = req
+    const { _id } = req
 
-    await knex("socialUsers")
-        .where({ id: currentUserId })
-        .del()
+    await User.findByIdAndDelete(_id)
+
+    await Post.deleteMany({ userId: _id })
+
+    await User.updateMany({ followers: _id }, { $pop: { followers: _id } })
+
+    await User.updateMany({ followings: _id }, { $pop: { followings: _id } })
 
     res.json({ success: "Account deleted successfull" })
 })

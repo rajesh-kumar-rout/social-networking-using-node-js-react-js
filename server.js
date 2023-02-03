@@ -1,12 +1,15 @@
 import cors from "cors"
-import { config } from "dotenv"
+import dotenv from "dotenv"
 import express from "express"
+import mongoose from "mongoose"
 import { authenticate, isAuthenticated } from "./middlewares/authentication.js"
 import authRoutes from "./routes/auth.js"
 import postRoutes from "./routes/posts.js"
 import userRoutes from "./routes/users.js"
 
-config()
+dotenv.config()
+
+mongoose.connect(process.env.MONGO_URL);
 
 const app = express()
 

@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
+import Post from "../models/post.js"
 import { destroy, upload } from "../utils/cloudinary.js"
 import knex from "../utils/database.js"
 import { checkValidationError, isYoutubeVideo, makeYoutubeVideoUrl } from "../utils/validation.js"
@@ -51,22 +52,46 @@ routes.get("/feeds", async (req, res) => {
 })
 
 routes.get("/:postId/comments", async (req, res) => {
-    const { currentUserId } = req
+    const { _id } = req
 
-    const { postId } = req.params
-
-    const comments = await knex("socialComments")
-        .where({ postId })
-        .join("socialUsers", "socialUsers.id", "socialComments.userId")
-        .select(
-            "socialUsers.id AS userId",
-            knex.raw("CONCAT(firstName, '', lastName) AS userName"),
-            "socialUsers.profileImageUrl",
-            "socialComments.id",
-            "socialComments.comments",
-            "socialComments.createdAt",
-            knex.raw("IIF(socialComments.userId = ?, 1, 0) AS isCommented", [currentUserId])
-        )
+    const comments = await Post.aggregate([
+        {
+            $match: {
+                _id
+            }
+        },
+        {
+            $unwind: "$comments"
+        },
+        {
+            $replaceRoot: {
+                newRoot: "$comments"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "id",
+                as: "users",
+                pipeline: [
+                    {
+                        $project: {
+                            name: 1,
+                            profileImage: {
+                                url: 1
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $replaceRoot: {
+                newRoot: { $mergeObjects: [{ $arrayElemAt: ["$users", 0] }, "$$ROOT"] }
+            }
+        }
+    ])
 
     res.json(comments)
 })
@@ -92,33 +117,33 @@ routes.post("/",
     async (req, res) => {
         const { description, image, videoUrl } = req.body
 
-        const { currentUserId } = req
+        const { _id } = req
 
         if (!description && !image && !videoUrl) {
             return res.status(422).json({ error: "Either desription or image or video is required" })
         }
 
-        if(image && videoUrl) {
+        if (image && videoUrl) {
             return res.status(422).json({ error: "Either provide image or video" })
         }
 
-        let imageUrl = null, imageId = null
-
-        if (image) {
-            const imageRes = await upload(image)
-            imageUrl = imageRes.imageUrl
-            imageId = imageRes.imageId
-        }
-
-        await knex("socialPosts").insert({
+        const post = await Post.create({
             description,
-            imageUrl,
-            imageId,
-            videoUrl,
-            userId: currentUserId
+            videoUrl
         })
 
-        res.status(201).json({ success: "Post added successfully" })
+        if (image) {
+
+            const { imageUrl, imageId } = await upload(image)
+
+            post.image.url = imageUrl
+
+            post.image.id = imageId
+
+            await post.save()
+        }
+
+        res.status(201).json(post)
     }
 )
 
@@ -134,55 +159,29 @@ routes.post(
     async (req, res) => {
         const { postId } = req.params
 
-        const { currentUserId } = req
-
         const { comment } = req.body
 
-        const isPostExists = await knex("socialPosts")
-            .where({ id: postId })
-            .first()
+        const post = await Post.findById(postId)
 
-        if (!isPostExists) {
+        if (!post) {
             return res.status(409).json({ error: "Post not found" })
         }
 
-        const [insertId] = await knex("socialComments").insert({
-            comments: comment,
-            userId: currentUserId,
-            postId
+        post.comments.push({
+            userId: _id,
+            comment
         })
 
-        const newComment = await knex("socialComments")
-            .where("socialComments.id", insertId)
-            .join("socialUsers", "socialUsers.id", "socialComments.userId")
-            .select(
-                "socialUsers.id AS userId",
-                knex.raw("CONCAT(firstName, '', lastName) AS userName"),
-                "socialUsers.profileImageUrl",
-                "socialComments.id",
-                "socialComments.comments",
-                "socialComments.createdAt",
-                knex.raw("1 AS isCommented")
-            )
-            .first()
-
-        res.status(201).json(newComment)
+        res.status(201).json({ success: "Comment added" })
     }
 )
 
-routes.delete("/comments/:commentId", async (req, res) => {
-    const { commentId } = req.params
+routes.delete("/:postId/comments/:commentId", async (req, res) => {
+    const { commentId, postId } = req.params
 
-    const { currentUserId } = req
+    const { _id } = req
 
-    const rowAffected = await knex("socialComments")
-        .where({ id: commentId })
-        .where({ userId: currentUserId })
-        .del()
-
-    if (rowAffected === 0) {
-        return res.status(404).json({ error: "Comment not found" })
-    }
+    await Post.updateOne({ _id: postId }, { $pull: { comments: { _id: commentId, userId: _id } } })
 
     res.json({ success: "Comment deleted successfully" })
 })
@@ -190,34 +189,21 @@ routes.delete("/comments/:commentId", async (req, res) => {
 routes.patch("/:postId/toggle-like", async (req, res) => {
     const { postId } = req.params
 
-    const { currentUserId } = req
+    const { _id } = req
 
-    const isPostExists = await knex("socialPosts")
-        .where({ id: postId })
-        .first()
+    const post = await Post.findById(postId)
 
-    if (!isPostExists) {
-        return res.status(409).json({ message: "Post does not exists" })
+    if (!post) {
+        return res.status(404).json({ error: "Post does not exists" })
     }
 
-    const isLiked = await knex("socialLikes")
-        .where({ userId: currentUserId })
-        .where({ postId })
-        .first()
-
-    if (await isLiked) {
-        await knex("socialLikes")
-            .where({ userId: currentUserId })
-            .where({ postId })
-            .del()
-
-        return res.json({ success: "Remove likes from post successfully" })
+    if (post.likes.include(_id)) {
+        post.likes.pull(_id)
+    } else {
+        post.likes.push(_id)
     }
 
-    await knex("socialLikes").insert({
-        userId: currentUserId,
-        postId
-    })
+    await post.save()
 
     res.status(201).json({ success: "Like the post successfully" })
 })
@@ -225,25 +211,19 @@ routes.patch("/:postId/toggle-like", async (req, res) => {
 routes.delete("/:postId", async (req, res) => {
     const { postId } = req.params
 
-    const { currentUserId } = req
+    const { _id } = req
 
-    const post = await knex("socialPosts")
-        .where({ id: postId })
-        .where({ userId: currentUserId })
-        .first()
+    const post = await Post.findOne({_id: postId, userId: _id})
 
     if (!post) {
         return res.status(404).json({ error: "Post not found" })
     }
 
-    if (post.imageId) {
-        await destroy(post.imageId)
+    if (post.image) {
+        await destroy(post.image.id)
     }
 
-    await knex("socialPosts")
-        .where({ id: postId })
-        .where({ userId: currentUserId })
-        .del()
+    await post.delete()
 
     res.json({ success: "Post deleted successfully" })
 })
