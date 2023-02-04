@@ -6,6 +6,7 @@ import Loader from "../components/Loader"
 import Post from "../components/Post"
 import axios from "../utils/axios"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
+import { fullName } from "../utils/functions"
 
 export default function HomePage() {
     const [posts, setPosts] = useState([])
@@ -32,7 +33,7 @@ export default function HomePage() {
 
         toast.error("Post deleted successfully")
 
-        setPosts(posts.filter(post => post.id !== postId))
+        setPosts(posts.filter(post => post._id !== postId))
 
         setIsLoading(false)
     }
@@ -42,7 +43,7 @@ export default function HomePage() {
 
         const newPosts = [...posts]
 
-        const index = newPosts.findIndex(post => post.id === postId)
+        const index = newPosts.findIndex(post => post._id === postId)
 
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1
 
@@ -67,7 +68,7 @@ export default function HomePage() {
 
                 {posts.map(post => (
                     <Post
-                        key={post.id}
+                        key={post._id}
                         post={post}
                         onDeletePost={handleDeletePost}
                         onToggleLike={handleToggleLike}
@@ -86,17 +87,17 @@ export default function HomePage() {
                     <div className="p-4">
                         {users.map(user => (
                             <Link 
-                                key={user.id} 
-                                to={`/profile/${user.id}`} 
+                                key={user._id} 
+                                to={`/profile/${user._id}`} 
                                 className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 
                                 py-3 first:pt-0 last:pb-0"
                             >
                                 <img 
                                     className="rounded-full h-12 w-12 object-cover" 
-                                    src={user.profileImageUrl ? user.profileImageUrl : DEFAULT_PROFILE_IMG} 
+                                    src={user.profileImage ? user.profileImage.url : DEFAULT_PROFILE_IMG} 
                                     alt="" 
                                 />
-                                <p className="font-semibold">{user.fullName}</p>
+                                <p className="font-semibold">{fullName(user)}</p>
                             </Link>
                         ))}
                     </div>

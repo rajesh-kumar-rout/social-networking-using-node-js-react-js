@@ -1,15 +1,21 @@
 import moment from "moment"
 
-export const postImgUrl = (url) => {
+export function cloudiImgUrl(url) {
+
     if (url && url.startsWith("https://res.cloudinary.com/")) {
+
         return [
             url.split("upload/")[0],
+
             "upload/",
+
             "w_510,h_360,c_fill/",
+
             url.split("upload/")[1]
         ].join("")
     }
-    return url;
+
+    return url
 }
 
 export const dateToAgo = (date) => {
@@ -20,14 +26,14 @@ export const dateToAgo = (date) => {
 export const handleImage = async (event, setFieldValue) => {
     const file = event.target.files[0]
 
-    if(file.size > 300000) {
+    if (file.size > 300000) {
         return event.target.setCustomValidity("File must be within 3kb")
     }
 
     event.target.setCustomValidity("")
 
     const reader = new FileReader()
-    
+
     reader.readAsDataURL(file)
 
     reader.onload = () => {
@@ -36,10 +42,10 @@ export const handleImage = async (event, setFieldValue) => {
 }
 
 export const getBase64 = async (file) => {
-    if(!file) return ""
-    
+    if (!file) return ""
+
     const reader = new FileReader()
-    
+
     reader.readAsDataURL(file)
 
     return new Promise((resolve, reject) => {
@@ -47,6 +53,10 @@ export const getBase64 = async (file) => {
             resolve(reader.result)
         }
     })
+}
+
+export function fullName(user) {
+    return `${user?.firstName} ${user?.lastName}`
 }
 
 

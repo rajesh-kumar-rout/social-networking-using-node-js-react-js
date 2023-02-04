@@ -12,6 +12,7 @@ export default function CommentBox({ postId }) {
 
     async function fetchComments() {
         const { data } = await axios.get(`/posts/${postId}/comments`)
+
         setComments(data)
         setIsLoading(false)
     }
@@ -25,19 +26,17 @@ export default function CommentBox({ postId }) {
 
         setIsLoading(true)
 
-        const { data } = await axios.post(`/posts/${postId}/comments`, { comment })
+        await axios.post(`/posts/${postId}/comments`, { comment })
 
-        setComments([data, ...comments])
-
-        setIsLoading(false)
+        fetchComments()
     }
 
     async function handleDeleteComment(commentId) {
         setIsLoading(true)
 
-        await axios.delete(`/posts/comments/${commentId}`)
+        await axios.delete(`/posts/${postId}/comments/${commentId}`)
 
-        setComments(comments.filter(comment => comment.id !== commentId))
+        setComments(comments.filter(comment => comment._id !== commentId))
 
         setIsLoading(false)
     }

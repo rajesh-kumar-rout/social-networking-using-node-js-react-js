@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
+import { fullName } from "../utils/functions"
 
 export default function Users({ title, users }) {
 
@@ -10,15 +11,15 @@ export default function Users({ title, users }) {
             <div>
                 {users.map(user => (
                     <Link
-                        to={`/profile/${user.id}`}
+                        to={`/profile/${user._id}`}
                         className="py-3 px-4 border-t-2 first:border-t-0 border-t-gray-300 flex items-center gap-3"
                         key={user.id}
                     >
                         <img
-                            src={user.profileImageUrl ? user.profileImageUrl : DEFAULT_PROFILE_IMG}
+                            src={user.profileImage ? user.profileImage.url : DEFAULT_PROFILE_IMG}
                             className="h-12 w-12 object-cover rounded-full"
                         />
-                        <p className="font-semibold">{user.fullName}</p>
+                        <p className="font-semibold">{fullName(user)}</p>
                     </Link>
                 ))}
             </div>

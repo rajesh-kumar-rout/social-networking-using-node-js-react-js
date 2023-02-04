@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { FaHeart, FaRegComment, FaRegHeart, FaRegTrashAlt } from "react-icons/fa"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
-import { dateToAgo, postImgUrl } from "../utils/functions"
+import { cloudiImgUrl, dateToAgo, fullName } from "../utils/functions"
+import { AuthContext } from "./Auth"
 import CommentBox from "./CommentBox"
 
 // export default function Post({ post, onDeletePost, onToggleLike }) {
@@ -61,26 +62,27 @@ import CommentBox from "./CommentBox"
 //     )
 // }
 export default function Post({ post, onDeletePost, onToggleLike }) {
+    const { currentUser } = useContext(AuthContext)
     const [isCommentBoxOpened, setIsCommentBoxOpened] = useState(false)
-
+console.log(post)
     return (
         <div className="bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md mx-auto w-full sm:w-[600px]">
             <div className="p-3 flex gap-3">
                 <img
-                    src={post.profileImageUrl ? post.profileImageUrl : DEFAULT_PROFILE_IMG}
+                    src={post.profileImage ? post.profileImage.url : DEFAULT_PROFILE_IMG}
                     className="w-12 h-12 rounded-full object-cover"
                 />
 
                 <div>
-                    <div className="text-sm font-bold">{post.userName}</div>
+                    <div className="text-sm font-bold">{fullName(post.user)}</div>
                     <div className="text-sm mt-1 text-gray-600">{dateToAgo(post.createdAt)}</div>
                 </div>
             </div>
 
             {post.description && <div className="text-sm text-gray-600 px-3 pb-3">{post.description}</div>}
 
-            {post.imageUrl && (
-                <img src={postImgUrl(post.imageUrl)} className="w-full object-cover" />
+            {post.image && (
+                <img src={cloudiImgUrl(post.image.url)} className="w-full object-cover" />
             )}
 
             {post.videoUrl && (
@@ -91,7 +93,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                 <div className="flex items-center gap-3">
                     <button
                         className="post-action-btn fill-pink-600"
-                        onClick={() => onToggleLike(post.id)}
+                        onClick={() => onToggleLike(post._id)}
                     >
                         {post.isLiked ? <FaHeart size={24} fill="fill-pink-600" /> : <FaRegHeart size={24} />}
                     </button>
@@ -103,10 +105,10 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                         <FaRegComment size={24} />
                     </button>
 
-                    {post.isPosted === 1 && (
+                    {post.user._id === currentUser._id && (
                         <button
                             className="post-action-btn"
-                            onClick={() => onDeletePost(post.id)}
+                            onClick={() => onDeletePost(post._id)}
                         >
                             <FaRegTrashAlt size={24} />
                         </button>
@@ -116,7 +118,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
                 <div className="text-gray-600 text-sm">{post.totalLikes} likes, {post.totalComments} comments</div>
             </div>
 
-            {isCommentBoxOpened && <CommentBox postId={post.id} />}
+            {isCommentBoxOpened && <CommentBox postId={post._id} />}
         </div>
     )
 }

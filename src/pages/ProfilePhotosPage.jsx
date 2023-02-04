@@ -10,6 +10,7 @@ export default function ProfilePhotosPage() {
 
     async function fetchPhotos() {
         const { data } = await axios.get(`/users/${userId}/photos`)
+        console.log(data)
         setPhotos(data)
     }
 
@@ -29,7 +30,7 @@ export default function ProfilePhotosPage() {
             ) : (
                 <div className="p-4 grid grid-cols-4 gap-2">
                     {photos.map(photo => (
-                        <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
+                        <img key={photo.image} className="rounded object-cover" src={photo.image.url} alt="" />
                     ))}
                 </div>
             )}

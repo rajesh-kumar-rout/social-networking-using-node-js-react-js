@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { MdFavoriteBorder, MdMale, MdOutlineCake, MdOutlineHome, MdOutlineLocationOn, MdOutlineSchool, MdSchedule, MdWorkOutline } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
@@ -5,6 +6,7 @@ import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import Post from "../components/Post";
 import axios from "../utils/axios";
+import { fullName } from "../utils/functions";
 
 export default function ProfileIndexPage() {
     const { userId } = useParams()
@@ -27,7 +29,7 @@ export default function ProfileIndexPage() {
         setPosts(postsRes.data)
 
         setPhotos(photosRes.data)
-
+console.log(photosRes.data)
         setFollowings(followingsRes.data)
 
         setIsLoading(false)
@@ -40,21 +42,7 @@ export default function ProfileIndexPage() {
 
         toast.success("Post deleted successfully")
 
-        setPosts(posts.filter(post => post.id !== postId))
-
-        setIsLoading(false)
-    }
-
-    async function handleToggleFollow() {
-        setIsLoading(true)
-
-        await axios.patch(`/users/${user.id}/toggle-follow`)
-
-        setUser({
-            ...user,
-            isFollowing: !user.isFollowing,
-            totalFollowers: user.isFollowing ? (user.totalFollowers - 1) : (user.totalFollowers + 1)
-        })
+        setPosts(posts.filter(post => post._id !== postId))
 
         setIsLoading(false)
     }
@@ -64,7 +52,7 @@ export default function ProfileIndexPage() {
 
         const newPosts = [...posts]
 
-        const index = posts.findIndex(post => post.id === postId)
+        const index = posts.findIndex(post => post._id === postId)
 
         newPosts[index].totalLikes = newPosts[index].isLiked ? newPosts[index].totalLikes - 1 : newPosts[index].totalLikes + 1
 
@@ -143,7 +131,7 @@ export default function ProfileIndexPage() {
 
                         <div className="flex items-center gap-4 text-gray-700">
                             <MdSchedule size={24} />
-                            <p className="text-gray-600">Joined on {user.createdAt}</p>
+                            <p className="text-gray-600">Joined on {moment(user.createdAt).format("DD MMM YYYY")}</p>
                         </div>
 
                         <div className="flex items-center gap-4 text-gray-700">
@@ -154,7 +142,7 @@ export default function ProfileIndexPage() {
                         {user.birthDate && (
                             <div className="flex items-center gap-4 text-gray-700">
                                 <MdOutlineCake size={24} />
-                                <p className="text-gray-600">Birth Day - {user.birthDate}</p>
+                                <p className="text-gray-600">Birth Day - {moment(user.birthDate).format("DD MMM YYYY")}</p>
                             </div>
                         )}
                     </div>
@@ -177,7 +165,7 @@ export default function ProfileIndexPage() {
                     ) : (
                         <div className="p-4 grid grid-cols-3 gap-1">
                             {photos.map(photo => (
-                                <img key={photo.imageUrl} className="rounded object-cover" src={photo.imageUrl} alt="" />
+                                <img key={photo.image.url} className="rounded object-cover" src={photo.image.url} alt="" />
                             ))}
                         </div>
                     )}
@@ -200,9 +188,9 @@ export default function ProfileIndexPage() {
                     ) : (
                         <div className="p-4 grid grid-cols-3 gap-x-1 gap-y-3">
                             {followings.map(following => (
-                                <Link key={following.id} to={`/profile/${following.id}`}>
-                                    <img className="rounded object-cover" src={following.profileImageUrl} alt="" />
-                                    <p className="text-xs font-semibold mt-1 text-center">{following.fullName}</p>
+                                <Link key={following._id} to={`/profile/${following._id}`}>
+                                    <img className="rounded object-cover" src={following.profileImage.url} alt="" />
+                                    <p className="text-xs font-semibold mt-1 text-center">{fullName(following)}</p>
                                 </Link>
                             ))}
                         </div>
@@ -221,7 +209,7 @@ export default function ProfileIndexPage() {
                 )}
                 {posts.map(post => (
                     <Post
-                        key={post.id}
+                        key={post._id}
                         post={post}
                         onDeletePost={handleDeletePost}
                         onToggleLike={handleToggleLike}

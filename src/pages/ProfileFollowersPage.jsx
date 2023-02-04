@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { MdArrowBack } from "react-icons/md"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import axios from "../utils/axios"
+import { fullName } from "../utils/functions"
 
 export default function ProfileFollowersPage() {
     const navigate = useNavigate()
@@ -31,12 +32,12 @@ export default function ProfileFollowersPage() {
                     {followings.map(following => (
                         <Link
                             key={following.id}
-                            to={`/profile/${following.id}`}
+                            to={`/profile/${following._id}`}
                             className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 
                             last:pb-0"
                         >
-                            <img className="rounded-full h-12 w-12 object-cover" src={following.profileImageUrl} alt="" />
-                            <p className="font-semibold">{following.fullName}</p>
+                            <img className="rounded-full h-12 w-12 object-cover" src={following.profileImage.url} alt="" />
+                            <p className="font-semibold">{fullName(following)}</p>
                         </Link>
                     ))}
                 </div>

@@ -16,10 +16,10 @@ export default function AddPost() {
         const payload = {
             description: event.target.description.value.trim(),
             image: await getBase64(event.target.image?.files[0]),
-            video: event.target.video?.value?.trim(),
+            videoUrl: event.target.video?.value?.trim(),
         }
 
-        if (!payload.description && !payload.image && !payload.video) return
+        if (!payload.description && !payload.image && !payload.videoUrl) return
 
         if (payload.description.length > 255) {
             return toast.error("You must describe within 255 characters")

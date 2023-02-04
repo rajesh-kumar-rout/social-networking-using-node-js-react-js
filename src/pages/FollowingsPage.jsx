@@ -11,7 +11,7 @@ export default function FollowingsPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchFollowings = async () => {
-        const { data } = await axios.get(`/users/${currentUser.id}/followings`)
+        const { data } = await axios.get(`/users/${currentUser._id}/followings`)
         setUsers(data)
         setIsFetching(false)
     }

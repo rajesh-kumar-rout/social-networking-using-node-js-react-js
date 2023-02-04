@@ -4,7 +4,7 @@ import { AuthContext } from "../components/Auth"
 import Loader from "../components/Loader"
 import axios from "../utils/axios"
 import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
-import { postImgUrl } from "../utils/functions"
+import { cloudiImgUrl, fullName } from "../utils/functions"
 
 export default function ProfilePage() {
     const { userId } = useParams()
@@ -18,7 +18,7 @@ export default function ProfilePage() {
             axios.get(`/users/${userId}`),
             axios.get(`/users/${userId}/posts`)
         ])
-
+console.log(userRes.data);
         setUser(userRes.data)
 
         setPosts(postRes.data)
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     async function handleToggleFollow() {
         setIsLoading(true)
 
-        await axios.patch(`/users/${user.id}/toggle-follow`)
+        await axios.patch(`/users/${user._id}/toggle-follow`)
 
         setUser({
             ...user,
@@ -56,7 +56,7 @@ export default function ProfilePage() {
             <div className="bg-white border-b-2 border-gray-300 pb-8">
                 <div className="mx-auto max-w-[1000px]">
                     <img
-                        src={user.coverImageUrl ? user.coverImageUrl : DEFAULT_COVER_IMG}
+                        src={user.coverImage ? user.coverImage.url : DEFAULT_COVER_IMG}
                         className="rounded-b-md object-cover w-full"
                         style={{ height: 350 }}
                     />
@@ -66,19 +66,19 @@ export default function ProfilePage() {
                         -mb-20 lg:-mb-14 lg:pl-10"
                     >
                         <img
-                            src={user.profileImageUrl ? postImgUrl(user.profileImageUrl) : DEFAULT_PROFILE_IMG}
+                            src={user.profileImage ? cloudiImgUrl(user.profileImage.url) : DEFAULT_PROFILE_IMG}
                             className="h-40 w-40 object-cover rounded-md border-white border-2"
                         />
 
                         <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between flex-1">
                             <div>
-                                <p className="text-center lg:text-start text-2xl font-bold mb-2">{user.fullName}</p>
+                                <p className="text-center lg:text-start text-2xl font-bold mb-2">{fullName(user)}</p>
                                 <p className="flex items-center gap-3 text-gray-700 mb-3 lg:mb-0">
                                     {user.totalFollowers} Followers • {user.totalFollowings} Followings • {user.totalPosts} Posts
                                 </p>
                             </div>
 
-                            {userId == currentUser.id ? (
+                            {userId == currentUser._id ? (
                                 <Link to="/auth/edit-profile" className="btn btn-primary">
                                     Update Profile
                                 </Link>

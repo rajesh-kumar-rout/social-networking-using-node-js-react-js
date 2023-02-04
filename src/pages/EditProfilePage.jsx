@@ -74,7 +74,7 @@ export default function EditProfilePage() {
                     currentCity: currentUser.currentCity,
                     gender: currentUser.gender,
                     relationship: currentUser.relationship,
-                    birthDate: currentUser.birthDate,
+                    birthDate: moment(currentUser.birthDate).format("YYYY-MM-DD"),
                     profileImage: "",
                     coverImage: ""
                 }}

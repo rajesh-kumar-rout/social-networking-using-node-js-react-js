@@ -23,8 +23,9 @@ export default function NavBar() {
 
     const handleLogout = async (event) => {
         event.preventDefault()
-        await axios.delete("/auth/logout")
-        localStorage.removeItem("token")
+
+        localStorage.removeItem("authToken")
+
         window.location.href = "/login"
     }
     
@@ -77,7 +78,7 @@ export default function NavBar() {
                     <div className="relative">
                         <div onClick={handleDropDown} className="flex items-center cursor-pointer">
                             <img
-                                src={currentUser.profileImageUrl ? currentUser.profileImageUrl : DEFAULT_PROFILE_IMG}
+                                src={currentUser.profileImage ? currentUser.profileImage.url : DEFAULT_PROFILE_IMG}
                                 className="h-9 w-9 rounded-full object-cover"
                             />
                             <MdArrowDropDown size={24} />
@@ -90,7 +91,7 @@ export default function NavBar() {
                             >
                                 <Link
                                     className="text-white hover:text-gray-300 flex items-center gap-2"
-                                    to={`/profile/${currentUser.id}`}
+                                    to={`/profile/${currentUser._id}`}
                                 >
                                     Profile
                                 </Link>
