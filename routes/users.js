@@ -3,7 +3,7 @@ import Post from "../models/post.js"
 import User from "../models/user.js"
 import { param } from "express-validator"
 import { checkValidationError } from "../utils/validation.js"
-import mongoose from "mongoose"
+import mongoose, { Mongoose } from "mongoose"
 const routes = Router()
 
 routes.get("/", async (req, res) => {
@@ -57,7 +57,7 @@ routes.get("/:userId", async (req, res) => {
 
     user.toalPosts = await Post.count({ userId: _id })
 
-    user.isFollowing = user.followers.includes(_id)
+    user.isFollowing = user.followers.some(id => id.equals(_id))
 
     user.followers = undefined
 
@@ -111,6 +111,7 @@ routes.get(
                     image: {
                         url: 1
                     },
+                    videoUrl: 1,
                     createdAt: 1,
                     totalLikes: { $size: "$likes" },
                     totalComments: { $size: "$comments" },
@@ -122,6 +123,9 @@ routes.get(
             },
             {
                 $unwind: "$user"
+            },
+            {
+                $sort: {createdAt: -1}
             }
         ])
 
@@ -185,7 +189,7 @@ routes.get(
 
         const { limit } = req.query
 
-        const photos = await Post.find({ userId, $ne: { image: null } }, { image: { url: 1 } }).limit(limit)
+        const photos = await Post.find({ userId, image: {$exists: 1} }, { image: { url: 1 } }).limit(limit)
 
         res.json(photos)
     }
@@ -253,7 +257,7 @@ routes.get("/:userId/followings", async (req, res) => {
         return res.status(404).json({ error: "User not found" })
     }
 
-    const followings = await User.find({ _id: { $in: user.followings } }, {
+    const followings = await User.find({ _id: { $in: user.followings }, profileImage: {$exists: 1} }, {
         firstName: 1,
         lastName: 1,
         profileImage: {

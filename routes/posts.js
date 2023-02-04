@@ -43,6 +43,7 @@ routes.get("/feeds", async (req, res) => {
                 image: {
                     url: 1
                 },
+                videoUrl: 1,
                 createdAt: 1,
                 totalLikes: { $size: "$likes" },
                 totalComments: { $size: "$comments" },
