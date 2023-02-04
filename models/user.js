@@ -1,5 +1,11 @@
 import mongoose from "mongoose"
 
+const imageSchema = mongoose.Schema({
+    url: String,
+
+    id: String
+})
+
 const schema = mongoose.Schema({
     firstName: String,
 
@@ -27,9 +33,13 @@ const schema = mongoose.Schema({
 
     gender: String,
 
+    profileImage: imageSchema,
+
+    coverImage: imageSchema,
+
     followings: [mongoose.ObjectId],
 
     followers: [mongoose.ObjectId]
-})
+}, { timestamps: true })
 
 export default mongoose.model("User", schema)

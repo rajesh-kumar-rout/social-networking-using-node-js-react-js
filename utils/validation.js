@@ -5,7 +5,7 @@ export function isYoutubeVideo(value) {
 }
 
 export function makeYoutubeVideoUrl(value) {
-    return "https://youtube.com/embed/" + value.split("be/")[1]
+    return "https://youtube.com/embed/" + value?.split("be/")[1]
 }
 
 export const checkValidationError = (req, res, next) => {

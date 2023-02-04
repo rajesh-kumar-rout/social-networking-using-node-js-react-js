@@ -33,7 +33,7 @@ routes.post(
 
         const authToken = jwt.sign(
             {
-                userId: user.id
+                _id: user.id
             },
             process.env.AUTH_TOKEN_SECRECT,
             {
@@ -51,11 +51,13 @@ routes.post(
     body("firstName")
         .isString()
         .trim()
+        .notEmpty()
         .isLength({ max: 30 }),
 
     body("lastName")
         .isString()
         .trim()
+        .notEmpty()
         .isLength({ max: 30 }),
 
     body("email")
@@ -108,17 +110,15 @@ routes.post(
         const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, profileImage, coverImage,
             relationship, gender, bio, password } = req.body
 
-        const hashedPassword = await bcrypt.hash(password)
-
         if (await User.findOne({ email })) {
             return res.status(409).json({ error: "Email already taken" })
         }
 
-        const user = User.create({
+        const user = new User({
             firstName,
             lastName,
             email,
-            password: hashedPassword,
+            password: await bcrypt.hash(password, 10),
             bio,
             birthDate,
             work,
@@ -152,7 +152,7 @@ routes.post(
 
         const authToken = jwt.sign(
             {
-                userId: user.id
+                _id: user.id
             },
             process.env.AUTH_TOKEN_SECRECT,
             {
@@ -189,7 +189,7 @@ routes.patch(
             return res.status(422).json({ error: "Old password does not match" })
         }
 
-        user.password = await bcrypt.hash(newPassword)
+        user.password = await bcrypt.hash(newPassword, 10)
 
         await user.save()
 
@@ -262,7 +262,7 @@ routes.patch(
         const { firstName, lastName, email, work, school, college, currentCity, homeTown, birthDate, relationship, gender, bio,
             coverImage, profileImage } = req.body
 
-        if (await User.findOne({ email, $ne: { _id } })) {
+        if (await User.findOne({ email, _id: { $ne: _id } })) {
             return res.status(409).json({ error: "Email already taken" })
         }
 
@@ -322,6 +322,10 @@ routes.patch(
 
         user.password = undefined
 
+        user.followings = undefined
+
+        user.followers = undefined
+
         res.json(user)
     }
 )
@@ -329,7 +333,11 @@ routes.patch(
 routes.get("/", async (req, res) => {
     const { _id } = req
 
-    const user = User.findById(_id)
+    const user = await User.findById(_id, {
+        password: 0,
+        followers: 0,
+        followings: 0
+    })
 
     res.json(user)
 })
@@ -341,9 +349,13 @@ routes.delete("/", isAuthenticated, async (req, res) => {
 
     await Post.deleteMany({ userId: _id })
 
-    await User.updateMany({ followers: _id }, { $pop: { followers: _id } })
+    await Post.updateMany({ likes: _id }, { $pull: { likes: _id } })
 
-    await User.updateMany({ followings: _id }, { $pop: { followings: _id } })
+    await Post.updateMany({ comments: { $elemMatch: { userId: _id } } }, { $pull: { comments: { userId: _id } } })
+
+    await User.updateMany({ followers: _id }, { $pull: { followers: _id } })
+
+    await User.updateMany({ followings: _id }, { $pull: { followings: _id } })
 
     res.json({ success: "Account deleted successfull" })
 })

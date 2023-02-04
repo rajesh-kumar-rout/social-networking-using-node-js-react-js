@@ -1,113 +1,177 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
+import mongoose from "mongoose"
 import Post from "../models/post.js"
+import User from "../models/user.js"
 import { destroy, upload } from "../utils/cloudinary.js"
-import knex from "../utils/database.js"
 import { checkValidationError, isYoutubeVideo, makeYoutubeVideoUrl } from "../utils/validation.js"
 
 const routes = Router()
 
 routes.get("/feeds", async (req, res) => {
-    const { currentUserId } = req
 
-    const posts = await knex("socialFollowers")
-        .where("socialFollowers.followerId", currentUserId)
-        .join("socialUsers", "socialUsers.id", "socialFollowers.followingId")
-        .join("socialPosts", "socialPosts.userId", "socialUsers.id")
-        .select(
-            "socialPosts.id",
-            "socialPosts.description",
-            "socialPosts.imageUrl",
-            "socialPosts.videoUrl",
-            "socialPosts.createdAt",
-            "socialPosts.userId",
-            knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
-            "socialUsers.profileImageUrl",
+    const { _id } = req 
 
-            knex("socialLikes")
-                .whereColumn("socialLikes.postId", "socialPosts.id")
-                .count()
-                .as("totalLikes"),
+    const user = await User.findById(_id)
 
-            knex("socialComments")
-                .whereColumn("socialComments.postId", "socialPosts.id")
-                .count()
-                .as("totalComments"),
-
-            knex.raw(
-                "EXISTS(?) AS isLiked",
-                [
-                    knex("socialLikes")
-                        .whereColumn("socialLikes.postId", "socialPosts.id")
-                        .whereColumn("socialLikes.userId", currentUserId)
-                        .select(1)
-                ]
-            ),
-
-            knex.raw("0 AS isPosted")
-        )
-        .orderBy("socialPosts.createdAt", "desc")
-
-    res.json(posts)
-})
-
-routes.get("/:postId/comments", async (req, res) => {
-    const { _id } = req
-
-    const comments = await Post.aggregate([
+    const posts = await Post.aggregate([
         {
             $match: {
-                _id
-            }
-        },
-        {
-            $unwind: "$comments"
-        },
-        {
-            $replaceRoot: {
-                newRoot: "$comments"
+                userId: {$in: user.followings}
             }
         },
         {
             $lookup: {
                 from: "users",
+                foreignField: "_id",
                 localField: "userId",
-                foreignField: "id",
-                as: "users",
+                as: "user",
                 pipeline: [
                     {
                         $project: {
-                            name: 1,
-                            profileImage: {
-                                url: 1
-                            }
+                            firstName: 1,
+                            lastName: 1,
+                            profileImage: { url: 1}
                         }
                     }
                 ]
             }
         },
         {
-            $replaceRoot: {
-                newRoot: { $mergeObjects: [{ $arrayElemAt: ["$users", 0] }, "$$ROOT"] }
+            $project: {
+                description: 1,
+                image: {
+                    url: 1
+                },
+                createdAt: 1,
+                totalLikes: { $size: "$likes" },
+                totalComments: { $size: "$comments" },
+                isLiked: {
+                    $in: [mongoose.Types.ObjectId(_id), "$likes"]
+                },
+                user: 1
             }
+        },
+        {
+            $unwind: "$user"
         }
     ])
 
-    res.json(comments)
+    res.json(posts)
+    // const { currentUserId } = req
+
+    // const posts = await knex("socialFollowers")
+    //     .where("socialFollowers.followerId", currentUserId)
+    //     .join("socialUsers", "socialUsers.id", "socialFollowers.followingId")
+    //     .join("socialPosts", "socialPosts.userId", "socialUsers.id")
+    //     .select(
+    //         "socialPosts.id",
+    //         "socialPosts.description",
+    //         "socialPosts.imageUrl",
+    //         "socialPosts.videoUrl",
+    //         "socialPosts.createdAt",
+    //         "socialPosts.userId",
+    //         knex.raw("CONCAT(socialUsers.firstName, ' ', socialUsers.lastName) AS userName"),
+    //         "socialUsers.profileImageUrl",
+
+    //         knex("socialLikes")
+    //             .whereColumn("socialLikes.postId", "socialPosts.id")
+    //             .count()
+    //             .as("totalLikes"),
+
+    //         knex("socialComments")
+    //             .whereColumn("socialComments.postId", "socialPosts.id")
+    //             .count()
+    //             .as("totalComments"),
+
+    //         knex.raw(
+    //             "EXISTS(?) AS isLiked",
+    //             [
+    //                 knex("socialLikes")
+    //                     .whereColumn("socialLikes.postId", "socialPosts.id")
+    //                     .whereColumn("socialLikes.userId", currentUserId)
+    //                     .select(1)
+    //             ]
+    //         ),
+
+    //         knex.raw("0 AS isPosted")
+    //     )
+    //     .orderBy("socialPosts.createdAt", "desc")
+
+    // res.json(posts)
 })
+
+routes.get(
+    "/:postId/comments",
+
+    param("postId").isMongoId(),
+
+    checkValidationError,
+
+    async (req, res) => {
+        const { _id } = req
+
+        const { postId } = req.params
+
+        const comments = await Post.aggregate([
+            {
+                $match: {
+                    _id: mongoose.Types.ObjectId(postId)
+                }
+            },
+            {
+                $unwind: "$comments"
+            },
+            {
+                $replaceRoot: {
+                    newRoot: "$comments"
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                    pipeline: [
+                        {
+                            $project: {
+                                firstName: 1,
+                                lastName: 1,
+                                profileImage: {
+                                    url: 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $unwind: "$user"
+            },
+            {
+                $sort: { createdAt: -1 }
+            }
+        ])
+
+        res.json(comments)
+    }
+)
 
 routes.post("/",
 
     body("description")
         .optional()
+        .isString()
         .trim()
         .isLength({ max: 255 }),
 
-    body("image").optional().isString(),
+    body("image")
+        .optional()
+        .isString(),
 
     body("videoUrl")
         .optional()
-        .trim()
         .isURL()
         .custom(isYoutubeVideo)
         .customSanitizer(makeYoutubeVideoUrl),
@@ -127,21 +191,27 @@ routes.post("/",
             return res.status(422).json({ error: "Either provide image or video" })
         }
 
-        const post = await Post.create({
+        const post = new Post({
             description,
-            videoUrl
+            videoUrl,
+            userId: _id
         })
 
         if (image) {
 
             const { imageUrl, imageId } = await upload(image)
 
-            post.image.url = imageUrl
-
-            post.image.id = imageId
-
-            await post.save()
+            post.image = {
+                url: imageUrl,
+                id: imageId
+            }
         }
+
+        await post.save()
+
+        post.comments = undefined
+
+        post.likes = undefined
 
         res.status(201).json(post)
     }
@@ -150,14 +220,20 @@ routes.post("/",
 routes.post(
     "/:postId/comments",
 
-    param("postId").isInt(),
+    param("postId").isMongoId(),
 
-    body("comment").isLength({ min: 1, max: 255 }),
+    body("comment")
+        .isString()
+        .trim()
+        .notEmpty()
+        .isLength({ max: 255 }),
 
     checkValidationError,
 
     async (req, res) => {
         const { postId } = req.params
+
+        const { _id } = req
 
         const { comment } = req.body
 
@@ -172,19 +248,31 @@ routes.post(
             comment
         })
 
-        res.status(201).json({ success: "Comment added" })
+        await post.save()
+
+        res.status(201).json({ success: "Comment added successfuly" })
     }
 )
 
-routes.delete("/:postId/comments/:commentId", async (req, res) => {
-    const { commentId, postId } = req.params
+routes.delete(
+    "/:postId/comments/:commentId",
 
-    const { _id } = req
+    param("postId").isMongoId(),
 
-    await Post.updateOne({ _id: postId }, { $pull: { comments: { _id: commentId, userId: _id } } })
+    param("commentId").isMongoId(),
 
-    res.json({ success: "Comment deleted successfully" })
-})
+    checkValidationError,
+
+    async (req, res) => {
+        const { commentId, postId } = req.params
+
+        const { _id } = req
+
+        await Post.updateOne({ _id: postId }, { $pull: { comments: { _id: commentId, userId: _id } } })
+
+        res.json({ success: "Comment deleted successfully" })
+    }
+)
 
 routes.patch("/:postId/toggle-like", async (req, res) => {
     const { postId } = req.params
@@ -197,7 +285,7 @@ routes.patch("/:postId/toggle-like", async (req, res) => {
         return res.status(404).json({ error: "Post does not exists" })
     }
 
-    if (post.likes.include(_id)) {
+    if (post.likes.includes(_id)) {
         post.likes.pull(_id)
     } else {
         post.likes.push(_id)
@@ -205,27 +293,41 @@ routes.patch("/:postId/toggle-like", async (req, res) => {
 
     await post.save()
 
-    res.status(201).json({ success: "Like the post successfully" })
+    res.json({ success: "Toggle like state successfully" })
 })
 
-routes.delete("/:postId", async (req, res) => {
-    const { postId } = req.params
+routes.delete(
+    "/:postId",
 
-    const { _id } = req
+    param("postId").isMongoId(),
 
-    const post = await Post.findOne({_id: postId, userId: _id})
+    checkValidationError,
 
-    if (!post) {
-        return res.status(404).json({ error: "Post not found" })
+    async (req, res) => {
+        const { postId } = req.params
+
+        const { _id } = req
+
+        const post = await Post.findOne({ _id: postId, userId: _id })
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" })
+        }
+
+        if (post.image) {
+            await destroy(post.image.id)
+        }
+
+        await post.delete()
+
+        res.json({ success: "Post deleted successfully" })
     }
-
-    if (post.image) {
-        await destroy(post.image.id)
-    }
-
-    await post.delete()
-
-    res.json({ success: "Post deleted successfully" })
-})
+)
 
 export default routes
+
+// {
+//     $replaceRoot: {
+//         newRoot: { $mergeObjects: [{ $arrayElemAt: ["$users", 0] }, "$$ROOT"] }
+//     }
+// }

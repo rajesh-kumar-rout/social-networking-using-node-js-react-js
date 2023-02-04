@@ -5,16 +5,22 @@ dotenv.config()
 
 export async function authenticate(req, res, next) {
 
-    const { authorization } = req.headers
+    let { authorization } = req.headers
 
     if (authorization?.startsWith("Bearer ")) {
 
         authorization = authorization.substring(7, authorization.length)
     }
 
-    const { _id } = jwt.verify(authorization, process.env.AUTH_TOKEN_SECRECT)
+    try {
+        
+        const { _id } = jwt.verify(authorization, process.env.AUTH_TOKEN_SECRECT)
 
-    req._id = _id
+        req._id = _id
+
+    } catch {
+
+    }
 
     next()
 }
