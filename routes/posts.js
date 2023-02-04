@@ -198,13 +198,7 @@ routes.post("/",
         })
 
         if (image) {
-
-            const { imageUrl, imageId } = await upload(image)
-
-            post.image = {
-                url: imageUrl,
-                id: imageId
-            }
+            post.image = await upload(image)
         }
 
         await post.save()

@@ -11,8 +11,8 @@ export async function upload(image) {
     const res = await cloudinary.uploader.upload(image)
     
     return {
-        imageUrl: res.secure_url,
-        imageId: res.public_id
+        url: res.secure_url,
+        id: res.public_id
     }
 }
 

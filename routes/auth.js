@@ -131,19 +131,15 @@ routes.post(
         })
 
         if (profileImage) {
-            const { imageUrl, imageId } = await upload(profileImage)
+            const image = await upload(profileImage)
 
-            user.profileImage.url = imageUrl
-
-            user.profileImage.id = imageId
+            user.profileImage = image
         }
 
         if (coverImage) {
-            const { imageUrl, imageId } = await upload(coverImage)
+            const image = await upload(coverImage)
 
-            user.coverImage.url = imageUrl
-
-            user.coverImage.id = imageId
+            user.coverImage = image
         }
 
         await user.save();
@@ -270,28 +266,20 @@ routes.patch(
 
         if (coverImage) {
 
-            const { imageUrl, imageId } = await upload(coverImage)
-
             if (user.coverImage) {
                 await destroy(user.coverImage.id)
             }
 
-            user.coverImage.url = imageUrl
-
-            user.coverImage.id = imageId
+            user.coverImage = await upload(coverImage) 
         }
 
         if (profileImage) {
-
-            const { imageUrl, imageId } = await upload(profileImage)
 
             if (user.profileImage) {
                 await destroy(user.profileImage.id)
             }
 
-            user.profileImage.url = imageUrl
-
-            user.profileImage.id = imageId
+            user.profileImage = await upload(profileImage)
         }
 
         user.firstName = firstName
@@ -345,7 +333,17 @@ routes.get("/", async (req, res) => {
 routes.delete("/", isAuthenticated, async (req, res) => {
     const { _id } = req
 
-    await User.findByIdAndDelete(_id)
+    const user = await User.findById(_id)
+
+    if(user.profileImage) {
+        await destroy(user.profileImage.id)
+    }
+
+    if(user.coverImage) {
+        await destroy(user.coverImage.id)
+    }
+
+    await user.delete()
 
     await Post.deleteMany({ userId: _id })
 

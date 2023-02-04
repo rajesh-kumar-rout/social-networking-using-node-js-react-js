@@ -4,7 +4,7 @@ const imageSchema = mongoose.Schema({
     url: String,
 
     id: String
-})
+}, {_id: false})
 
 const schema = mongoose.Schema({
     firstName: String,
