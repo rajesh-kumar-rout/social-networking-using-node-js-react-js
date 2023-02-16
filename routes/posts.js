@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
-import mongoose from "mongoose"
+import mongoose, { Types } from "mongoose"
 import Post from "../models/post.js"
 import User from "../models/user.js"
 import { destroy, upload } from "../utils/cloudinary.js"
@@ -10,14 +10,16 @@ const routes = Router()
 
 routes.get("/feeds", async (req, res) => {
 
-    const { _id } = req 
+    const { _id } = req
 
     const user = await User.findById(_id)
 
+    const followings = [...user.followings, Types.ObjectId(_id)]
+console.log(followings);
     const posts = await Post.aggregate([
         {
             $match: {
-                userId: {$in: user.followings}
+                userId: {$in: followings}
             }
         },
         {
@@ -55,6 +57,9 @@ routes.get("/feeds", async (req, res) => {
         },
         {
             $unwind: "$user"
+        },
+        {
+            $sort: {createdAt: -1}
         }
     ])
 
@@ -162,17 +167,15 @@ routes.get(
 routes.post("/",
 
     body("description")
-        .optional()
+        .optional({checkFalsy: true})
         .isString()
         .trim()
         .isLength({ max: 255 }),
 
-    body("image")
-        .optional()
-        .isString(),
+    body("image").isString(),
 
     body("videoUrl")
-        .optional()
+        .optional({checkFalsy: true})
         .isURL()
         .custom(isYoutubeVideo)
         .customSanitizer(makeYoutubeVideoUrl),
@@ -200,6 +203,7 @@ routes.post("/",
 
         if (image) {
             post.image = await upload(image)
+            console.log(post.image);
         }
 
         await post.save()
