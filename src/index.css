@@ -4,9 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    @apply font-poppins;
-}
 
 /* @layer components {
     .form {

@@ -104,7 +104,7 @@ export default function HomePage() {
                 </div>
             </div> */}
 
-            <div className="card" style={{minWidth: 350}}>
+            <div className="card">
                 <div className="card-header card-title">Suggested For You</div>
 
                 <div className="card-body">

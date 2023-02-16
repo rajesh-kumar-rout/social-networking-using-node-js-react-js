@@ -82,11 +82,10 @@ export default function EditProfilePage() {
                 onSubmit={handleProfileUpdate}
             >
                 {({ isSubmitting, setFieldValue, handleBlur }) => (
-                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 
-                    sm:rounded-md">
-                        <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-teal-600 font-bold">Update Your Profile</p>
+                    <Form className="card" style={{ maxWidth: 700, margin: "auto" }}>
+                        <p className="card-header card-title">Edit Personal Info</p>
 
-                        <div className="p-4">
+                        <div className="card-body">
                             <div className="form-group">
                                 <label htmlFor="firstName" className="form-label form-label-required">First Name</label>
                                 <Field
@@ -147,29 +146,28 @@ export default function EditProfilePage() {
                             <div className="form-group">
                                 <label className="form-label form-label-required">Gender</label>
 
-                                <div className="mt-1 flex gap-6">
-                                    <div className="flex items-center gap-2">
-                                        <Field
-                                            type="radio"
-                                            id="male"
-                                            className=" text-teal-600 focus:ring-teal-600"
-                                            name="gender"
-                                            value="Male"
-                                        />
-                                        <label htmlFor="male">Male</label>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Field
-                                            type="radio"
-                                            id="female"
-                                            className="text-teal-600 focus:ring-teal-600"
-                                            name="gender"
-                                            value="Female"
-                                        />
-                                        <label htmlFor="female">Female</label>
-                                    </div>
+                                <div className="form-radio">
+                                    <Field
+                                        type="radio"
+                                        id="male"
+                                        className=" form-radio-input"
+                                        name="gender"
+                                        value="Male"
+                                    />
+                                    <label htmlFor="male">Male</label>
                                 </div>
+
+                                <div className="form-radio" style={{ marginTop: 8 }}>
+                                    <Field
+                                        type="radio"
+                                        id="female"
+                                        className="form-radio-input"
+                                        name="gender"
+                                        value="Female"
+                                    />
+                                    <label htmlFor="female">Female</label>
+                                </div>
+                                
                                 <ErrorMessage component="p" name="gender" className="form-error" />
                             </div>
 
@@ -269,7 +267,7 @@ export default function EditProfilePage() {
                             </div>
                         </div>
 
-                        <div className="px-4 py-3 border-t-2 border-gray-300">
+                        <div className="card-footer">
                             <button
                                 type="submit"
                                 className="btn btn-primary bg-teal-600 font-semibold"
@@ -292,11 +290,10 @@ export default function EditProfilePage() {
                 }}
             >
                 {({ isSubmitting }) => (
-                    <Form className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 
-                    sm:rounded-md">
-                        <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-teal-600 font-bold">Change Password</p>
+                    <Form className="card" style={{ maxWidth: 700, margin: "auto", marginTop: 36 }}>
+                        <p className="card-header card-title">Change Password</p>
 
-                        <div className="p-4">
+                        <div className="card-body">
                             <div className="form-group">
                                 <label htmlFor="oldPassword" className="form-label">Old Password</label>
                                 <Field
@@ -319,7 +316,7 @@ export default function EditProfilePage() {
                                 <ErrorMessage component="p" name="newPassword" className="form-error" />
                             </div>
 
-                            <div className="">
+                            <div>
                                 <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
                                 <Field
                                     type="password"
@@ -331,7 +328,7 @@ export default function EditProfilePage() {
                             </div>
                         </div>
 
-                        <div className="px-4 py-3 border-t-2 border-gray-300">
+                        <div className="card-footer">
                             <button
                                 type="submit"
                                 className="btn btn-primary bg-teal-600 font-semibold"
@@ -344,15 +341,15 @@ export default function EditProfilePage() {
                 )}
             </Formik>
 
-            <div className="max-w-xl mx-auto my-8 bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md">
-                <p className="px-4 py-3 border-b-2 border-gray-300 text-lg text-red-600 font-bold">Delete Account</p>
+            <div className="card" style={{ maxWidth: 700, margin: "auto", marginTop: 36 }}>
+                <p className="card-header card-title">Delete Account</p>
 
-                <div className="p-4 text-gray-600">
+                <div className="card-body">
                     Are you sure you want to delete your account ? This action can not be un done. Once you delete your
                     account all your photos and post will be deleted too.
                 </div>
 
-                <div className="px-4 py-3 border-t-2 border-gray-300">
+                <div className="card-footer">
                     <button
                         type="submit"
                         className="btn btn-primary bg-red-600 font-semibold"

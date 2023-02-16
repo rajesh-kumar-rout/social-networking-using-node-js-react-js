@@ -12,7 +12,7 @@ body {
     font-size: 16px;
     font-weight: normal;
     color: var(--gray700);
-    background-color: var(--gray100);
+    background-color: var(--gray200);
 }
 
 ul {
@@ -34,6 +34,7 @@ button {
     background: none;
 }
 
-input {
+input,
+textarea {
     outline: none;
 }

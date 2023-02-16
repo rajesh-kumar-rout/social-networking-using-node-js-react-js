@@ -19,25 +19,26 @@ export default function ProfileFollowersPage() {
     }, [])
 
     return (
-        <div className="bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md max-w-xl mx-auto my-8">
-            <p className="px-4 py-3 border-b-2 border-gray-300 text-lg font-bold text-teal-600 flex items-center gap-2">
-                <MdArrowBack size={24} className="cursor-pointer" onClick={() => navigate(-1)} />
+        <div className="card" style={{ maxWidth: 700, margin: "24px auto 0px" }}>
+            <p className="card-header card-title profile-back-nav">
+            <button onClick={() => navigate(-1)} >
+                    <MdArrowBack size={24} />
+                </button>
                 All Followings
             </p>
 
             {followings.length === 0 ? (
-                <p className="text-sm text-gray-600 p-4 text-center">No Followings Found</p>
+                <p className="card-body" style={{ textAlign: "center" }}>No Followings Found</p>
             ) : (
-                <div className="p-4">
+                <div className="card-body">
                     {followings.map(following => (
                         <Link
                             key={following.id}
                             to={`/profile/${following._id}`}
-                            className="flex items-center gap-4 border-t-2 border-gray-300 first:border-t-0 py-3 first:pt-0 
-                            last:pb-0"
+                            className="suggested"
                         >
-                            <img className="rounded-full h-12 w-12 object-cover" src={following.profileImage.url} alt="" />
-                            <p className="font-semibold">{fullName(following)}</p>
+                            <img className="suggested-img" src={following.profileImage.url} alt="" />
+                            <p className="suggested-name">{fullName(following)}</p>
                         </Link>
                     ))}
                 </div>

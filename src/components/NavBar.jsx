@@ -157,6 +157,9 @@ export default function NavBar() {
                 <Link to="/" className="navbar-title">MY DIARY</Link>
 
                 <div className="navbar-links">
+                    <Link to="search" className="navbar-link">
+                        <MdSearch size={24}/>
+                    </Link>
 
                     <div className="navbar-dropdown-wrapper">
                         <div onClick={handleDropDown} className="navbar-dropdown-btn">
