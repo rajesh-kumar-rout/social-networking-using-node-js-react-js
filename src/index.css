@@ -8,7 +8,7 @@
     @apply font-poppins;
 }
 
-@layer components {
+/* @layer components {
     .form {
         @apply max-w-xl bg-white shadow-md md:rounded-lg my-8 mx-auto p-6;
     }
@@ -62,4 +62,4 @@
     .post-action-btn {
         @apply bg-gray-200 transition-all rounded-full p-2 hover:bg-gray-300 text-gray-800 duration-300;
     }
-}
+} */

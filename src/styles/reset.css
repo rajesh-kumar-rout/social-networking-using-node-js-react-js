@@ -1,0 +1,39 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-weight: inherit;
+    font-size: inherit;
+    color: inherit;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-size: 16px;
+    font-weight: normal;
+    color: var(--gray700);
+    background-color: var(--gray100);
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+button {
+    outline: none;
+    background: none;
+}
+
+input {
+    outline: none;
+}

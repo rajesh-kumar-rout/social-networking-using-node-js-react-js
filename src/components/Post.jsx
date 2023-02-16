@@ -66,20 +66,20 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
     const [isCommentBoxOpened, setIsCommentBoxOpened] = useState(false)
 console.log(post)
     return (
-        <div className="bg-white border-2 border-x-0 sm:border-x-2 border-gray-300 sm:rounded-md mx-auto w-full sm:w-[600px]">
-            <div className="p-3 flex gap-3">
+        <div className="post">
+            <div className="post-header">
                 <img
-                    src={post.profileImage ? post.profileImage.url : DEFAULT_PROFILE_IMG}
-                    className="w-12 h-12 rounded-full object-cover"
+                    src={post.user.profileImage ? post.user.profileImage.url : DEFAULT_PROFILE_IMG}
+                    className="post-profile-img"
                 />
 
                 <div>
-                    <div className="text-sm font-bold">{fullName(post.user)}</div>
-                    <div className="text-sm mt-1 text-gray-600">{dateToAgo(post.createdAt)}</div>
+                    <div className="post-username">{fullName(post.user)}</div>
+                    <div className="post-created-at">{dateToAgo(post.createdAt)}</div>
                 </div>
             </div>
 
-            {post.description && <div className="text-sm text-gray-600 px-3 pb-3">{post.description}</div>}
+            {post.description && <div className="post-description">{post.description}</div>}
 
             {post.image && (
                 <img src={cloudiImgUrl(post.image.url)} className="w-full object-cover" />
@@ -89,17 +89,17 @@ console.log(post)
                 <iframe width="100%" height="345" src={post.videoUrl}></iframe>
             )}
 
-            <div className="p-3 flex justify-between">
-                <div className="flex items-center gap-3">
+            <div className="post-footer">
+                <div className="post-actions">
                     <button
-                        className="post-action-btn fill-pink-600"
+                        className="post-action"
                         onClick={() => onToggleLike(post._id)}
                     >
-                        {post.isLiked ? <FaHeart size={24} fill="fill-pink-600" /> : <FaRegHeart size={24} />}
+                        {post.isLiked ? <FaHeart size={24} fill="var(--pink600)" /> : <FaRegHeart size={24} />}
                     </button>
 
                     <button
-                        className="post-action-btn"
+                        className="post-action"
                         onClick={() => setIsCommentBoxOpened(!isCommentBoxOpened)}
                     >
                         <FaRegComment size={24} />
@@ -107,7 +107,7 @@ console.log(post)
 
                     {post.user._id === currentUser._id && (
                         <button
-                            className="post-action-btn"
+                            className="post-action"
                             onClick={() => onDeletePost(post._id)}
                         >
                             <FaRegTrashAlt size={24} />
@@ -115,7 +115,7 @@ console.log(post)
                     )}
                 </div>
 
-                <div className="text-gray-600 text-sm">{post.totalLikes} likes, {post.totalComments} comments</div>
+                <div className="post-footer-text">{post.totalLikes} likes, {post.totalComments} comments</div>
             </div>
 
             {isCommentBoxOpened && <CommentBox postId={post._id} />}

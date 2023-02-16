@@ -4,6 +4,9 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
 import "./index.css"
+import "./styles/variables.css"
+import "./styles/index.css"
+import "./styles/reset.css"
 import "react-toastify/dist/ReactToastify.css"
 
 const root = createRoot(document.getElementById("root"))
