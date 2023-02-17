@@ -3,13 +3,13 @@ import Post from "../models/post.js"
 import User from "../models/user.js"
 import { param } from "express-validator"
 import { checkValidationError } from "../utils/validation.js"
-import mongoose, { Mongoose } from "mongoose"
+import mongoose, { Mongoose, Types } from "mongoose"
 const routes = Router()
 
 routes.get("/", async (req, res) => {
-    const { limit } = req.query
+    const { limit, query } = req.query
 
-    const users = await User.find()
+    let users = await User.find()
         .select({
             firstName: 1,
             lastName: 1,
@@ -80,8 +80,8 @@ routes.get(
     async (req, res) => {
         const { userId } = req.params
 
-        const { _id } = req 
-        
+        const { _id } = req
+
         const posts = await Post.aggregate([
             {
                 $match: {
@@ -99,7 +99,7 @@ routes.get(
                             $project: {
                                 firstName: 1,
                                 lastName: 1,
-                                profileImage: { url: 1}
+                                profileImage: { url: 1 }
                             }
                         }
                     ]
@@ -125,7 +125,7 @@ routes.get(
                 $unwind: "$user"
             },
             {
-                $sort: {createdAt: -1}
+                $sort: { createdAt: -1 }
             }
         ])
 
@@ -189,7 +189,7 @@ routes.get(
 
         const { limit } = req.query
 
-        const photos = await Post.find({ userId, image: {$exists: 1} }, { image: { url: 1 } }).limit(limit)
+        const photos = await Post.find({ userId, image: { $exists: 1 } }, { image: { url: 1 } }).limit(limit)
 
         res.json(photos)
     }
@@ -210,9 +210,9 @@ routes.patch("/:userId/toggle-follow", async (req, res) => {
 
     if (user.followers.includes(_id)) {
 
-        user.followers.pop(_id)
+        user.followers.pull(_id)
 
-        currentUser.followings.pop(userId)
+        currentUser.followings.pull(userId)
 
     } else {
 
@@ -225,7 +225,7 @@ routes.patch("/:userId/toggle-follow", async (req, res) => {
 
     await currentUser.save()
 
-    res.status(201).json({ success: "Follow the user successfully" })
+    res.json({ success: "Toggle the follow state successfully" })
 })
 
 routes.get("/:userId/followers", async (req, res) => {
@@ -257,7 +257,7 @@ routes.get("/:userId/followings", async (req, res) => {
         return res.status(404).json({ error: "User not found" })
     }
 
-    const followings = await User.find({ _id: { $in: user.followings }, profileImage: {$exists: 1} }, {
+    const followings = await User.find({ _id: { $in: user.followings }, profileImage: { $exists: 1 } }, {
         firstName: 1,
         lastName: 1,
         profileImage: {
