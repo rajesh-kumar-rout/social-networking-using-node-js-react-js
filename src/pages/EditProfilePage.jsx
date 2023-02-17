@@ -146,7 +146,7 @@ export default function EditProfilePage() {
                             <div className="form-group">
                                 <label className="form-label form-label-required">Gender</label>
 
-                                <div className="form-radio">
+                                <label className="form-radio">
                                     <Field
                                         type="radio"
                                         id="male"
@@ -155,9 +155,9 @@ export default function EditProfilePage() {
                                         value="Male"
                                     />
                                     <label htmlFor="male">Male</label>
-                                </div>
+                                </label>
 
-                                <div className="form-radio" style={{ marginTop: 6 }}>
+                                <label className="form-radio" style={{ marginTop: 6}}>
                                     <Field
                                         type="radio"
                                         id="female"
@@ -166,7 +166,7 @@ export default function EditProfilePage() {
                                         value="Female"
                                     />
                                     <label htmlFor="female">Female</label>
-                                </div>
+                                </label>
                                 
                                 <ErrorMessage component="p" name="gender" className="form-error" />
                             </div>

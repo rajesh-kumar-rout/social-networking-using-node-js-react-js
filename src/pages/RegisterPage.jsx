@@ -117,7 +117,7 @@ export default function RegisterPage() {
                             <div className="form-group">
                                 <label className="form-label form-label-required">Gender</label>
 
-                                <div className="form-radio">
+                                <label className="form-radio">
                                     <Field
                                         type="radio"
                                         id="male"
@@ -126,9 +126,9 @@ export default function RegisterPage() {
                                         value="Male"
                                     />
                                     <label htmlFor="male">Male</label>
-                                </div>
+                                </label>
 
-                                <div className="form-radio" style={{marginTop: 6}}>
+                                <label className="form-radio" style={{marginTop: 6}}>
                                     <Field
                                         type="radio"
                                         id="female"
@@ -137,7 +137,7 @@ export default function RegisterPage() {
                                         value="Female"
                                     />
                                     <label htmlFor="female">Female</label>
-                                </div>
+                                </label>
 
                                 <ErrorMessage component="p" name="gender" className="form-error" />
                             </div>
