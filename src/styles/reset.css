@@ -49,7 +49,9 @@ input[type=email],
 input[type=date],
 input[type=time],
 input[type=search],
+input[type=password],
 textarea,
+select,
 input[type=datetime] {
     width: 100%;
 }

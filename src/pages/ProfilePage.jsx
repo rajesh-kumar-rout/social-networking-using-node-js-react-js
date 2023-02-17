@@ -55,10 +55,10 @@ export default function ProfilePage() {
     return (
         <div style={{maxWidth: 1200}}>
             <div className="profile">
-                <Image src={user.coverImage.url} alt={DEFAULT_PROFILE_IMG} className="profile-cover-img"/>
+                <Image src={user.coverImage?.url} alt={DEFAULT_COVER_IMG} className="profile-cover-img"/>
 
                 <div className="profile-footer">
-                    <Image src={user.profileImage.url} alt={DEFAULT_PROFILE_IMG} className="profile-img"/>
+                    <Image src={user.profileImage?.url} alt={DEFAULT_PROFILE_IMG} className="profile-img"/>
 
                     <div className="profile-right">
                         <div>
