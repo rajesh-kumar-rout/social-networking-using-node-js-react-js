@@ -6,7 +6,7 @@ import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { handleImage } from "../utils/functions"
 import { AuthContext } from "./Auth"
 
-export default function AddPost() {
+export default function AddPost({ onAddPost }) {
     const { currentUser } = useContext(AuthContext)
 
     const handleSubmit = async(values, {setSubmitting, resetForm}) => {
@@ -29,7 +29,7 @@ export default function AddPost() {
                 videoUrl: "",
                 type: ""
             }}
-            onSubmit={handleSubmit}
+            onSubmit={onAddPost}
         >
             {({ isSubmitting, values, setFieldValue }) => (
                 <Form className="add-post">

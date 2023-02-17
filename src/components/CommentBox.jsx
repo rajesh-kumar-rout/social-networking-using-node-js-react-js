@@ -55,7 +55,7 @@ export default function CommentBox({ postId }) {
                 </div>
             ) : (
                 <>
-                    <div className="comment-form">
+                    {/* <div className="comment-form">
                         <Image src={currentUser.profileImage.url} alt={DEFAULT_PROFILE_IMG} className="comment-img" />
 
                         <form onSubmit={handleAddComment} className="comment-form-right">
@@ -67,6 +67,39 @@ export default function CommentBox({ postId }) {
                             />
                             <button className="btn btn-sm btn-primary">Post</button>
                         </form>
+                    </div> */}
+                    {/* <div className="border-2 border-gray-300 rounded-md mt-4">
+                        <p className="card-header card-title">Your comment</p>
+
+                        <form onSubmit={handleAddComment} className="card-body">
+                            <textarea
+                                className="form-control"
+                                style={{ resize: "none" }}
+                                name="comment"
+                            />
+                          
+                        </form>
+
+                        <div className="card-footer text-right">
+                            <button className="btn btn-sm btn-primary">Post</button>
+                            </div>
+                    </div> */}
+                    <div className="mt-4">
+                        <p className="font-bold text-orange-600 mb-3">Your comment</p>
+
+                        <form onSubmit={handleAddComment} >
+                            <textarea
+                                className="form-control"
+                                style={{ resize: "none" }}
+                                name="comment"
+                            />
+
+
+
+                            <div className="">
+                                <button className="px-2 py-1 text-sm bg-orange-600 text-white mt-3 rounded-md">Save Comment</button>
+                            </div>
+                            </form>
                     </div>
 
                     {comments.map(comment => (

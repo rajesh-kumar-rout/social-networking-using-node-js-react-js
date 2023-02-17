@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import Account from "./components/Auth"
 import Authenticated from "./components/Authenticated"
 import Layout from "./components/Layout"
-import NotAuthenticated from "./components/NotAuthenticated"
+import UnAuthenticated from "./components/UnAuthenticated"
 import EditProfilePage from "./pages/EditProfilePage"
 import FollowersPage from "./pages/FollowersPage"
 import FollowingPage from "./pages/FollowingsPage"
@@ -23,10 +23,6 @@ export default function App() {
                     <Route element={<Layout />}>
                         <Route index element={<HomePage />} />
                         <Route path="/search" element={<SearchPage />} />
-                        {/* <Route path="/add-post" element={<AddPostPage />} /> */}
-                        {/* <Route path="/auth/profile/:userId" element={<ProfilePage />} /> */}
-                        {/* <Route path="/profile/:userId" element={<ProfilePage />} /> */}
-                        {/* <Route path="/auth/edit-profile" element={<EditProfilePage />} /> */}
                         <Route path="/auth/edit-profile" element={<EditProfilePage />} />
                         <Route path="/auth/followers" element={<FollowersPage />} />
                         <Route path="/auth/followings" element={<FollowingPage />} />
@@ -39,10 +35,7 @@ export default function App() {
                     </Route>
                 </Route>
 
-
-
-
-                <Route element={<NotAuthenticated />}>
+                <Route element={<UnAuthenticated />}>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                 </Route>
