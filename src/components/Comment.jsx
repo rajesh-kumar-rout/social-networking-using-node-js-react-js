@@ -1,36 +1,30 @@
 import { useContext } from "react"
-import { MdDeleteOutline } from "react-icons/md"
 import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { dateToAgo, fullName } from "../utils/functions"
 import { AuthContext } from "./Auth"
+import Image from "./Image"
 
 export default function Comment({ comment, onDeleteComment }) {
     const { currentUser } = useContext(AuthContext)
+
     return (
-        <div className="flex gap-3 px-3 py-4 border-t-2 border-gray-300">
-            <img 
-                src={comment.profileImage ? comment.profileImage.url : DEFAULT_PROFILE_IMG} 
-                className="h-9 w-9 rounded-full object-cover" 
-            />
+        <div className="comment">
+            <div className="comment-header">
+                <Image src={comment.user.profileImage.url}  alt={DEFAULT_PROFILE_IMG} className="comment-img"/>
 
-            <div className="flex justify-between flex-1">
-                <div className="">
-                    <p className="">
-                        <span className="text-sm font-[500]">{fullName(comment.user)}</span>
-                        <span className="text-sm text-gray-600"> • {dateToAgo(comment.createdAt)}</span> 
-                    </p>
-                    <p className="text-sm text-gray-700 mt-1">{comment.comment}</p>
+                <div className="comment-header-right">
+                    <span className="comment-username">{fullName(comment.user)}</span>
+                    <span className="comment-created-at">{dateToAgo(comment.createdAt)}</span>
                 </div>
-
-                {comment.user._id === currentUser._id && (
-                    <button 
-                        className="p-1 bg-gray-200 rounded-full h-min hover:bg-gray-300" 
-                        onClick={() => onDeleteComment(comment._id)}
-                    >
-                        <MdDeleteOutline size={20} />
-                    </button>
-                )}
             </div>
+
+            <p className="comment-content">{comment.comment}</p>
+
+            {comment.user._id === currentUser._id && (
+                <div className="comment-footer">
+                    <button className="btn btn-sm btn-primary" onClick={() => onDeleteComment(comment._id)}>Delete</button>
+                </div>
+            )}
         </div>
     )
 }

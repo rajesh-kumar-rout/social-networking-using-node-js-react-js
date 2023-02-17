@@ -10,7 +10,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
-
+console.log('call');
         try {
             const { data } = await axios.post("/auth/login", values)
 
@@ -36,16 +36,11 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <div className="h-screen w-full bg-gray-200 py-8">
-                    <Form className="bg-white rounded-md overflow-hidden lg:grid grid-cols-2 max-w-4xl mx-auto">
-                        <div className="relative hidden lg:block">
-                            <img src="https://cdn.pixabay.com/photo/2015/01/08/18/25/desk-593327__340.jpg" className="object-cover h-full w-full" alt="" />
+                <Form style={{ maxWidth: 600, padding: 10, margin: "24px auto" }}>
+                    <div className="card">
+                        <p className="card-header card-title">Login</p>
 
-                            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-teal-600 font-bold text-lg mb-6">Login</p>
-
+                        <div className="card-body">
                             <div className="form-group">
                                 <label htmlFor="email" className="form-label">Email</label>
                                 <Field
@@ -71,20 +66,19 @@ export default function LoginPage() {
                             <div className="form-group">
                                 <button
                                     type="submit"
-                                    className="btn btn-primary w-full"
+                                    className="btn btn-primary btn-full"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? "Loading..." : "Login"}
                                 </button>
                             </div>
 
-                            <p className="text-center text-gray-700">
-                                Do not have an account ? <Link to="/register" className=" text-teal-600">Register</Link>
-                            </p>
+                            <center>
+                                Do not have an account ? <Link to="/register" style={{ color: "var(--orange600)" }}>Register</Link>
+                            </center>
                         </div>
-                        <Footer />
-                    </Form>
-                </div>
+                    </div>
+                </Form>
             )}
         </Formik>
     )

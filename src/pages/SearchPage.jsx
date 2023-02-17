@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import Loader from "../components/Loader"
 import UserList from "../components/Users"
 import axios from "../utils/axios"
+import { MdSearch } from "react-icons/md"
 
 export default function SearchPage() {
     const [searchParams] = useSearchParams()
@@ -28,5 +29,13 @@ export default function SearchPage() {
         return <Loader />
     }
 
-    return <UserList title={`${users.length} Users Found`} users={users} />
+    return (
+        <div>
+            <div className="search-box">
+                <MdSearch size={24}/>
+                <input type="search" placeholder="Search people here..."/>
+            </div>
+            <UserList title={`${users.length} Users Found`} users={users} />
+        </div>
+    )
 }

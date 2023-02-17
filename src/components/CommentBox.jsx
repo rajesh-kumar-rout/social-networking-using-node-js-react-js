@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import axios from "../utils/axios"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
+import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { AuthContext } from "./Auth"
 import Comment from "./Comment"
+import Image from "../components/Image"
+import Loader from "./Loader"
 
 export default function CommentBox({ postId }) {
     const [comments, setComments] = useState([])
@@ -46,26 +48,24 @@ export default function CommentBox({ postId }) {
     }, [])
 
     return (
-        <div className="border-t-2 border-gray-300">
+        <div className="comment-box">
             {isLoading ? (
-                <div className="py-4">
-                    <div className="h-10 w-10 rounded-full mx-auto border-4 border-indigo-600 border-b-transparent animate-spin"></div>
+                <div style={{ padding: "16px 16px 4px" }}>
+                    <Loader />
                 </div>
             ) : (
                 <>
-                    <div className="flex gap-3 px-3 py-4 ">
-                        <img
-                            src={currentUser.profileImageUrl ? currentUser.profileImageUrl : DEFAULT_PROFILE_IMG}
-                            className="h-9 w-9 rounded-full object-cover"
-                        />
+                    <div className="comment-form">
+                        <Image src={currentUser.profileImage.url} alt={DEFAULT_PROFILE_IMG} className="comment-img" />
 
-                        <form onSubmit={handleAddComment} className="flex-1 flex flex-col gap-2 justify-end items-end">
+                        <form onSubmit={handleAddComment} className="comment-form-right">
                             <textarea
-                                className="form-control bg-gray-100 text-sm resize-none"
+                                className="form-control"
+                                style={{ resize: "none" }}
                                 name="comment"
                                 placeholder="Write your comment..."
                             />
-                            <button className="px-2 py-1 rounded bg-teal-600 text-white text-sm font-semibold">Post</button>
+                            <button className="btn btn-sm btn-primary">Post</button>
                         </form>
                     </div>
 

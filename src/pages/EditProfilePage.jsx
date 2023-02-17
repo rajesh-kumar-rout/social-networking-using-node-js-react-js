@@ -157,7 +157,7 @@ export default function EditProfilePage() {
                                     <label htmlFor="male">Male</label>
                                 </div>
 
-                                <div className="form-radio" style={{ marginTop: 8 }}>
+                                <div className="form-radio" style={{ marginTop: 6 }}>
                                     <Field
                                         type="radio"
                                         id="female"

@@ -52,11 +52,11 @@ export default function RegisterPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting, setFieldValue, handleBlur }) => (
-                <div className="h-screen w-full overflow-y-auto bg-gray-200 py-8">
-                    <Form className="bg-white border-2 border-gray-300 rounded-md max-w-xl mx-auto">
-                        <p className="border-b-2 border-gray-300 px-4 py-3 text-center text-lg font-bold text-teal-600">Register</p>
+                <div style={{ maxWidth: 600, padding: 10, margin: "24px auto" }}>
+                    <Form className="card">
+                        <p className="card-header card-title">Register</p>
 
-                        <div className="p-4">
+                        <div className="card-body">
                             <div className="form-group">
                                 <label htmlFor="firstName" className="form-label form-label-required">First Name</label>
                                 <Field
@@ -80,7 +80,7 @@ export default function RegisterPage() {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="bio" className="form-label">Bio</label>
+                                <label htmlFor="bio" className="form-label form-label-required">Bio</label>
                                 <Field
                                     type="text"
                                     id="bio"
@@ -117,29 +117,28 @@ export default function RegisterPage() {
                             <div className="form-group">
                                 <label className="form-label form-label-required">Gender</label>
 
-                                <div className="mt-1 flex gap-6">
-                                    <div className="flex items-center gap-2">
-                                        <Field
-                                            type="radio"
-                                            id="male"
-                                            className=" text-teal-600 focus:ring-teal-600"
-                                            name="gender"
-                                            value="Male"
-                                        />
-                                        <label htmlFor="male">Male</label>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <Field
-                                            type="radio"
-                                            id="female"
-                                            className="text-teal-600 focus:ring-teal-600"
-                                            name="gender"
-                                            value="Female"
-                                        />
-                                        <label htmlFor="female">Female</label>
-                                    </div>
+                                <div className="form-radio">
+                                    <Field
+                                        type="radio"
+                                        id="male"
+                                        className="form-radio-input"
+                                        name="gender"
+                                        value="Male"
+                                    />
+                                    <label htmlFor="male">Male</label>
                                 </div>
+
+                                <div className="form-radio" style={{marginTop: 6}}>
+                                    <Field
+                                        type="radio"
+                                        id="female"
+                                        className="form-radio-input"
+                                        name="gender"
+                                        value="Female"
+                                    />
+                                    <label htmlFor="female">Female</label>
+                                </div>
+
                                 <ErrorMessage component="p" name="gender" className="form-error" />
                             </div>
 
@@ -263,20 +262,17 @@ export default function RegisterPage() {
                             <div className="form-group">
                                 <button
                                     type="submit"
-                                    className="btn btn-primary w-full"
+                                    className="btn btn-primary btn-full"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? "Loading..." : "Sign Up"}
+                                    {isSubmitting ? "Loading..." : "Register"}
                                 </button>
                             </div>
 
-                            <p className="text-center text-gray-700">
-                                Already have an account ?
-                                <Link className=" text-teal-600" to="/login"> Login</Link>
-                            </p>
+                            <center>
+                                Already have an account ? <Link to="/login" style={{ color: "var(--orange600)" }}>Login</Link>
+                            </center>
                         </div>
-
-                        {/* <Footer /> */}
                     </Form>
                 </div>
             )}

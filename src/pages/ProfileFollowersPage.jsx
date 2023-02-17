@@ -21,7 +21,7 @@ export default function ProfileFollowersPage() {
     return (
         <div className="card" style={{ maxWidth: 700, margin: "24px auto 0px" }}>
             <p className="card-header card-title profile-back-nav">
-            <button onClick={() => navigate(-1)} >
+                <button onClick={() => navigate(-1)} >
                     <MdArrowBack size={24} />
                 </button>
                 All Followings
