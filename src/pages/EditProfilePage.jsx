@@ -270,7 +270,7 @@ export default function EditProfilePage() {
                         <div className="card-footer">
                             <button
                                 type="submit"
-                                className="btn btn-primary bg-teal-600 font-semibold"
+                                className="btn btn-primary"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Please Wait..." : "Update Profile"}
@@ -331,7 +331,7 @@ export default function EditProfilePage() {
                         <div className="card-footer">
                             <button
                                 type="submit"
-                                className="btn btn-primary bg-teal-600 font-semibold"
+                                className="btn btn-primary"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Please Wait..." : "Change Password"}

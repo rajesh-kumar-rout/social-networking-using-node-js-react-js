@@ -42,6 +42,18 @@ button {
     cursor: pointer;
 }
 
+input[type=text],
+input[type=file],
+input[type=number],
+input[type=email],
+input[type=date],
+input[type=time],
+input[type=search],
+textarea,
+input[type=datetime] {
+    width: 100%;
+}
+
 input,
 textarea {
     outline: none;

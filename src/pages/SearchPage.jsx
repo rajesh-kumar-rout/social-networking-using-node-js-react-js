@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import Loader from "../components/Loader"
 import UserList from "../components/Users"
 import axios from "../utils/axios"
 import { MdSearch } from "react-icons/md"
 
 export default function SearchPage() {
+    const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const query = searchParams.get("query")
     const [users, setUsers] = useState([])
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchUsers = async () => {
-        const { data } = await axios.get(`/users?search=${query}`)
+        const { data } = await axios.get(`/users?query=${query}`)
 
         setUsers(data)
 
         setIsFetching(false)
+    }
+
+    const handleSubmit = event => {
+        event.preventDefault()
+        navigate(`/search?query=${event.target.query.value}`)
     }
 
     useEffect(() => {
@@ -25,17 +31,13 @@ export default function SearchPage() {
         fetchUsers()
     }, [query])
 
-    if (isFetching) {
-        return <Loader />
-    }
-
     return (
         <div>
-            <div className="search-box">
-                <MdSearch size={24}/>
-                <input type="search" placeholder="Search people here..."/>
-            </div>
-            <UserList title={`${users.length} Users Found`} users={users} />
+            <form className="search-box" onSubmit={handleSubmit}>
+                <MdSearch size={24} />
+                <input type="search" defaultValue={query} name="query" placeholder="Search people here..." />
+            </form>
+            {!isFetching && <UserList title={`${users.length} Users Found`} users={users} />}
         </div>
     )
 }

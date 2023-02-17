@@ -241,7 +241,6 @@
     border: 2px solid var(--gray300);
     border-radius: 6px;
     padding: 8px;
-    width: 100%;
 }
 
 .form-control:focus {

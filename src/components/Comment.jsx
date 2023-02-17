@@ -64,16 +64,18 @@ export default function Comment({ comment, onDeleteComment }) {
 
     return (
         <div className="mt-4 border-2 border-gray-300 rounded-md">
-            <div className="card-header flex items-center justify-between">
+            <div className="flex items-center justify-between p-3 border-b-2 border-gray-300">
                 <p className="card-title">{fullName(comment.user)}</p>
                 <p className="text-gray-600 text-sm">1 month ago</p>
             </div>
-            <div className="card-body">
+            <div className="p-3">
                {comment.comment}
             </div>
-            <div className="card-footer text-right">
+            {comment.user._id === currentUser._id && (
+                <div className="border-t-2 border-gray-300 p-3 text-right">
                 <button className="btn btn-sm btn-primary">Remove</button>
             </div>
+            )}
         </div>
     )
 }
