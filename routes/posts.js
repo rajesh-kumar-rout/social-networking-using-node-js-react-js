@@ -188,7 +188,7 @@ routes.post("/",
         const { _id } = req
 
         if (!description && !image && !videoUrl) {
-            return res.status(422).json({ error: "Either desription or image or video is required" })
+            return res.status(422).json({ error: "Either desription or image or video url is required" })
         }
 
         if (image && videoUrl) {
