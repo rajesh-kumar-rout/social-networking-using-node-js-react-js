@@ -27,7 +27,7 @@ export default function ProfileFollowersPage() {
                 <button onClick={() => navigate(-1)} >
                     <MdArrowBack size={24} />
                 </button>
-                All Followings
+                <p>All Followings</p>
             </p>
 
             {isFetching ? (

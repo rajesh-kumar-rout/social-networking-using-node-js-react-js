@@ -1,6 +1,5 @@
 import { useContext, useState } from "react"
 import { FaHeart, FaRegComment, FaRegHeart, FaRegTrashAlt } from "react-icons/fa"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { cloudiImgUrl, dateToAgo, fullName } from "../utils/functions"
 import { AuthContext } from "./Auth"
 import CommentBox from "./CommentBox"
@@ -13,7 +12,7 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
     return (
         <div className="post">
             <div className="post-header">
-                <Image src={post.user.profileImage?.url} alt={DEFAULT_PROFILE_IMG} className="post-profile-img"/>
+                <Image src={post.user.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="post-profile-img"/>
 
                 <div>
                     <div className="post-username">{fullName(post.user)}</div>

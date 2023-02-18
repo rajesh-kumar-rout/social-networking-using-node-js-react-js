@@ -1,98 +1,146 @@
-import { Field, Form, Formik } from "formik"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { toast } from "react-toastify"
 import axios from "../utils/axios"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
-import { handleImage } from "../utils/functions"
+import { fileToString } from "../utils/functions"
+import { addPostSchema } from "../utils/validationSchema"
 import { AuthContext } from "./Auth"
+import Image from "./Image"
 
-export default function AddPost({ onAddPost }) {
+export default function AddPost({ onFetchPosts }) {
     const { currentUser } = useContext(AuthContext)
 
-    const handleSubmit = async(values, {setSubmitting, resetForm}) => {
-        setSubmitting(true)
+    const [inputs, setInputs] = useState({
+        image: "",
+        videoUrl: "",
+        description: ""
+    })
 
-        await axios.post("/posts", values)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
-        resetForm()
+    const [type, setType] = useState()
 
-        setSubmitting(false)
+    const handleImageClick = () => {
+        setType("image")
+
+        setInputs({ ...inputs, videoUrl: "" })
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+
+        try {
+            await addPostSchema.validate(inputs)
+        } catch ({ errors }) {
+            return toast.error(errors?.[0])
+        }
+
+        setIsSubmitting(true)
+
+        await axios.post("/posts", inputs)
+
+        setInputs({
+            image: "",
+            videoUrl: "",
+            description: ""
+        })
+
+        setType()
+
+        setIsSubmitting(false)
 
         toast.success("Post created successfully")
+
+        onFetchPosts()
+    }
+
+    const handleChange = async (event) => {
+        setInputs({
+            ...inputs,
+            [event.target.name]: event.target.type === "file" ? await fileToString(event.target.files[0]) : event.target.value
+        })
+    }
+
+    const handleVideoUrlClick = event => {
+        setType("videoUrl")
+
+        setInputs({ ...inputs, image: "" })
+    }
+
+    const handleVideoUrlRemoved = event => {
+        setType()
+
+        setInputs({ ...inputs, videoUrl: "" })
+    }
+
+    const handleImageRemoved = event => {
+        setType()
+
+        setInputs({ ...inputs, image: "" })
     }
 
     return (
-        <Formik
-            initialValues={{
-                image: "",
-                description: "",
-                videoUrl: "",
-                type: ""
-            }}
-            onSubmit={onAddPost}
-        >
-            {({ isSubmitting, values, setFieldValue }) => (
-                <Form className="add-post">
-                    <div className="add-post-header">
-                        <img className="add-post-img" src={currentUser.profileImage ? currentUser.profileImage.url : DEFAULT_PROFILE_IMG} alt="" />
+        <form className="add-post" onSubmit={handleSubmit}>
+            <div className="add-post-header">
+                <Image className="add-post-img" src={currentUser.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} />
 
-                        <div className="add-post-right">
-                            <Field
-                                name="description"
-                                className="form-control"
-                                style={{ resize: "none" }}
-                                as="textarea"
-                                placeholder={`What's on your mind, ${currentUser.firstName}?`}
-                            />
+                <div className="add-post-right">
+                    <textarea
+                        name="description"
+                        className="form-control"
+                        style={{ resize: "none" }}
+                        onChange={handleChange}
+                        value={inputs.description}
+                        placeholder={`What's on your mind, ${currentUser.firstName}?`}
+                    />
 
-                            {values.type === "image" && (
-                                <input
-                                    type="file"
-                                    name="image"
-                                    className="form-control"
-                                    style={{ marginTop: 4 }}
-                                    onChange={event => handleImage(event, setFieldValue)}
-                                    placeholder="Enter video link"
-                                />
-                            )}
+                    {type === "image" && (
+                        <input
+                            type="file"
+                            name="image"
+                            className="form-control"
+                            style={{ marginTop: 4 }}
+                            onChange={handleChange}
+                            placeholder="Enter video link"
+                        />
+                    )}
 
-                            {values.type === "video" && (
-                                <Field
-                                    type="text"
-                                    name="videoUrl"
-                                    className="form-control"
-                                    style={{ marginTop: 4 }}
-                                    placeholder="Youtube video link"
-                                />
-                            )}
-                        </div>
-                    </div>
+                    {type === "videoUrl" && (
+                        <input
+                            type="text"
+                            name="videoUrl"
+                            className="form-control"
+                            style={{ marginTop: 4 }}
+                            placeholder="Youtube video link"
+                            onChange={handleChange}
+                            value={inputs.videoUrl}
+                        />
+                    )}
+                </div>
+            </div>
 
-                    <div className="add-post-footer">
-                        {values.type === "video" ? (
-                            <button type="button" className="btn btn-sm btn-danger" onClick={() => setFieldValue("type", "")}>
-                                Remove Video
-                            </button>
-                        ) : (
-                            <button type="button" className="btn btn-sm btn-danger" onClick={() => setFieldValue("type", "video")}>
-                                Add Video
-                            </button>
-                        )}
+            <div className="add-post-footer">
+                {type === "videoUrl" ? (
+                    <button type="button" className="btn btn-sm btn-danger" onClick={handleVideoUrlRemoved}>
+                        Remove Video
+                    </button>
+                ) : (
+                    <button type="button" className="btn btn-sm btn-danger" onClick={handleVideoUrlClick}>
+                        Add Video
+                    </button>
+                )}
 
-                        {values.type === "image" ? (
-                            <button type="button" className="btn btn-sm btn-success" onClick={() => setFieldValue("type", "")}>
-                                Remove Photo
-                            </button>
-                        ) : (
-                            <button type="button" className="btn btn-sm btn-success" onClick={() => setFieldValue("type", "image")}>
-                                Add Photo
-                            </button>
-                        )}
+                {type === "image" ? (
+                    <button type="button" className="btn btn-sm btn-success" onClick={handleImageRemoved}>
+                        Remove Photo
+                    </button>
+                ) : (
+                    <button type="button" className="btn btn-sm btn-success" onClick={handleImageClick}>
+                        Add Photo
+                    </button>
+                )}
 
-                        <button className="btn btn-sm btn-primary" type="submit" disabled={isSubmitting}>Save</button>
-                    </div>
-                </Form>
-            )}
-        </Formik>
+                <button className="btn btn-sm btn-primary" type="submit" disabled={isSubmitting}>Save</button>
+            </div>
+        </form>
     )
 }

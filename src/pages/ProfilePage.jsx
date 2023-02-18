@@ -4,8 +4,7 @@ import { AuthContext } from "../components/Auth"
 import Image from "../components/Image"
 import Loader from "../components/Loader"
 import axios from "../utils/axios"
-import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
-import { cloudiImgUrl, fullName } from "../utils/functions"
+import { fullName } from "../utils/functions"
 
 export default function ProfilePage() {
     const { userId } = useParams()
@@ -55,10 +54,10 @@ export default function ProfilePage() {
     return (
         <div style={{maxWidth: 1200}}>
             <div className="profile">
-                <Image src={user.coverImage?.url} alt={DEFAULT_COVER_IMG} className="profile-cover-img"/>
+                <Image src={user.coverImage?.url} alt={process.env.REACT_APP_DEFAULT_COVER_IMG} className="profile-cover-img"/>
 
                 <div className="profile-footer">
-                    <Image src={user.profileImage?.url} alt={DEFAULT_PROFILE_IMG} className="profile-img"/>
+                    <Image src={user.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="profile-img"/>
 
                     <div className="profile-right">
                         <div>

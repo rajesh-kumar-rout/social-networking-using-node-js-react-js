@@ -58,20 +58,6 @@ export default function HomePage() {
 
     }, [])
 
-    const handleAddPost = async(values, {setSubmitting, resetForm}) => {
-        setSubmitting(true)
-
-        await axios.post("/posts", values)
-
-        resetForm()
-
-        setSubmitting(false)
-
-        toast.success("Post created successfully")
-
-        fetchPosts()
-    }
-
     if (isLoading) {
         return <Loader />
     }
@@ -79,7 +65,7 @@ export default function HomePage() {
     return (
         <div className="home">
             <div className="home-left">
-                <AddPost onAddPost={handleAddPost}/>
+                <AddPost onFetchPosts={fetchPosts}/>
 
                 {posts.map(post => (
                     <Post

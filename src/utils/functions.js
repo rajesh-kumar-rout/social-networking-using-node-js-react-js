@@ -41,7 +41,7 @@ export const handleImage = async (event, setFieldValue) => {
     }
 }
 
-export const getBase64 = async (file) => {
+export const fileToString = async (file) => {
     if (!file) return ""
 
     const reader = new FileReader()

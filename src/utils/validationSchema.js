@@ -17,12 +17,12 @@ export const changePasswordSchema = object().shape({
 })
 
 export const addPostSchema = object().shape({
-    desc: string()
+    description: string()
         .trim()
         .max(255, "Description must be within 255 characters")
-        .when("img", {
-            is: (img) => img === undefined,
-            then: string().required("Either image or description required")
+        .when(["image", "videoUrl"], {
+            is: (image, videoUrl) => image === "" && videoUrl === "",
+            then: string().required("Either image or video url or description required")
         })
 })
 

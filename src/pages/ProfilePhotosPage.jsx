@@ -26,7 +26,7 @@ export default function ProfilePhotosPage() {
                 <button onClick={() => navigate(-1)} >
                     <MdArrowBack size={24} />
                 </button>
-                All Photos
+                <p>All Photos</p>
             </p>
 
             {isFetching ? (

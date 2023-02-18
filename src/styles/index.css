@@ -198,6 +198,7 @@
     background-color: var(--white);
     box-shadow: 1px 1px 6px 0px var(--gray400);
     padding: 16px;
+    border-radius: 6px;
 }
 
 .add-post-header {

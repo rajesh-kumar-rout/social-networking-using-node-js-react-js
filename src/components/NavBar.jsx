@@ -1,7 +1,6 @@
 import { useContext, useState } from "react"
 import { MdArrowDropDown, MdSearch } from "react-icons/md"
 import { Link } from "react-router-dom"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { AuthContext } from "./Auth"
 import Image from "./Image"
 
@@ -36,7 +35,7 @@ export default function NavBar() {
 
                     <div className="navbar-dropdown-wrapper">
                         <div onClick={handleDropDown} className="navbar-dropdown-btn">
-                            <Image src={currentUser.profileImage?.url} alt={DEFAULT_PROFILE_IMG} className="navbar-dropdown-img"/>
+                            <Image src={currentUser.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="navbar-dropdown-img"/>
                             <MdArrowDropDown size={24} />
                         </div>
 
