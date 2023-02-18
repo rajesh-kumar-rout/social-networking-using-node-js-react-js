@@ -1,9 +1,10 @@
 import { Router } from "express"
+import { param } from "express-validator"
+import mongoose from "mongoose"
 import Post from "../models/post.js"
 import User from "../models/user.js"
-import { param } from "express-validator"
 import { checkValidationError } from "../utils/validation.js"
-import mongoose, { Mongoose, Types } from "mongoose"
+
 const routes = Router()
 
 routes.get("/", async (req, res) => {
@@ -130,50 +131,6 @@ routes.get(
         ])
 
         res.json(posts)
-
-        // const { userId } = req.param
-
-        // const { currentUserId } = req
-
-        // const posts = await knex("socialUsers")
-        //     .where("socialUsers.id", userId)
-        //     .join("socialPosts", "socialPosts.userId", "socialUsers.id")
-        //     .select(
-        //         "socialPosts.id",
-        //         "socialPosts.description",
-        //         "socialPosts.imageUrl",
-        //         "socialPosts.videoUrl",
-        //         "socialPosts.createdAt",
-        //         "socialPosts.userId",
-        //         knex.raw("CONCAT(firstName, '', lastName) AS userName"),
-        //         "socialUsers.profileImageUrl",
-
-        //         knex("socialLikes")
-        //             .whereColumn("socialLikes.postId", "socialPosts.id")
-        //             .count()
-        //             .as("totalLikes"),
-
-        //         knex("socialComments")
-        //             .whereColumn("socialComments.postId", "socialPosts.id")
-        //             .count()
-        //             .as("totalComments"),
-
-        //         knex.raw(
-        //             "EXISTS(??) AS isLiked",
-        //             [
-        //                 knex("socialLikes")
-        //                     .whereColumn("socialLikes.postId", "socialPosts.id")
-        //                     .whereColumn("socialUsers.id", "socialLikes.userId")
-        //                     .select(1)
-        //                     .limit(1)
-        //             ]
-        //         ),
-
-        //         knex.raw("IIF(socialUsers.id = ?, 1, 0) AS isPosted", [currentUserId])
-        //     )
-        //     .orderBy("socialPosts.createdAt", "desc")
-
-        // res.json(posts)
     }
 )
 
