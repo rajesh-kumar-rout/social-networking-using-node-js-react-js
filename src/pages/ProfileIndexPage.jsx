@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { MdFavoriteBorder, MdMale, MdOutlineCake, MdOutlineHome, MdOutlineLocationOn, MdOutlineSchool, MdSchedule, MdWorkOutline } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import EmptyMessage from "../components/EmptyMessage";
 import Loader from "../components/Loader";
 import Post from "../components/Post";
 import axios from "../utils/axios";
@@ -70,7 +71,7 @@ console.log(photosRes.data)
 
     if (isLoading) {
         return (
-            <div className="my-4">
+            <div style={{margin: "16px 0px"}}>
                 <Loader />
             </div>
         )
@@ -197,14 +198,8 @@ console.log(photosRes.data)
             </div>
 
             <div className="index-col">
-                {posts.length === 0 && (
-                    <p
-                        className="font-bold w-full sm:w-[600px] text-center text-teal-600 bg-white border-2 border-x-0 
-                        sm:border-x-2 border-gray-300 rounded-md p-4"
-                    >
-                        No Posts Found
-                    </p>
-                )}
+                {posts.length === 0 && <EmptyMessage message="No Posts Found"/>}
+                
                 {posts.map(post => (
                     <Post
                         key={post._id}

@@ -1,4 +1,4 @@
-export const BASE_URL = "https://social-networking.cyclic.app"
+export const BASE_URL = "https://social-networking.cyclic.app/api"
 
 // export const BASE_URL = "http://localhost:3001/api"
 

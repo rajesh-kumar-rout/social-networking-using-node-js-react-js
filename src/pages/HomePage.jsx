@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 import AddPost from "../components/AddPost"
+import EmptyMessage from "../components/EmptyMessage"
 import Loader from "../components/Loader"
 import Post from "../components/Post"
 import axios from "../utils/axios"
@@ -39,7 +40,7 @@ export default function HomePage() {
     }
 
     async function handleToggleLike(postId) {
-        const { data } = await axios.patch(`/posts/${postId}/toggle-like`)
+        axios.patch(`/posts/${postId}/toggle-like`)
 
         const newPosts = [...posts]
 
@@ -89,34 +90,8 @@ export default function HomePage() {
                     />
                 ))}
 
-                {posts.length === 0 && <p className="text-teal-600 font-bold text-center my-4">No Posts Found <br /> Follow people to see their post and photos</p>}
+                {posts.length === 0 && <EmptyMessage message="No Posts Found. Follow people to see their post and photos"/>}
             </div>
-
-            {/* <div>
-                <div className="bg-white border-2 border-x-0 md:border-x-2 border-gray-300 md:rounded-md w-full md:w-[350px]">
-                    <p className="px-4 py-3 border-b-2 border-gray-300 text-lg font-bold text-teal-600 flex items-center gap-2">
-                        Suggested For You
-                    </p>
-
-                    <div className="p-4">
-                        {users.map(user => (
-                            <Link
-                                key={user._id}
-                                to={`/profile/${user._id}`}
-                                className="flex cursor-pointer items-center gap-4 border-t-2 border-gray-300 first:border-t-0 
-                                py-3 first:pt-0 last:pb-0"
-                            >
-                                <img
-                                    className="rounded-full h-12 w-12 object-cover"
-                                    src={user.profileImage ? user.profileImage.url : DEFAULT_PROFILE_IMG}
-                                    alt=""
-                                />
-                                <p className="font-semibold">{fullName(user)}</p>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </div> */}
 
             <div className="card">
                 <div className="card-header card-title">Suggested For You</div>
