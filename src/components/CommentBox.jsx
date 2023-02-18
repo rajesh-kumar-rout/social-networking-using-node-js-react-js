@@ -1,103 +1,101 @@
 import { useContext, useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import axios from "../utils/axios"
-import { DEFAULT_COVER_IMG, DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { AuthContext } from "./Auth"
 import Comment from "./Comment"
-import Image from "../components/Image"
 import Loader from "./Loader"
 
 const demoComments = [{
     "id": 1,
     "user": {
-          "firstName": "Margy",
-    "lastName": "Drioli",
-    "_id": "d"
+        "firstName": "Margy",
+        "lastName": "Drioli",
+        "_id": "d"
     },
     "comment": "Unspecified injury of other extensor muscle, fascia and tendon at forearm level, unspecified arm, initial encounter"
-  }, {
+}, {
     "id": 2,
     "user": {
-            "firstName": "Junie",
-    "lastName": "Earie",
-    "_id": "d"
+        "firstName": "Junie",
+        "lastName": "Earie",
+        "_id": "d"
     },
     "comment": "Osteolysis, right thigh"
-  }, {
+}, {
     "id": 3,
     "user": {
-            "firstName": "Emmye",
-    "lastName": "Demchen",
-    "_id": "d"
+        "firstName": "Emmye",
+        "lastName": "Demchen",
+        "_id": "d"
     },
     "comment": "Bitten by dolphin, sequela"
-  }, {
+}, {
     "id": 4,
     "user": {
-            "firstName": "Marjie",
-    "lastName": "Gaishson",
-    "_id": "d"
+        "firstName": "Marjie",
+        "lastName": "Gaishson",
+        "_id": "d"
     },
     "comment": "Insect bite (nonvenomous), left ankle"
-  }, {
+}, {
     "id": 5,
     "user": {
-            "firstName": "Cinderella",
-    "lastName": "Agerskow",
-    "_id": "63ee3fe5ec03c8068617004a"
+        "firstName": "Cinderella",
+        "lastName": "Agerskow",
+        "_id": "63ee3fe5ec03c8068617004a"
     },
     "comment": "Puncture wound with foreign body, unspecified knee, subsequent encounter"
-  }, {
+}, {
     "id": 6,
     "user": {
-           "firstName": "Fanechka",
-    "lastName": "Andrzejczak",
-    "_id": "d"
+        "firstName": "Fanechka",
+        "lastName": "Andrzejczak",
+        "_id": "d"
     },
     "comment": "Basal cell carcinoma of skin of lower limb, including hip"
-  }, {
+}, {
     "id": 7,
     "user": {
-            "firstName": "Doralin",
-    "lastName": "Sandaver",
-    "_id": "63ee3fe5ec03c8068617004a"
+        "firstName": "Doralin",
+        "lastName": "Sandaver",
+        "_id": "63ee3fe5ec03c8068617004a"
     },
     "comment": "Other lymphoid leukemia, in relapse"
-  }, {
+}, {
     "id": 8,
     "user": {
-            "firstName": "Freedman",
-    "lastName": "Siward",
-    "_id": "d"
+        "firstName": "Freedman",
+        "lastName": "Siward",
+        "_id": "d"
     },
     "comment": "Female infertility"
-  }, {
+}, {
     "id": 9,
     "user": {
-            "firstName": "Chelsy",
-    "lastName": "McFeat",
-    "_id": "d"
+        "firstName": "Chelsy",
+        "lastName": "McFeat",
+        "_id": "d"
     },
     "comment": "Atherosclerosis of autologous vein bypass graft(s) of the extremities with rest pain, other extremity"
-  }, {
+}, {
     "id": 10,
-        "user": {
-            "firstName": "Constantine",
-    "lastName": "Rowcliffe",
-    "_id": "d"
-        },
+    "user": {
+        "firstName": "Constantine",
+        "lastName": "Rowcliffe",
+        "_id": "d"
+    },
     "comment": "Fall on or from playground slide, subsequent encounter"
-  }]
-  
+}]
+
 export default function CommentBox({ postId }) {
     const [comments, setComments] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const { currentUser } = useContext(AuthContext)
 
     async function fetchComments() {
         const { data } = await axios.get(`/posts/${postId}/comments`)
 
         setComments(data)
+        
         setIsLoading(false)
     }
 
@@ -137,51 +135,17 @@ export default function CommentBox({ postId }) {
                 </div>
             ) : (
                 <>
-                    {/* <div className="comment-form">
-                        <Image src={currentUser.profileImage.url} alt={DEFAULT_PROFILE_IMG} className="comment-img" />
+                    <div style={{ marginTop: 16 }}>
+                        <p className="comment-form-title">Your comment</p>
 
-                        <form onSubmit={handleAddComment} className="comment-form-right">
+                        <form onSubmit={handleAddComment}>
                             <textarea
                                 className="form-control"
                                 style={{ resize: "none" }}
                                 name="comment"
-                                placeholder="Write your comment..."
                             />
-                            <button className="btn btn-sm btn-primary">Post</button>
+                            <button className="btn btn-primary btn-sm" style={{ marginTop: 12 }}>Save Comment</button>
                         </form>
-                    </div> */}
-                    {/* <div className="border-2 border-gray-300 rounded-md mt-4">
-                        <p className="card-header card-title">Your comment</p>
-
-                        <form onSubmit={handleAddComment} className="card-body">
-                            <textarea
-                                className="form-control"
-                                style={{ resize: "none" }}
-                                name="comment"
-                            />
-                          
-                        </form>
-
-                        <div className="card-footer text-right">
-                            <button className="btn btn-sm btn-primary">Post</button>
-                            </div>
-                    </div> */}
-                    <div className="mt-4">
-                        <p className="font-bold text-orange-600 mb-3">Your comment</p>
-
-                        <form onSubmit={handleAddComment} >
-                            <textarea
-                                className="form-control"
-                                style={{ resize: "none" }}
-                                name="comment"
-                            />
-
-
-
-                            <div className="">
-                                <button className="px-2 py-1 text-sm bg-orange-600 text-white mt-3 rounded-md">Save Comment</button>
-                            </div>
-                            </form>
                     </div>
 
                     {demoComments.map(comment => (

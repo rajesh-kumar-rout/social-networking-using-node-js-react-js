@@ -56,9 +56,5 @@ textarea,
 select,
 input[type=datetime] {
     width: 100%;
-}
-
-input,
-textarea {
     outline: none;
 }

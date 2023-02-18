@@ -29,9 +29,6 @@ export default function FollowersPage() {
     }
 
     return (
-        <UserList
-            title={`${users.length} Followers Found`}
-            users={users}
-        />
+        <UserList title={`${users.length} Followers Found`} users={users} />
     )
 }

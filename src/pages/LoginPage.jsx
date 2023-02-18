@@ -1,7 +1,6 @@
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { Link, useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
-import Footer from "../components/Footer"
 import axios from "../utils/axios"
 import { loginSchema } from "../utils/validationSchema"
 

@@ -11,7 +11,6 @@ export default function Auth() {
 
     const fetchAccount = async () => {
         const { data } = await axios.get("/auth")
-        console.log(data);
         setCurrentUser(data)
         setIsFetching(false)
     }
@@ -22,7 +21,7 @@ export default function Auth() {
 
     if (isFetching) {
         return (
-            <div className="flex items-center justify-center w-full h-screen">
+            <div className="loader-auth-wrapper">
                 <Loader />
             </div>
         )
