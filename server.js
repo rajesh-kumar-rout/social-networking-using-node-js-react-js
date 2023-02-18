@@ -6,6 +6,7 @@ import { authenticate, isAuthenticated } from "./middlewares/authentication.js"
 import authRoutes from "./routes/auth.js"
 import postRoutes from "./routes/posts.js"
 import userRoutes from "./routes/users.js"
+import path from "path"
 
 dotenv.config()
 
