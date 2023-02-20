@@ -56,7 +56,7 @@ export default function AddPost({ onFetchPosts }) {
     const handleChange = async (event) => {
         setInputs({
             ...inputs,
-            [event.target.name]: event.target.type === "file" ? await fileToString(event.target.files[0]) : event.target.value
+            [event.target.name]: event.target.type === "file" ? await fileToString(event) : event.target.value
         })
     }
 

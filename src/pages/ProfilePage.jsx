@@ -18,7 +18,7 @@ export default function ProfilePage() {
             axios.get(`/users/${userId}`),
             axios.get(`/users/${userId}/posts`)
         ])
-        console.log(userRes.data);
+
         setUser(userRes.data)
 
         setPosts(postRes.data)

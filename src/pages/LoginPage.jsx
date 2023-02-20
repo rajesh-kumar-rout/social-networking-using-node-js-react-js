@@ -9,7 +9,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
-console.log('call');
+
         try {
             const { data } = await axios.post("/auth/login", values)
 

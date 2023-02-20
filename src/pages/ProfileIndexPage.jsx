@@ -1,13 +1,13 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { MdFavoriteBorder, MdMale, MdOutlineCake, MdOutlineHome, MdOutlineLocationOn, MdOutlineSchool, MdSchedule, MdWorkOutline } from "react-icons/md";
-import { Link, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import EmptyMessage from "../components/EmptyMessage";
-import Loader from "../components/Loader";
-import Post from "../components/Post";
-import axios from "../utils/axios";
-import { fullName } from "../utils/functions";
+import { useEffect, useState } from "react"
+import { MdFavoriteBorder, MdMale, MdOutlineCake, MdOutlineHome, MdOutlineLocationOn, MdOutlineSchool, MdSchedule, MdWorkOutline } from "react-icons/md"
+import { Link, useParams } from "react-router-dom"
+import { toast } from "react-toastify"
+import EmptyMessage from "../components/EmptyMessage"
+import Loader from "../components/Loader"
+import Post from "../components/Post"
+import axios from "../utils/axios"
+import { fullName } from "../utils/functions"
 
 export default function ProfileIndexPage() {
     const { userId } = useParams()
@@ -30,7 +30,7 @@ export default function ProfileIndexPage() {
         setPosts(postsRes.data)
 
         setPhotos(photosRes.data)
-console.log(photosRes.data)
+
         setFollowings(followingsRes.data)
 
         setIsLoading(false)

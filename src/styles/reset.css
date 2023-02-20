@@ -58,3 +58,7 @@ input[type=datetime] {
     width: 100%;
     outline: none;
 }
+
+svg {
+    display: block;
+}

@@ -3,10 +3,10 @@ import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 import AddPost from "../components/AddPost"
 import EmptyMessage from "../components/EmptyMessage"
+import Image from "../components/Image"
 import Loader from "../components/Loader"
 import Post from "../components/Post"
 import axios from "../utils/axios"
-import { DEFAULT_PROFILE_IMG } from "../utils/constants"
 import { fullName } from "../utils/functions"
 
 export default function HomePage() {
@@ -65,7 +65,7 @@ export default function HomePage() {
     return (
         <div className="home">
             <div className="home-left">
-                <AddPost onFetchPosts={fetchPosts}/>
+                <AddPost onFetchPosts={fetchPosts} />
 
                 {posts.map(post => (
                     <Post
@@ -76,7 +76,7 @@ export default function HomePage() {
                     />
                 ))}
 
-                {posts.length === 0 && <EmptyMessage message="No Posts Found. Follow people to see their post and photos"/>}
+                {posts.length === 0 && <EmptyMessage message="No Posts Found. Follow people to see their post and photos" />}
             </div>
 
             <div className="card">
@@ -85,9 +85,10 @@ export default function HomePage() {
                 <div className="card-body">
                     {users.map(user => (
                         <Link key={user._id} to={`/profile/${user._id}`} className="suggested">
-                            <img
+                            <Image
                                 className="suggested-img"
-                                src={user.profileImage ? user.profileImage.url : DEFAULT_PROFILE_IMG}
+                                src={user.profileImage?.url}
+                                alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG}
                             />
                             <p className="suggested-name">{fullName(user)}</p>
                         </Link>

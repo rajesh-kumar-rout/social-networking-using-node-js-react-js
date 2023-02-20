@@ -9,7 +9,7 @@ export default function Users({ title, users }) {
 
             <div className="card-body">
                 {users.map(user => (
-                    <Link to={`/profile/${user._id}`} className="suggested" key={user.id}>
+                    <Link to={`/profile/${user._id}`} className="suggested" key={user._id}>
                         <Image src={user.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="suggested-img"/>
                         <p className="suggested-name">{fullName(user)}</p>
                     </Link>

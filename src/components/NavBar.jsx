@@ -60,6 +60,10 @@ export default function NavBar() {
                                 <Link className="navbar-dropdown-link" to="/auth/logout" onClick={handleLogout}>
                                     Logout
                                 </Link>
+
+                                <a className="navbar-dropdown-link" href="https://rajeshrout.netlify.app/">
+                                    About Devloper
+                                </a>
                             </div>
                         )}
                     </div>
