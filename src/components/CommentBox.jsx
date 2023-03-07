@@ -95,7 +95,7 @@ export default function CommentBox({ postId }) {
         const { data } = await axios.get(`/posts/${postId}/comments`)
 
         setComments(data)
-        
+
         setIsLoading(false)
     }
 
@@ -135,7 +135,7 @@ export default function CommentBox({ postId }) {
                 </div>
             ) : (
                 <>
-                    <div style={{ marginTop: 16 }}>
+                    <div>
                         <p className="comment-form-title">Your comment</p>
 
                         <form onSubmit={handleAddComment}>
@@ -148,7 +148,7 @@ export default function CommentBox({ postId }) {
                         </form>
                     </div>
 
-                    {demoComments.map(comment => (
+                    {comments.map(comment => (
                         <Comment
                             comment={comment}
                             onDeleteComment={handleDeleteComment}

@@ -71,7 +71,7 @@ export default function ProfileIndexPage() {
 
     if (isLoading) {
         return (
-            <div style={{margin: "16px 0px"}}>
+            <div style={{ margin: "16px 0px" }}>
                 <Loader />
             </div>
         )
@@ -152,12 +152,7 @@ export default function ProfileIndexPage() {
                 <div className="card">
                     <h2 className="card-header index-header">
                         <p className="card-title">Photos</p>
-                        <Link
-                            to="photos"
-                            className="index-link"
-                        >
-                            View All
-                        </Link>
+                        <Link to="photos" className="index-link">View All</Link>
                     </h2>
 
                     {photos.length === 0 ? (
@@ -165,7 +160,7 @@ export default function ProfileIndexPage() {
                     ) : (
                         <div className="card-body index-photos">
                             {photos.map(photo => (
-                                <img key={photo.image.url} src={photo.image.url} alt="" />
+                                <img className="img-rounded" key={photo.image.url} src={photo.image.url} alt="" />
                             ))}
                         </div>
                     )}
@@ -174,12 +169,7 @@ export default function ProfileIndexPage() {
                 <div className="card">
                     <h2 className="card-header index-header">
                         <p className="card-title">Followings</p>
-                        <Link
-                            to="followings"
-                            className="index-link"
-                        >
-                            View All
-                        </Link>
+                        <Link to="followings" className="index-link">View All</Link>
                     </h2>
 
                     {followings.length === 0 ? (
@@ -188,7 +178,7 @@ export default function ProfileIndexPage() {
                         <div className="card-body index-followings">
                             {followings.map(following => (
                                 <Link key={following._id} to={`/profile/${following._id}`}>
-                                    <img src={following.profileImage.url} alt="" />
+                                    <img className="img-rounded" src={following.profileImage.url} alt="" />
                                     <p className="index-following-name">{fullName(following)}</p>
                                 </Link>
                             ))}
@@ -198,8 +188,8 @@ export default function ProfileIndexPage() {
             </div>
 
             <div className="index-col">
-                {posts.length === 0 && <EmptyMessage message="No Posts Found"/>}
-                
+                {posts.length === 0 && <EmptyMessage message="No Posts Found" />}
+
                 {posts.map(post => (
                     <Post
                         key={post._id}

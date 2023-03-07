@@ -87,7 +87,7 @@ export default function AddPost({ onFetchPosts }) {
                     <textarea
                         name="description"
                         className="form-control"
-                        style={{ resize: "none" }}
+                        style={{ resize: "none",  }}
                         onChange={handleChange}
                         value={inputs.description}
                         placeholder={`What's on your mind, ${currentUser.firstName}?`}
@@ -98,7 +98,7 @@ export default function AddPost({ onFetchPosts }) {
                             type="file"
                             name="image"
                             className="form-control"
-                            style={{ marginTop: 4 }}
+                            style={{ marginTop: 16 }}
                             onChange={handleChange}
                             placeholder="Enter video link"
                         />
@@ -109,7 +109,7 @@ export default function AddPost({ onFetchPosts }) {
                             type="text"
                             name="videoUrl"
                             className="form-control"
-                            style={{ marginTop: 4 }}
+                            style={{ marginTop: 16 }}
                             placeholder="Youtube video link"
                             onChange={handleChange}
                             value={inputs.videoUrl}

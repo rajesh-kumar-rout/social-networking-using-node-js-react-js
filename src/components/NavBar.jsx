@@ -42,7 +42,7 @@ export default function NavBar() {
                         {isDropDownOpened && (
                             <div className="navbar-dropdown">
                                 <Link className="navbar-dropdown-link" to={`/profile/${currentUser._id}`}>
-                                    Profile
+                                    My Profile
                                 </Link>
 
                                 <Link className="navbar-dropdown-link" to="/auth/followers">

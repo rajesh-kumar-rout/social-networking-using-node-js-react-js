@@ -27,10 +27,15 @@ a {
     cursor: pointer;
 }
 
+textarea {
+    vertical-align: top;
+    display: block;
+}
+
 img {
     width: 100%;
     object-fit: cover;
-    border-radius: 6px;
+    display: block;
 }
 
 iframe {
@@ -59,6 +64,14 @@ input[type=datetime] {
     outline: none;
 }
 
+iframe{
+    display: block;
+}
+
 svg {
     display: block;
+}
+
+.img-rounded {
+    border-radius: 6px;
 }

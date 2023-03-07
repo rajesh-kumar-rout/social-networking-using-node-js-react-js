@@ -34,8 +34,10 @@ export default function SearchPage() {
     return (
         <div>
             <form className="search-box" onSubmit={handleSubmit}>
-                <MdSearch size={24} />
-                <input style={{ border: "none" }} type="search" defaultValue={query} name="query" placeholder="Search people here..." />
+                <input type="search" className="search-box-input form-control" defaultValue={query} name="query" placeholder="Search people here..." />
+                <button className="search-box-btn">
+                    <MdSearch size={24}/>
+                </button>
             </form>
             {isFetching ? (<Loader />) : <UserList title={`${users.length} Users Found`} users={users} />}
         </div>

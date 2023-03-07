@@ -38,7 +38,7 @@ export default function ProfilePhotosPage() {
                     <p className="card-body" style={{ textAlign: "center" }}>No Photos Found</p>
                 ) : (
                     <div className="card-body photos">
-                        {photos.map(photo => <img key={photo.image} src={photo.image.url} alt="" />)}
+                        {photos.map(photo => <img className="img-rounded" key={photo.image} src={photo.image.url} alt="" />)}
                     </div>
                 )
             )}
