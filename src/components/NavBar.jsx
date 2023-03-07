@@ -61,7 +61,7 @@ export default function NavBar() {
                                     Logout
                                 </Link>
 
-                                <a className="navbar-dropdown-link" href="https://rajeshrout.netlify.app/">
+                                <a className="navbar-dropdown-link" href={process.env.REACT_APP_MY_WEBSITE}>
                                     About Devloper
                                 </a>
                             </div>

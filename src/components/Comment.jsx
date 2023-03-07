@@ -8,18 +8,20 @@ export default function Comment({ comment, onDeleteComment }) {
 
     return (
         <div className="comment">
-            <div className="comment-header">
-            <p className="comment-username">{fullName(comment.user)}</p>
-                    <p className="comment-created-at">{dateToAgo(comment.createdAt)}</p>
-            </div>
+            <Image className="comment-img" src={comment.user.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG}/>
 
-            <div className="comment-body">{comment.comment}</div>
-            
-            {comment.user._id === currentUser._id && (
-                <div className="comment-footer" onClick={() => onDeleteComment(comment._id)}>
-                    <button className="btn btn-sm btn-primary">Delete</button>
+            <div className="comment-right">
+                <div className="comment-header">
+                    <h4 className="comment-username">{fullName(comment.user)}</h4>
+                    <p className="comment-created-at">{dateToAgo(comment.createdAt)}</p>
                 </div>
-            )}
+
+                <p className="comment-text">{comment.comment}</p>
+
+                {comment.user._id === currentUser._id && (
+                    <button onClick={() => onDeleteComment(comment._id)} style={{ marginTop: 12 }} className="btn btn-sm btn-primary">Delete</button>
+                )}
+            </div>
         </div>
     )
 }

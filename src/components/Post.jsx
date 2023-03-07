@@ -1,6 +1,5 @@
 import { useContext, useState } from "react"
-import { FaHeart, FaRegComment, FaRegHeart, FaRemoveFormat, FaTrash, FaTrashAlt, FaTrashRestore, FaTrashRestoreAlt } from "react-icons/fa"
-import { MdDelete, MdDeleteOutline, MdMoreVert } from "react-icons/md"
+import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa"
 import { FiTrash } from "react-icons/fi"
 import { cloudiImgUrl, dateToAgo, fullName } from "../utils/functions"
 import { AuthContext } from "./Auth"
@@ -33,25 +32,16 @@ export default function Post({ post, onDeletePost, onToggleLike }) {
 
             <div className="post-footer">
                 <div className="post-actions">
-                    <button
-                        className="post-action"
-                        onClick={() => onToggleLike(post._id)}
-                    >
+                    <button className="post-action" onClick={() => onToggleLike(post._id)}>
                         {post.isLiked ? <FaHeart size={24} fill="var(--pink600)" /> : <FaRegHeart size={24} />}
                     </button>
 
-                    <button
-                        className="post-action"
-                        onClick={() => setIsCommentBoxOpened(!isCommentBoxOpened)}
-                    >
+                    <button className="post-action" onClick={() => setIsCommentBoxOpened(!isCommentBoxOpened)}>
                         <FaRegComment size={24} />
                     </button>
 
                     {post.user._id === currentUser._id && (
-                        <button
-                            className="post-action"
-                            onClick={() => onDeletePost(post._id)}
-                        >
+                        <button className="post-action" onClick={() => onDeletePost(post._id)}>
                             <FiTrash size={24} />
                         </button>
                     )}
