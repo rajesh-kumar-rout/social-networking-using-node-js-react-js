@@ -9,11 +9,8 @@ export default function Comment({ comment, onDeleteComment }) {
     return (
         <div className="comment">
             <div className="comment-header">
-                <Image className="comment-profile-img" src={comment.user.profileImage?.url} alt={process.env.DEFAULT_PROFILE_IMG}/>
-                <div className="comment-header-right">
-                    <p className="comment-username">{fullName(comment.user)}</p>
+            <p className="comment-username">{fullName(comment.user)}</p>
                     <p className="comment-created-at">{dateToAgo(comment.createdAt)}</p>
-                </div>
             </div>
 
             <div className="comment-body">{comment.comment}</div>

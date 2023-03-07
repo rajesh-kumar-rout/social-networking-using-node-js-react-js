@@ -130,9 +130,7 @@ export default function CommentBox({ postId }) {
     return (
         <div className="comment-box">
             {isLoading ? (
-                <div style={{ padding: "16px 16px 4px" }}>
-                    <Loader />
-                </div>
+                <Loader />
             ) : (
                 <>
                     <div>
