@@ -35,7 +35,7 @@ export default function SearchPage() {
         <div>
             <form className="search-box" onSubmit={handleSubmit}>
                 <input type="search" className="search-box-input form-control" defaultValue={query} name="query" placeholder="Search people here..." />
-                <button className="search-box-btn">
+                <button className="search-box-btn btn btn-primary">
                     <MdSearch size={24}/>
                 </button>
             </form>

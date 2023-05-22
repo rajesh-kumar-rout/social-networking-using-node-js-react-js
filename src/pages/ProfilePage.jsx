@@ -68,9 +68,7 @@ export default function ProfilePage() {
                         </div>
 
                         {userId == currentUser._id ? (
-                            <Link to="/auth/edit-profile" className="btn btn-primary">
-                                Update Profile
-                            </Link>
+                            <Link to="/edit-profile" className="btn btn-primary">Update Profile</Link>
                         ) : (
                             <button className="btn btn-primary" onClick={handleToggleFollow}>
                                 {user.isFollowing ? "Un Follow" : "Follow"}

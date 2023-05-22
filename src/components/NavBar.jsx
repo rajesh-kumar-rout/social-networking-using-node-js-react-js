@@ -28,46 +28,43 @@ export default function NavBar() {
             <div className="navbar-container">
                 <Link to="/" className="navbar-title">MY DIARY</Link>
 
-                <div className="navbar-links">
-                    <Link to="search" className="navbar-link">
-                        <MdSearch size={24}/>
-                    </Link>
+                <ul className="navbar-links">
+                    <li>
+                        <Link to="/search" className="navbar-link">
+                            <MdSearch size={24} />
+                        </Link>
+                    </li>
 
-                    <div className="navbar-dropdown-wrapper">
+                    <li className="navbar-dropdown-wrapper">
                         <div onClick={handleDropDown} className="navbar-dropdown-btn">
-                            <Image src={currentUser.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="navbar-dropdown-img"/>
+                            <Image src={currentUser.profileImage?.url} alt={process.env.REACT_APP_DEFAULT_PROFILE_IMG} className="navbar-dropdown-img" />
                             <MdArrowDropDown size={24} />
                         </div>
 
                         {isDropDownOpened && (
-                            <div className="navbar-dropdown">
-                                <Link className="navbar-dropdown-link" to={`/profile/${currentUser._id}`}>
-                                    My Profile
-                                </Link>
-
-                                <Link className="navbar-dropdown-link" to="/auth/followers">
-                                    Followers
-                                </Link>
-
-                                <Link className="navbar-dropdown-link" to="/auth/followings">
-                                    Followings
-                                </Link>
-
-                                <Link className="navbar-dropdown-link" to="/auth/edit-profile">
-                                    Edit Profile
-                                </Link>
-
-                                <Link className="navbar-dropdown-link" to="/auth/logout" onClick={handleLogout}>
-                                    Logout
-                                </Link>
-
-                                <a className="navbar-dropdown-link" href={process.env.REACT_APP_MY_WEBSITE}>
-                                    About Devloper
-                                </a>
-                            </div>
+                            <ul className="navbar-dropdown">
+                                <li>
+                                    <Link className="navbar-dropdown-link" to={`/profile/${currentUser._id}`}>My Profile</Link>
+                                </li>
+                                <li>
+                                    <Link className="navbar-dropdown-link" to="/followers">Followers</Link>
+                                </li>
+                                <li>
+                                    <Link className="navbar-dropdown-link" to="/followings">Followings</Link>
+                                </li>
+                                <li>
+                                    <Link className="navbar-dropdown-link" to="/edit-profile">Edit Profile</Link>
+                                </li>
+                                <li>
+                                    <Link className="navbar-dropdown-link" to="" onClick={handleLogout}>Logout</Link>
+                                </li>
+                                <li>
+                                    <a className="navbar-dropdown-link" href={process.env.REACT_APP_MY_WEBSITE}>About Devloper</a>
+                                </li>
+                            </ul>
                         )}
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </div>
     )

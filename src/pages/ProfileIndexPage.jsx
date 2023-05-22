@@ -81,17 +81,17 @@ export default function ProfileIndexPage() {
         <div className="index">
             <div className="index-col">
                 <div className="card">
-                    <h2 className="card-header card-title">Bio</h2>
+                    <p className="card-header card-header-title">Bio</p>
                     <p className="card-body">{user.bio}</p>
                 </div>
 
                 <div className="card">
-                    <h2 className="card-header card-title">Intro</h2>
+                    <p className="card-header card-header-title">Intro</p>
                     <div className="card-body index-intro">
                         {user.work && (
                             <div className="index-intro-item">
                                 <MdWorkOutline size={24} />
-                                <p className="index-intro-text">Works at {user.work}</p>
+                                <p className="index-intro-tet">Works at {user.work}</p>
                             </div>
                         )}
 
@@ -150,35 +150,33 @@ export default function ProfileIndexPage() {
                 </div>
 
                 <div className="card">
-                    <h2 className="card-header index-header">
-                        <p className="card-title">Photos</p>
+                    <div className="card-header index-header">
+                        <p className="card-header-title">Photos</p>
                         <Link to="photos" className="index-link">View All</Link>
-                    </h2>
+                    </div>
 
                     {photos.length === 0 ? (
                         <p className="card-body">No Photos Found</p>
                     ) : (
                         <div className="card-body index-photos">
-                            {photos.map(photo => (
-                                <img className="img-rounded" key={photo.image.url} src={photo.image.url} alt="" />
-                            ))}
+                            {photos.map(photo => <img className="img-rounded" key={photo.image.url} src={photo.image.url} />)}
                         </div>
                     )}
                 </div>
 
                 <div className="card">
-                    <h2 className="card-header index-header">
-                        <p className="card-title">Followings</p>
+                    <div className="card-header index-header">
+                        <p className="card-header-title">Followings</p>
                         <Link to="followings" className="index-link">View All</Link>
-                    </h2>
+                    </div>
 
                     {followings.length === 0 ? (
                         <p className="card-body">No Followings Found</p>
                     ) : (
                         <div className="card-body index-followings">
                             {followings.map(following => (
-                                <Link key={following._id} to={`/profile/${following._id}`}>
-                                    <img className="img-rounded" src={following.profileImage.url} alt="" />
+                                <Link key={following._id} to={`/profile/${following._id}`} className="index-following">
+                                    <img className="img-rounded" src={following.profileImage.url} />
                                     <p className="index-following-name">{fullName(following)}</p>
                                 </Link>
                             ))}

@@ -201,7 +201,7 @@ export default function RegisterPage() {
                                 <label htmlFor="relationship" className="form-label">Relationship</label>
                                 <Field
                                     id="relationship"
-                                    className="form-control"
+                                    className="form-control form-select"
                                     name="relationship"
                                     as="select"
                                 >

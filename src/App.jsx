@@ -23,9 +23,9 @@ export default function App() {
                     <Route element={<Layout />}>
                         <Route index element={<HomePage />} />
                         <Route path="/search" element={<SearchPage />} />
-                        <Route path="/auth/edit-profile" element={<EditProfilePage />} />
-                        <Route path="/auth/followers" element={<FollowersPage />} />
-                        <Route path="/auth/followings" element={<FollowingPage />} />
+                        <Route path="/edit-profile" element={<EditProfilePage />} />
+                        <Route path="/followers" element={<FollowersPage />} />
+                        <Route path="/followings" element={<FollowingPage />} />
 
                         <Route path="/profile/:userId" element={<ProfilePage/>}>
                             <Route index element={<ProfileIndexPage/>}/>
