@@ -15,11 +15,11 @@ routes.get("/feeds", async (req, res) => {
     const user = await User.findById(_id)
 
     const followings = [...user.followings, Types.ObjectId(_id)]
-console.log(followings);
+    console.log(followings);
     const posts = await Post.aggregate([
         {
             $match: {
-                userId: {$in: followings}
+                userId: { $in: followings }
             }
         },
         {
@@ -33,7 +33,7 @@ console.log(followings);
                         $project: {
                             firstName: 1,
                             lastName: 1,
-                            profileImage: { url: 1}
+                            profileImage: { url: 1 }
                         }
                     }
                 ]
@@ -59,7 +59,7 @@ console.log(followings);
             $unwind: "$user"
         },
         {
-            $sort: {createdAt: -1}
+            $sort: { createdAt: -1 }
         }
     ])
 
@@ -167,7 +167,7 @@ routes.get(
 routes.post("/",
 
     body("description")
-        .optional({checkFalsy: true})
+        .optional({ checkFalsy: true })
         .isString()
         .trim()
         .isLength({ max: 255 }),
@@ -175,7 +175,7 @@ routes.post("/",
     body("image").isString(),
 
     body("videoUrl")
-        .optional({checkFalsy: true})
+        .optional({ checkFalsy: true })
         .isURL()
         .custom(isYoutubeVideo)
         .customSanitizer(makeYoutubeVideoUrl),
@@ -324,9 +324,3 @@ routes.delete(
 )
 
 export default routes
-
-// {
-//     $replaceRoot: {
-//         newRoot: { $mergeObjects: [{ $arrayElemAt: ["$users", 0] }, "$$ROOT"] }
-//     }
-// }

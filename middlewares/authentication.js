@@ -13,7 +13,7 @@ export async function authenticate(req, res, next) {
     }
 
     try {
-        
+
         const { _id } = jwt.verify(authorization, process.env.AUTH_TOKEN_SECRECT)
 
         req._id = _id
